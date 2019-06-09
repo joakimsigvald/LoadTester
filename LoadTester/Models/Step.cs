@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 
 namespace LoadTester
 {
     public class Step
     {
         public string Endpoint { get; set; }
+        public string Path { get; set; }
         public string Args { get; set; }
         public dynamic Body { get; set; }
+        public JObject Response { get; set; }
         public int DelayMs { get; set; }
         public int Times { get; set; }
         public TimeSpan? _delay;

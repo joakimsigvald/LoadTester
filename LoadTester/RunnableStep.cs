@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -8,15 +9,16 @@ namespace LoadTester
     {
         private readonly HttpClient _client;
         private readonly Endpoint _endpoint;
-        public Step Step { get; private set; }
+        public Step Blueprint { get; private set; }
 
         public RunnableStep(Step step, Service service, Endpoint endpoint)
         {
             _client = service.CreateClient();
             _endpoint = endpoint;
-            Step = step;
+            Blueprint = step;
         }
 
-        public Task<HttpResponseMessage> Run() => _client.SendAsync(_endpoint.GetRequest(Step.Args, Step.Body));
+        public Task<HttpResponseMessage> Run(Dictionary<string, string> variables) 
+            => _client.SendAsync(_endpoint.GetRequest(Blueprint, variables));
     }
 }

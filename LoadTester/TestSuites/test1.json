@@ -20,6 +20,11 @@
           "Name": "MakeBooking",
           "Method": "Post",
           "Path": "Bookings"
+        },
+        {
+          "Name": "GetPdf",
+          "Method": "Get",
+          "Path": "Bookings/pdf"
         }
       ]
     }
@@ -27,7 +32,7 @@
   "Scenarios": [
     {
       "Name": "GetTicketTypes",
-      "Instances": 100,
+      "Instances": 10,
       "Steps": [
         {
           "Endpoint": "Shopping.GetTicketTypes",
@@ -39,25 +44,6 @@
     },
     {
       "Name": "GetJourney",
-      "Instances": 100,
-      "Steps": [
-        {
-          "Endpoint": "Shopping.GetJourney",
-          "Args": "lang=sv",
-          "Body": {
-            "adultCount": 1,
-            "youthCount": 2,
-            "childCount": 3,
-            "departureDate": "2019-08-01",
-            "returnDate": null
-          },
-          "Times": 1,
-          "DelayMs": 0
-        }
-      ]
-    },
-    {
-      "Name": "GetJourneyAndBuyTicket",
       "Instances": 10,
       "Steps": [
         {
@@ -70,20 +56,24 @@
             "departureDate": "2019-08-01",
             "returnDate": null
           },
-          "Response": {
-            "data": {
-              "refundable": {
-                "tickets": [
-                  {
-                    "ticketType": {
-                      "id": "{{ID}}"
-                    },
-                    "count": "{{COUNT}}",
-                    "departureDate": "{{DEPARTURE}}"
-                  }
-                ]
-              }
-            }
+          "Times": 1,
+          "DelayMs": 0
+        }
+      ]
+    },
+    {
+      "Name": "BuyTicket",
+      "Instances": 1,
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetJourney",
+          "Args": "lang=sv",
+          "Body": {
+            "adultCount": 1,
+            "youthCount": 2,
+            "childCount": 3,
+            "departureDate": "2019-08-01",
+            "returnDate": null
           },
           "Times": 1,
           "DelayMs": 0
@@ -115,8 +105,21 @@
               "email": "test.testsson@mailinator.com"
             }
           },
+          "Response": {
+            "data": {
+              "bookingId": "{{BOOKINGID}}",
+              "handle": "{{HANDLE}}"
+            }
+          },
           "Times": 1,
-          "DelayMs": 0
+          "DelayMs": 500
+        },
+        {
+          "Endpoint": "Shopping.GetPdf",
+          "Path": "{{BOOKINGID}}",
+          "Args": "handle={{HANDLE}}&lang=sv",
+          "Times": 1,
+          "DelayMs": 2000
         }
       ]
     }
