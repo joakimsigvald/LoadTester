@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LoadTester": {
+      "commandName": "Project",
+      "commandLineArgs": "TestSuites/test1.json"
+    }
+  }
+}

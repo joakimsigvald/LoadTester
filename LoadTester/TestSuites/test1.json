@@ -1,0 +1,124 @@
+﻿{
+  "Name": "Test1",
+  "Services": [
+    {
+      "Name": "Shopping",
+      "BaseUrl": "https://aex-shopping-test.westeurope.cloudapp.azure.com",
+      "ApiKey": "AEX123",
+      "Endpoints": [
+        {
+          "Name": "GetTicketTypes",
+          "Method": "Get",
+          "Path": "TicketTypes"
+        },
+        {
+          "Name": "GetJourney",
+          "Method": "Post",
+          "Path": "Journey"
+        },
+        {
+          "Name": "MakeBooking",
+          "Method": "Post",
+          "Path": "Bookings"
+        }
+      ]
+    }
+  ],
+  "Scenarios": [
+    {
+      "Name": "GetTicketTypes",
+      "Instances": 100,
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetTicketTypes",
+          "Args": "lang=sv",
+          "Times": 1,
+          "DelayMs": 0
+        }
+      ]
+    },
+    {
+      "Name": "GetJourney",
+      "Instances": 100,
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetJourney",
+          "Args": "lang=sv",
+          "Body": {
+            "adultCount": 1,
+            "youthCount": 2,
+            "childCount": 3,
+            "departureDate": "2019-08-01",
+            "returnDate": null
+          },
+          "Times": 1,
+          "DelayMs": 0
+        }
+      ]
+    },
+    {
+      "Name": "GetJourneyAndBuyTicket",
+      "Instances": 10,
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetJourney",
+          "Args": "lang=sv",
+          "Body": {
+            "adultCount": 1,
+            "youthCount": 2,
+            "childCount": 3,
+            "departureDate": "2019-08-01",
+            "returnDate": null
+          },
+          "Response": {
+            "data": {
+              "refundable": {
+                "tickets": [
+                  {
+                    "ticketType": {
+                      "id": "{{ID}}"
+                    },
+                    "count": "{{COUNT}}",
+                    "departureDate": "{{DEPARTURE}}"
+                  }
+                ]
+              }
+            }
+          },
+          "Times": 1,
+          "DelayMs": 0
+        },
+        {
+          "Endpoint": "Shopping.MakeBooking",
+          "Args": "lang=sv",
+          "Body": {
+            "ticketRequests": [
+              {
+                "ticketTypeId": 101,
+                "count": 1,
+                "departureDate": "2019-08-01",
+                "returnDate": null
+              },
+              {
+                "ticketTypeId": 103,
+                "count": 2,
+                "departureDate": "2019-08-01",
+                "returnDate": null
+              }
+            ],
+            "departureDate": "2019-08-01",
+            "returnDate": null,
+            "paymentReference": "123456",
+            "customer": {
+              "firstName": "Test",
+              "lastName": "Testsson",
+              "email": "test.testsson@mailinator.com"
+            }
+          },
+          "Times": 1,
+          "DelayMs": 0
+        }
+      ]
+    }
+  ]
+}
