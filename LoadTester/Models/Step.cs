@@ -6,7 +6,6 @@ namespace LoadTester
     public class Step
     {
         public string Endpoint { get; set; }
-        public string Path { get; set; }
         public string Args { get; set; }
         public dynamic Body { get; set; }
         public JObject Response { get; set; }
@@ -14,5 +13,7 @@ namespace LoadTester
         public int Times { get; set; }
         public TimeSpan? _delay;
         public TimeSpan Delay => _delay ?? (_delay = TimeSpan.FromMilliseconds(DelayMs)).Value;
+        public bool AbortOnSuccess { get; set; }
+        public bool AbortOnFail { get; set; } = true;
     }
 }

@@ -23,9 +23,27 @@
           "Path": "Bookings/Checkout"
         },
         {
+          "Name": "GetBooking",
+          "Method": "Get",
+          "Path": "Bookings/{{OrderNumber}}"
+        },
+        {
           "Name": "GetPdf",
           "Method": "Get",
-          "Path": "Bookings/{OrderNumber}/pdf"
+          "Path": "Bookings/{{OrderNumber}}/pdf"
+        }
+      ]
+    },
+    {
+      "Name": "Payment",
+      "BaseUrl": "https://api-test.atrain.se",
+      "BasePath": "ecom/payment",
+      "ApiKey": "AEX123",
+      "Endpoints": [
+        {
+          "Name": "Pay",
+          "Method": "Post",
+          "Path": "Payment"
         }
       ]
     }
@@ -61,10 +79,10 @@
           "DelayMs": 0
         }
       ]
-    } /*,
+    },
     {
       "Name": "BuyTicket",
-      "Instances": 1,
+      "Instances": 30,
       "Steps": [
         {
           "Endpoint": "Shopping.GetJourney",
@@ -80,7 +98,7 @@
           "DelayMs": 0
         },
         {
-          "Endpoint": "Shopping.MakeBooking",
+          "Endpoint": "Shopping.Checkout",
           "Args": "lang=sv",
           "Body": {
             "ticketRequests": [
@@ -99,31 +117,73 @@
             ],
             "departureDate": "2019-08-01",
             "returnDate": null,
-            "paymentReference": "123456",
             "customer": {
               "firstName": "Test",
               "lastName": "Testsson",
               "email": "test.testsson@mailinator.com"
-            }
+            },
+            "suppressEmail": true
           },
           "Response": {
             "data": {
-              "bookingId": "{{BOOKINGID}}",
-              "handle": "{{HANDLE}}"
+              "total": {
+                "amountIncVat": "{{Amount}}",
+                "currencyCode": "{{Currency}}"
+              },
+              "orderNumber": "{{OrderNumber}}",
+              "handle": "{{Handle}}"
             }
           },
           "Times": 1,
           "DelayMs": 500
         },
         {
+          "Endpoint": "Payment.Pay",
+          "Args": "secure=false",
+          "Body": {
+            "amount": {
+              "currency": "{{Currency}}",
+              "value": "{{Amount:int}}"
+            },
+            "paymentMethodDetails": {
+              "type": "scheme",
+              "encryptedCardNumber": "adyenjs_0_1_18$gByjAzkyxRH3QPtWYd8OmKvfxkF3YQKaHjMIhktR2+tHW/P4gittbcitBpuxIOJjz4tbqqs5kqfjipY5mOFG91hi2Oz+9WO5v1eS0mX6kBhNhaWJmT8HMHq1Smn0DtXYkykLfecCzHKqpDZL9q2YAUUfcf3jfef91Bw0YAxr6ADzgyVPyncR+jkc3MPzkXltC/9QxtZoqJI+AwDoQHDmTJNylJbdzn9y8o2Lh6IsxNw3zuXVhVOT5KX699RoyTeM9o4csGhk7me00Mo1w0wmLGcZ6KDTorSzFufMFEZ4MJ3aRs5jalJVsv1QkKIQmeaV3PR5bz2ticz11RuOBTEAMQ==$XRpLNtQyJDt05djMoTlqC8HtmyVe6M208FK1wpYx59fiF+0dhu/M8jjvRxwx/MPVRMWKN2+hvAHgwOa+aItRM1sVHOVgWUf/QYPfvQiEYR07vBF1l6cmb5bTqL46FZ2iHuwtsFLcgf5HDA7vtCQNdz2R5PO9cA33t/vwng8B+mHHLeYfpy4VnMrJZnWRjj2BbqGfQLihKEOcPHHr7W/jRawolvRv6wat7dDumMFdz1pAS6bocdbcwZwBGpF1+x+SEsQX26lqDKg+R8OassERYVbeAmXSPVNG1sT41+r4asrE74aX0h8pVQ1yn0D8WrN/Jo31qeNFG9LEPuSRwolqbp0PbuAQZFo0sf1SiBkrYoCe/iFC9s/dmq5puxO29HAtHTJB5TUtD/NxMUieX8geGUQ34u3cgrfRPlO3Kdy3SpCMG1eb6vd+SL9Y17RdMUHPnSNm1YIAf17Aww==",
+              "encryptedExpiryMonth": "adyenjs_0_1_18$YIybsF5qUC+IDu+O/rH/jctOXWvRYQKsjGhsilUCC+6B1QK4bbKSC8KUJ1S3EQoDpxUM4aNghmcP+h6JUWrepE1IRkwmNTtEqT7FyuMUnrW0qTGslofKESVq2zdjDTK/h0MpYhI91G1lNQsWpiJEieEDfnjy1Qnn2a9KuOYNWzeAV//6fTHIDc12txhfyUVp2VnmMCFP2S+stTyLVAUdchZuGITVdtNQqrNyVmR5ufPgIhBEqsQsps6KQDyc4OyCwfXTCUODK9ED8Y6+5nq0iZn5zrULmOPLxG+iDKTnGaEuz3UhwmP+SJeGb7o+Kr5HSyw4xNQJ6JQcmycBrFkTVQ==$w3ATIpk9RRPhfYsNtR2irZwQjR0uo3gcWWl0oZZeaVYnX6XFV7v3MK5Iazsm/8UL8EyojaIRLj192lhGkN39GewzNHYDJw76Lt333DEMX7yEIPJQ9YqEll/ItuZMH1INSxfR95Cw2tN0WzV20Wvt3VU+eTNGXSd4Zw//ysNg1NA/1U/MjxC+rwD038fBmiusz3beYVCNHKzt0mr3uRZC3lu4aTG74oI+6r0wMYBmySMEqgFP9aZ156kcwl6+ubNl322HcchyCEH1w1lwErYYNPGbo5z7L3dmU7MFrHH1puKpaQqyN2GSDLFBX0l1T3qzNK+rAX1bbJH3JZ8YmKzWM5U=",
+              "encryptedExpiryYear": "adyenjs_0_1_18$pNVixhVVPFB+HZcErVTAVDRY7DFP835KnxvsU5GQDe4/RzByoOR+pWSC4zyfaaYxiyBDZWvxA4wdR2yp62ZSNwkjdWevGhDC4uD5hKjpezqV1K6klJ2wsL8YSlR5g344nmLpptSrUI42TfNgHUktmu690l/Xr2swPgMByeR/IA9wYwzo9PvQfiswvKmPrFwVz+XGQoGQ6FwKwMt9quw/OkdEDXNVbcs3bRq1GLrUYpUHK8UOAUja5rkckg2E9Xzt96mRNctisk8FfQbAE9lxNzZF78nvCaiA/ZfTPX1auHID2jjdaHMSTVh6Y1clF/Lk1Tk7zUhV6klMuv4eWZDDnA==$/bchbfHsCJamnrhN1L6miwcz1KqV3quxhpAngAzF6qswyX19Iv0iQJI8KEK4yWDeO/2GQ4NNzu9bsFC/gW7MyR08A6CM9O8qdRCN7B7Kf8lElfxSWpU6Wt7ciUWJiT8n6xS5FYBVqj1t9Vi7hvt0Ic4bvfQkqf2QLG8u7MWpY0okobWQ5CgYv2xVTm1+3gRjD2DMlQ5deAordAKYgVM42H7ZTOsgLgJaUxPaGY/YW6uGtBoxx01ug9k4XLS8ursdhxtywzu3vz3a7n2s+r4ly7vr5g4Z6cNJS/d2Bb4ldJPuR1/awpkoOfZjD0d/laEZ373GH6uwlNEl1ofdQNyv2aOJ",
+              "encryptedSecurityCode": "adyenjs_0_1_18$VVMhyifaGpdfAndx8mdgZqOxhSlPL9lsE3smg0/SxkyBfB8ZH9k59mgmMl1g14fktW0mWdQtXoQNwMue+9xSExX7XVA6Wxaz0FS1lFiiLZbfELCdAdjmBlY41zlO54Nov/UG+dLN0YlrVzhn2mLM0xrN4XToTRHVgYea0vJCnwNuaPa2hvbv2stR2cDJe4KtNEXfF4q5SoM4LbazPuqovD1mop/vKXfPpXpBilqqnlBawEzc60RvY96J2qaj4FHrQZYqW7FWgLZTDoFZ/sugccyNFxkejRDlu+w6JVo6fC1Y4UPrernoZzC9au+3U8VOKtkYiLvIj25WmgnZl+npVg==$C9YRapeXjwrBnSTDH3zcV777qwrgjGie4NjobMEErtXPu0UORxjJNqpwiaEKASi/oUEjO8z3Qd/RyuHSK/O/+5HtU6yzZa6MLBs+5wqSI9GaD+OObRMQY0EB0avP66/037jlydFACfEV3piPZ6hHhjAqaHZf7PbiGaDvxo2RbcdlhHN3jWeuo8DovwXF4SdvYyUF2Bu0HNW9Gxw4ym+i+bhMvCDAsp1qKXGYoFZafM68cI0UPbT9BLKPPx7l5y3V7AxhvL/4K7lXN1wesSoP3Sx4+T1DoYUU+RDkQsfODQLzPMD8FfjlFvVAz/nQ+1t4TaiV4j1/lWPKiQ==",
+              "holderName": "Test Testsson"
+            },
+            "orderNumber": "{{OrderNumber:int}}",
+            "returnUrl": "string",
+            "browserInfo": {
+              "userAgent": "string",
+              "acceptHeader": "string",
+              "language": "string",
+              "colorDepth": 0,
+              "screenHeight": 0,
+              "screenWidth": 0,
+              "javaEnabled": true,
+              "timeZoneOffset": 0
+            }
+          },
+          "Times": 1,
+          "DelayMs": 500
+        },
+        {
+          "Endpoint": "Shopping.GetBooking",
+          "Args": "lang=sv&handle={{Handle}}",
+          "Times": 20,
+          "AbortOnSuccess": true,
+          "AbortOnFail": false,
+          "DelayMs": 1000
+        },
+        {
           "Endpoint": "Shopping.GetPdf",
-          "Path": "{{BOOKINGID}}",
-          "Args": "handle={{HANDLE}}&lang=sv",
+          "Args": "handle={{Handle}}&lang=sv",
           "Times": 1,
           "DelayMs": 500
         }
       ]
     }
-    */
   ]
 }

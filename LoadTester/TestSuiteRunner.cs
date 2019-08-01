@@ -23,7 +23,9 @@ namespace LoadTester
                 var result = await Run(scenario);
                 results.Add(result);
                 if (result.Success)
+                {
                     Console.WriteLine("Successfully completed scenario");
+                }
                 else
                 {
                     Console.WriteLine("Scenario failed, because: " + result.Error);

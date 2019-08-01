@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace LoadTester
@@ -37,22 +38,64 @@ namespace LoadTester
             var variables = new Dictionary<string, string>();
             foreach (var step in Steps)
             {
-                for (int i = 0; i < step.Blueprint.Times; i++)
+                try
                 {
-                    await Task.Delay(step.Blueprint.Delay);
-                    var response = await step.Run(variables);
-                    var body = await response.Content.ReadAsStringAsync();
-                    if (!response.IsSuccessStatusCode)
-                        return ScenarioInstanceResult.Failed($"{response.StatusCode}: {body}");
-                    if (step.Blueprint.Response != null)
-                        BindVariables(
-                            variables, 
-                            step.Blueprint.Response, 
-                            JsonConvert.DeserializeObject<JObject>(body));
+                    await StepRunner.Run(step, variables);
+                }
+                catch (ScenarioFailed sf)
+                {
+                    return ScenarioInstanceResult.Failed(sf.Message);
                 }
             }
             sw.Stop();
             return ScenarioInstanceResult.Succeeded(sw.Elapsed);
+        }
+    }
+
+    public class StepRunner
+    {
+        private readonly RunnableStep _step;
+        private readonly Dictionary<string, string> _variables;
+
+        public static Task Run(RunnableStep step, Dictionary<string, string> variables)
+            => new StepRunner(step, variables).Run();
+
+        private StepRunner(RunnableStep step, Dictionary<string, string> variables)
+        {
+            _step = step;
+            _variables = variables;
+        }
+
+        private async Task Run()
+        {
+            HttpResponseMessage lastResponse = await RunRun();
+            await HandleResponse(lastResponse);
+        }
+
+        private async Task HandleResponse(HttpResponseMessage response)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new ScenarioFailed($"{response.StatusCode}: {body}");
+            if (_step.Blueprint.Response != null)
+                BindVariables(
+                    _variables,
+                    _step.Blueprint.Response,
+                    JsonConvert.DeserializeObject<JObject>(body));
+        }
+
+        private async Task<HttpResponseMessage> RunRun()
+        {
+            HttpResponseMessage lastResponse = null;
+            for (int i = 0; i < _step.Blueprint.Times; i++)
+            {
+                await Task.Delay(_step.Blueprint.Delay);
+                lastResponse = await _step.Run(_variables);
+                if (lastResponse.IsSuccessStatusCode && _step.Blueprint.AbortOnSuccess
+                    || !lastResponse.IsSuccessStatusCode && _step.Blueprint.AbortOnFail)
+                    break;
+            }
+            return lastResponse;
         }
 
         private void BindVariables(Dictionary<string, string> variables, JObject pattern, JObject source)
