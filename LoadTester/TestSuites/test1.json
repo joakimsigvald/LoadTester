@@ -3,7 +3,8 @@
   "Services": [
     {
       "Name": "Shopping",
-      "BaseUrl": "https://aex-shopping-test.westeurope.cloudapp.azure.com",
+      "BaseUrl": "https://api-test.atrain.se",
+      "BasePath": "ecom/shopping",
       "ApiKey": "AEX123",
       "Endpoints": [
         {
@@ -17,14 +18,14 @@
           "Path": "Journey"
         },
         {
-          "Name": "MakeBooking",
+          "Name": "Checkout",
           "Method": "Post",
-          "Path": "Bookings"
+          "Path": "Bookings/Checkout"
         },
         {
           "Name": "GetPdf",
           "Method": "Get",
-          "Path": "Bookings/pdf"
+          "Path": "Bookings/{OrderNumber}/pdf"
         }
       ]
     }
@@ -32,7 +33,7 @@
   "Scenarios": [
     {
       "Name": "GetTicketTypes",
-      "Instances": 10,
+      "Instances": 100,
       "Steps": [
         {
           "Endpoint": "Shopping.GetTicketTypes",
@@ -44,7 +45,7 @@
     },
     {
       "Name": "GetJourney",
-      "Instances": 10,
+      "Instances": 100,
       "Steps": [
         {
           "Endpoint": "Shopping.GetJourney",
@@ -60,7 +61,7 @@
           "DelayMs": 0
         }
       ]
-    },
+    } /*,
     {
       "Name": "BuyTicket",
       "Instances": 1,
@@ -119,9 +120,10 @@
           "Path": "{{BOOKINGID}}",
           "Args": "handle={{HANDLE}}&lang=sv",
           "Times": 1,
-          "DelayMs": 2000
+          "DelayMs": 500
         }
       ]
     }
+    */
   ]
 }

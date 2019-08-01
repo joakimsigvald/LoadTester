@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 
@@ -10,24 +8,28 @@ namespace LoadTester
     public class Endpoint
     {
         public string Name { get; set; }
-        public string Service { get; set; }
         public string Path { get; set; }
 
         public string Method { get; set; }
         public HttpMethod HttpMethod => new HttpMethod(Method);
 
-        public HttpRequestMessage GetRequest(Step step, Dictionary<string, string> variables) 
-            => new HttpRequestMessage(HttpMethod, GetUrl(step, variables)) {
-                Content = CreateContent(step.Body)
+        public HttpRequestMessage GetRequest(string basePath, Step step, Dictionary<string, string> variables)
+        {
+            var url = GetUrl(basePath, step, variables);
+            var content = CreateContent(step.Body);
+            return new HttpRequestMessage(HttpMethod, url)
+            {
+                Content = content
             };
+        }
 
         private HttpContent CreateContent(dynamic body)
             => body is null
             ? null
             : new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
 
-        private string GetUrl(Step step, Dictionary<string, string> variables)
-            => GetPath(step, variables) + GetQuery(step, variables);
+        private string GetUrl(string basePath, Step step, Dictionary<string, string> variables)
+            => $"{basePath}/{GetPath(step, variables)}?{GetQuery(step, variables)}".TrimStart('/').TrimEnd('?');
 
         private string GetPath(Step step, Dictionary<string, string> variables)
             => step.Path is null
