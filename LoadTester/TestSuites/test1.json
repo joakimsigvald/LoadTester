@@ -82,7 +82,7 @@
     },
     {
       "Name": "BuyTicket",
-      "Instances": 30,
+      "Instances": 20,
       "Steps": [
         {
           "Endpoint": "Shopping.GetJourney",
@@ -95,7 +95,7 @@
             "returnDate": null
           },
           "Times": 1,
-          "DelayMs": 0
+          "DelayMs": 600
         },
         {
           "Endpoint": "Shopping.Checkout",
@@ -166,13 +166,18 @@
               "timeZoneOffset": 0
             }
           },
+          "Response": {
+            "data": {
+              "resultCode": "Authorised"
+            }
+          },
           "Times": 1,
           "DelayMs": 500
         },
         {
           "Endpoint": "Shopping.GetBooking",
           "Args": "lang=sv&handle={{Handle}}",
-          "Times": 20,
+          "Times": 30,
           "AbortOnSuccess": true,
           "AbortOnFail": false,
           "DelayMs": 1000

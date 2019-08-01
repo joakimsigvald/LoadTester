@@ -1,0 +1,117 @@
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace LoadTester
+{
+    public class StepRunner
+    {
+        private readonly RunnableStep _step;
+        private readonly Dictionary<string, string> _variables;
+
+        public static Task Run(RunnableStep step, Dictionary<string, string> variables)
+            => new StepRunner(step, variables).Run();
+
+        private StepRunner(RunnableStep step, Dictionary<string, string> variables)
+        {
+            _step = step;
+            _variables = variables;
+        }
+
+        private async Task Run()
+        {
+            HttpResponseMessage lastResponse = await RunRun();
+            await HandleResponse(lastResponse);
+        }
+
+        private async Task HandleResponse(HttpResponseMessage response)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new ScenarioFailed($"{response.StatusCode}: {body}");
+            if (_step.Blueprint.Response != null) {
+                var pattern = _step.Blueprint.Response;
+                var source = JsonConvert.DeserializeObject<JObject>(body);
+                VerifyResponse(pattern, source);
+                BindVariables(pattern, source);
+            }
+        }
+
+        private void VerifyResponse(JObject pattern, JObject source)
+        {
+            var patternProperties = pattern.Properties();
+            foreach (var pp in patternProperties)
+            {
+                var val = source.GetValue(pp.Name);
+                if (pp.Value is JObject ppObject && val is JObject valObject)
+                    VerifyResponse(ppObject, valObject);
+                else if (TryGetValue(pp, out var expectedValue) && expectedValue != null)
+                    VerifyValue(expectedValue, val.Value<string>());
+            }
+        }
+
+        private void VerifyValue(string expectedValue, string actualValue)
+        {
+            if (expectedValue != actualValue)
+                throw new ScenarioFailed($"Unexpected response: {actualValue}, expected {expectedValue}");
+        }
+
+        private async Task<HttpResponseMessage> RunRun()
+        {
+            HttpResponseMessage lastResponse = null;
+            for (int i = 0; i < _step.Blueprint.Times; i++)
+            {
+                await Task.Delay(_step.Blueprint.Delay);
+                lastResponse = await _step.Run(_variables);
+                if (lastResponse.IsSuccessStatusCode && _step.Blueprint.AbortOnSuccess
+                    || !lastResponse.IsSuccessStatusCode && _step.Blueprint.AbortOnFail)
+                    break;
+            }
+            return lastResponse;
+        }
+
+        private void BindVariables(JObject pattern, JObject source)
+        {
+            var patternProperties = pattern.Properties();
+            foreach (var pp in patternProperties)
+            {
+                var val = source.GetValue(pp.Name);
+                if (pp.Value is JObject ppObject && val is JObject valObject)
+                    BindVariables(ppObject, valObject);
+                else if (TryGetVariableName(pp, out var varName) && varName != null)
+                    _variables[varName] = val.Value<string>();
+            }
+        }
+
+        private bool TryGetVariableName(JProperty p, out string varName)
+        {
+            varName = null;
+            if (!IsString(p))
+                return false;
+            var val = p.Value.Value<string>();
+            if (IsVariable(val))
+                varName = val.Substring(2..^2);
+            return true;
+        }
+
+        private bool TryGetValue(JProperty p, out string value)
+        {
+            value = null;
+            if (!IsString(p))
+                return false;
+            var val = p.Value.Value<string>();
+            if (!IsVariable(val))
+                value = val;
+            return true;
+        }
+
+        private bool IsVariable(string val)
+            => val.StartsWith("{{") && val.EndsWith("}}");
+
+        private bool IsString(JProperty p)
+            => p.Value.Type == JTokenType.String;
+    }
+}
