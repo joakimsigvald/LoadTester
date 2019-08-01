@@ -37,8 +37,8 @@ namespace LoadTester
 
         public async Task<ScenarioResult> Run(Scenario scenario)
         {
-            var instances = Enumerable.Range(0, scenario.Instances)
-                .Select(i => scenario.CreateInstance(_suite))
+            var instances = Enumerable.Range(1, scenario.Instances)
+                .Select(i => scenario.CreateInstance(_suite, i))
                 .ToArray();
             var runs = await Task.WhenAll(instances.Select(i => i.Run()));
             if (!runs.All(r => r.Success))

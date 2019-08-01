@@ -10,9 +10,11 @@ namespace LoadTester
         public Scenario Scenario { get; set; }
         public RunnableStep[] Steps { get; private set; }
         private readonly TestSuite _suite;
+        private readonly int _instanceId;
 
-        public RunnableScenario(TestSuite suite, Scenario scenario)
+        public RunnableScenario(TestSuite suite, Scenario scenario, int instanceId)
         {
+            _instanceId = instanceId;
             _suite = suite;
             Scenario = scenario;
             Steps = scenario.Steps.Select(Instanciate).ToArray();
@@ -31,7 +33,8 @@ namespace LoadTester
         public async Task<ScenarioInstanceResult> Run()
         {
             var sw = Stopwatch.StartNew();
-            var variables = new Dictionary<string, string>();
+            var variables = new Dictionary<string, string> {
+                { "InstanceId", $"{_instanceId}" } };
             foreach (var step in Steps)
             {
                 try

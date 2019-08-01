@@ -82,7 +82,7 @@
     },
     {
       "Name": "BuyTicket",
-      "Instances": 20,
+      "Instances": 10,
       "Steps": [
         {
           "Endpoint": "Shopping.GetJourney",
@@ -120,7 +120,7 @@
             "customer": {
               "firstName": "Test",
               "lastName": "Testsson",
-              "email": "test.testsson@mailinator.com"
+              "email": "test.testsson{{InstanceId}}@mailinator.com"
             },
             "suppressEmail": true
           },
