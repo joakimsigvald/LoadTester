@@ -22,17 +22,9 @@ namespace LoadTester
                 Console.WriteLine("Running scenario: " + scenario.Name);
                 var result = await Run(scenario);
                 results.Add(result);
-                if (result.Success)
-                {
-                    Console.WriteLine("Successfully completed scenario");
-                }
-                else
-                {
-                    Console.WriteLine("Scenario failed, because: " + result.Error);
-                    break;
-                }
+                Console.WriteLine("Scenario " + (result.Success ? "succeeded" : "failed"));
             }
-            return new TestSuiteResult(results.ToArray());
+            return new TestSuiteResult(results.OrderByDescending(res => res.Success).ToArray());
         }
 
         public async Task<ScenarioResult> Run(Scenario scenario)

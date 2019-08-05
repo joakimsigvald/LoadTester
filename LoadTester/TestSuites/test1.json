@@ -115,7 +115,7 @@
     },
     {
       "Name": "BuyTicket",
-      "Instances": 16,
+      "Instances": 20,
       "Steps": [
         {
           "Endpoint": "Shopping.GetJourney",

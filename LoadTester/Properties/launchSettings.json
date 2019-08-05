@@ -2,7 +2,7 @@
   "profiles": {
     "LoadTester": {
       "commandName": "Project",
-      "commandLineArgs": "TestSuites/test2.json"
+      "commandLineArgs": "TestSuites/test1.json"
     }
   }
 }

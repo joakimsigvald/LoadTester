@@ -13,7 +13,29 @@ namespace LoadTester
             var testSuite = LoadTestSuite(args.FirstOrDefault());
             Console.WriteLine("Running test suite: " + testSuite.Name);
             var result = await RunTestSuite(testSuite);
-            TestResultPresenter.PresentResult(testSuite.Name, result);
+            var resultLines = OutputResult(testSuite.Name, result);
+            Console.WriteLine("Output result to text-file? (Y/N)");
+            var answer = Console.ReadKey();
+            if (answer.Key == ConsoleKey.Y)
+                OutputResultToFile(testSuite.Name, resultLines);
+        }
+
+        private static void OutputResultToFile(string testName, string[] resultLines)
+        {
+            int i = 1;
+            while (File.Exists(GetFileName(testName, i)))
+                i++;
+            File.WriteAllLines(GetFileName(testName, i), resultLines);
+        }
+
+        private static string GetFileName(string name, int n) => $"{name}_{n}.txt";
+
+        private static string[] OutputResult(string name, TestSuiteResult result)
+        {
+            var resultLines = TestResultPresenter.PresentResult(name, result);
+            foreach (var line in resultLines)
+                Console.WriteLine(line);
+            return resultLines;
         }
 
         private static TestSuite LoadTestSuite(string filename)
