@@ -12,17 +12,29 @@ namespace LoadTester
                 Error = error
             };
 
-        public static ScenarioResult Succeeded(Scenario scenario, TimeSpan[] orderedDurations)
-            => new ScenarioResult
+        public static ScenarioResult Succeeded(Scenario scenario, ScenarioInstanceResult[] orderedResults)
+            => new ScenarioResult(scenario, orderedResults.Select(or => or.Duration).ToArray())
             {
-                Scenario = scenario,
-                Success = true,
-                Max = orderedDurations.Last(),
-                Min = orderedDurations.First(),
-                Mean = GetQuantile(orderedDurations, 0.5f),
-                Q75 = GetQuantile(orderedDurations, 0.75f),
-                Q90 = GetQuantile(orderedDurations, 0.9f)
+                StepResults = GetStepResults(scenario, orderedResults)
             };
+
+        private ScenarioResult(Scenario scenario, TimeSpan[] durations)
+        {
+            Scenario = scenario;
+            Success = true;
+            Max = durations.Last();
+            Min = durations.First();
+            Mean = GetQuantile(durations, 0.5f);
+            Q75 = GetQuantile(durations, 0.75f);
+            Q90 = GetQuantile(durations, 0.9f);
+        }
+
+        private static StepResult[] GetStepResults(Scenario scenario, ScenarioInstanceResult[] results)
+        => results
+            .SelectMany(res => res.StepTimes.Select((st, i) => (step: scenario.Steps[i], elapsed: st)))
+            .GroupBy(pair => pair.step)
+            .Select(g => new StepResult(g.Key, g.Select(pair => pair.elapsed).OrderBy(ts => ts).ToArray()))
+            .ToArray();
 
         private static TimeSpan GetQuantile(TimeSpan[] orderedDurations, float quantile)
             => orderedDurations.Skip((int)(orderedDurations.Length * quantile)).First();
@@ -37,5 +49,6 @@ namespace LoadTester
         public TimeSpan Mean { get; private set; }
         public TimeSpan Q75 { get; private set; }
         public TimeSpan Q90 { get; private set; }
+        public StepResult[] StepResults { get; internal set; }
     }
 }

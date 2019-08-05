@@ -44,8 +44,7 @@ namespace LoadTester
             if (!runs.All(r => r.Success))
                 return ScenarioResult.Failed(scenario, string.Join(", ", runs.Where(r => !r.Success).Select(r => r.Error)));
             return ScenarioResult.Succeeded(scenario,
-                runs.Select(r => r.Duration)
-                .OrderBy(d => d)
+                runs.OrderBy(d => d.Duration)
                 .ToArray());
         }
     }

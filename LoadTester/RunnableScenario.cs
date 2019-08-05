@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,11 +35,13 @@ namespace LoadTester
         {
             var sw = Stopwatch.StartNew();
             var variables = CreateVariables();
+            var stepTimes = new List<TimeSpan>();
             foreach (var step in Steps)
             {
                 try
                 {
-                    await StepRunner.Run(step, variables);
+                    var elapsed = await StepRunner.Run(step, variables);
+                    stepTimes.Add(elapsed);
                 }
                 catch (ScenarioFailed sf)
                 {
@@ -46,7 +49,7 @@ namespace LoadTester
                 }
             }
             sw.Stop();
-            return ScenarioInstanceResult.Succeeded(sw.Elapsed);
+            return ScenarioInstanceResult.Succeeded(sw.Elapsed, stepTimes);
         }
 
         private IDictionary<string, object> CreateVariables()

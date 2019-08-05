@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace LoadTester
         private readonly RunnableStep _step;
         private readonly IDictionary<string, object> _variables;
 
-        public static Task Run(RunnableStep step, IDictionary<string, object> variables)
+        public static Task<TimeSpan> Run(RunnableStep step, IDictionary<string, object> variables)
             => new StepRunner(step, variables).Run();
 
         private StepRunner(RunnableStep step, IDictionary<string, object> variables)
@@ -21,10 +22,11 @@ namespace LoadTester
             _variables = variables;
         }
 
-        private async Task Run()
+        private async Task<TimeSpan> Run()
         {
-            HttpResponseMessage lastResponse = await RunRun();
-            await HandleResponse(lastResponse);
+            var (response, elapsed) = await RunRun();
+            await HandleResponse(response);
+            return elapsed;
         }
 
         private async Task HandleResponse(HttpResponseMessage response)
@@ -59,8 +61,9 @@ namespace LoadTester
                 throw new ScenarioFailed($"Unexpected response: {actualValue}, expected {expectedValue}");
         }
 
-        private async Task<HttpResponseMessage> RunRun()
+        private async Task<(HttpResponseMessage response, TimeSpan)> RunRun()
         {
+            var sw = Stopwatch.StartNew();
             HttpResponseMessage lastResponse = null;
             for (int i = 0; i < _step.Blueprint.Times; i++)
             {
@@ -70,7 +73,8 @@ namespace LoadTester
                     || !lastResponse.IsSuccessStatusCode && _step.Blueprint.AbortOnFail)
                     break;
             }
-            return lastResponse;
+            sw.Stop();
+            return (lastResponse, sw.Elapsed);
         }
 
         private void BindVariables(JObject pattern, JObject source)
