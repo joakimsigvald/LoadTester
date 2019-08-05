@@ -33,7 +33,7 @@ namespace LoadTester
         {
             var body = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
-                throw new ScenarioFailed($"{response.StatusCode}: {body}");
+                throw new ScenarioFailed(_step.Blueprint, $"{response.StatusCode}: {body}");
             if (_step.Blueprint.Response != null) {
                 var pattern = _step.Blueprint.Response;
                 var source = JsonConvert.DeserializeObject<JObject>(body);
@@ -58,7 +58,7 @@ namespace LoadTester
         private void VerifyValue(string expectedValue, string actualValue)
         {
             if (expectedValue != actualValue)
-                throw new ScenarioFailed($"Unexpected response: {actualValue}, expected {expectedValue}");
+                throw new ScenarioFailed(_step.Blueprint, $"Unexpected response: {actualValue}, expected {expectedValue}");
         }
 
         private async Task<(HttpResponseMessage response, TimeSpan)> RunRun()

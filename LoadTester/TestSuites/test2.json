@@ -84,7 +84,7 @@
   "Scenarios": [
     {
       "Name": "BuyTicket",
-      "Instances": 1,
+      "Instances": 20,
       "Steps": [
         {
           "Endpoint": "Shopping.GetJourney",
