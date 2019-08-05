@@ -20,7 +20,7 @@ namespace LoadTester
             Service = service;
         }
 
-        public Task<HttpResponseMessage> Run(Dictionary<string, string> variables) 
+        public Task<HttpResponseMessage> Run(IDictionary<string, object> variables) 
             => _client.SendAsync(_endpoint.GetRequest(Service.BasePath, Blueprint, variables));
     }
 }

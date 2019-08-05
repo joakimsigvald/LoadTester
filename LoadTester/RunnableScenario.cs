@@ -33,8 +33,7 @@ namespace LoadTester
         public async Task<ScenarioInstanceResult> Run()
         {
             var sw = Stopwatch.StartNew();
-            var variables = new Dictionary<string, string> {
-                { "InstanceId", $"{_instanceId}" } };
+            var variables = CreateVariables();
             foreach (var step in Steps)
             {
                 try
@@ -49,5 +48,10 @@ namespace LoadTester
             sw.Stop();
             return ScenarioInstanceResult.Succeeded(sw.Elapsed);
         }
+
+        private IDictionary<string, object> CreateVariables()
+            => _suite.Constants
+                .Prepend(new Constant("InstanceId", $"{_instanceId}"))
+                .ToDictionary(c => c.Name, c => c.CreateValue());
     }
 }

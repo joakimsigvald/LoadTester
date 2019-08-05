@@ -12,7 +12,7 @@ namespace LoadTester
         public string Method { get; set; }
         public HttpMethod HttpMethod => new HttpMethod(Method);
 
-        public HttpRequestMessage GetRequest(string basePath, Step step, Dictionary<string, string> variables)
+        public HttpRequestMessage GetRequest(string basePath, Step step, IDictionary<string, object> variables)
             => RequestFactory.GetRequest(basePath, this, step, variables);
     }
 }

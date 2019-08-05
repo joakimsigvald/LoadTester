@@ -10,12 +10,12 @@ namespace LoadTester
     public class StepRunner
     {
         private readonly RunnableStep _step;
-        private readonly Dictionary<string, string> _variables;
+        private readonly IDictionary<string, object> _variables;
 
-        public static Task Run(RunnableStep step, Dictionary<string, string> variables)
+        public static Task Run(RunnableStep step, IDictionary<string, object> variables)
             => new StepRunner(step, variables).Run();
 
-        private StepRunner(RunnableStep step, Dictionary<string, string> variables)
+        private StepRunner(RunnableStep step, IDictionary<string, object> variables)
         {
             _step = step;
             _variables = variables;
@@ -82,7 +82,10 @@ namespace LoadTester
                 if (pp.Value is JObject ppObject && val is JObject valObject)
                     BindVariables(ppObject, valObject);
                 else if (TryGetVariableName(pp, out var varName) && varName != null)
-                    _variables[varName] = val.Value<string>();
+                {
+                    var constant = new Constant(varName, val.Value<string>());
+                    _variables[constant.Name] = constant.CreateValue();
+                }
             }
         }
 

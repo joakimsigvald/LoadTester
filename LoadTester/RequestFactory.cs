@@ -10,13 +10,13 @@ namespace LoadTester
     {
         private readonly string _basePath;
         private readonly Endpoint _endpoint;
-        private readonly Dictionary<string, string> _variables;
+        private readonly IDictionary<string, object> _variables;
         private readonly Step _step;
 
-        public static HttpRequestMessage GetRequest(string basePath, Endpoint endpoint, Step step, Dictionary<string, string> variables)
+        public static HttpRequestMessage GetRequest(string basePath, Endpoint endpoint, Step step, IDictionary<string, object> variables)
             => new RequestFactory(basePath, endpoint, step, variables).GetRequest();
 
-        private RequestFactory(string basePath, Endpoint endpoint, Step step, Dictionary<string, string> variables)
+        private RequestFactory(string basePath, Endpoint endpoint, Step step, IDictionary<string, object> variables)
         {
             _basePath = basePath;
             _endpoint = endpoint;
@@ -47,8 +47,17 @@ namespace LoadTester
 
         private string SubstituteVariables(string target) => _variables.Aggregate(target, Substitute);
 
-        private string Substitute(string target, KeyValuePair<string, string> kvp)
-            => target.Replace("{{" + kvp.Key + "}}", kvp.Value.ToString())
-            .Replace("\"{{" + kvp.Key + ":int}}\"", kvp.Value.ToString());
+        private string Substitute(string target, KeyValuePair<string, object> variable)
+            => variable.Value is int?
+            ? SubstituteInt(target, variable)
+            : SubstituteValue(target, variable);
+
+        private string SubstituteInt(string target, KeyValuePair<string, object> variable)
+            => SubstituteValue(target.Replace($"\"{Embrace(variable.Key)}\"", variable.Value.ToString()), variable);
+
+        private string SubstituteValue(string target, KeyValuePair<string, object> variable)
+            => target.Replace(Embrace(variable.Key), variable.Value.ToString());
+
+        private string Embrace(string value) => "{{" + value + "}}";
     }
 }

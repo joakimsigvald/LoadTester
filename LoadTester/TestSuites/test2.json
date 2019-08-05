@@ -1,5 +1,5 @@
 ﻿{
-  "Name": "Test1",
+  "Name": "Test2",
   "Constants": [
     {
       "Name": "TravelDate",
@@ -83,39 +83,8 @@
   ],
   "Scenarios": [
     {
-      "Name": "GetTicketTypes",
-      "Instances": 100,
-      "Steps": [
-        {
-          "Endpoint": "Shopping.GetTicketTypes",
-          "Args": "lang=sv",
-          "Times": 1,
-          "DelayMs": 0
-        }
-      ]
-    },
-    {
-      "Name": "GetJourney",
-      "Instances": 100,
-      "Steps": [
-        {
-          "Endpoint": "Shopping.GetJourney",
-          "Args": "lang=sv",
-          "Body": {
-            "adultCount": 1,
-            "youthCount": 2,
-            "childCount": 3,
-            "departureDate": "2019-09-01",
-            "returnDate": null
-          },
-          "Times": 1,
-          "DelayMs": 0
-        }
-      ]
-    },
-    {
       "Name": "BuyTicket",
-      "Instances": 16,
+      "Instances": 1,
       "Steps": [
         {
           "Endpoint": "Shopping.GetJourney",
