@@ -43,9 +43,9 @@ namespace LoadTester
                     var elapsed = await StepRunner.Run(step, variables);
                     stepTimes.Add(elapsed);
                 }
-                catch (ScenarioFailed sf)
+                catch (RunFailed sf)
                 {
-                    return ScenarioInstanceResult.Failed(sf.Message);
+                    return ScenarioInstanceResult.Failed($"Step: {step.Blueprint.Endpoint} failed with error {sf.Message}");
                 }
             }
             sw.Stop();

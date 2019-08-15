@@ -19,7 +19,9 @@ namespace LoadTester
             var results = new List<ScenarioResult>();
             foreach (var scenario in _suite.Scenarios)
             {
-                Console.WriteLine("Running scenario: " + scenario.Name);
+                Console.WriteLine($"Running scenario: {scenario.Name} with {scenario.Instances} instances");
+                if (Interactor.Ask("Change number of instances"))
+                    scenario.Instances = Interactor.Get<int>("number of instances");
                 var result = await Run(scenario);
                 results.Add(result);
                 Console.WriteLine("Scenario " + (result.Success ? "succeeded" : "failed"));

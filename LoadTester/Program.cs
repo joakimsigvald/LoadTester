@@ -11,14 +11,20 @@ namespace LoadTester
         static async Task Main(string[] args)
         {
             var testSuite = LoadTestSuite(args.FirstOrDefault());
-            Console.WriteLine("Running test suite: " + testSuite.Name);
-            var result = await RunTestSuite(testSuite);
-            var resultLines = OutputResult(testSuite.Name, result);
-            Console.WriteLine("Output result to text-file? (Y/N)");
-            var answer = Console.ReadKey();
-            if (answer.Key == ConsoleKey.Y)
-                OutputResultToFile(testSuite.Name, resultLines);
+            do
+            {
+                Console.WriteLine("Running test suite: " + testSuite.Name);
+                var result = await RunTestSuite(testSuite);
+                var resultLines = OutputResult(testSuite.Name, result);
+                if (OutputResult())
+                    OutputResultToFile(testSuite.Name, resultLines);
+            }
+            while (RunAgain());
         }
+
+        private static bool OutputResult() => Interactor.Ask("Output result to text-file");
+
+        private static bool RunAgain() => Interactor.Ask("Run again");
 
         private static void OutputResultToFile(string testName, string[] resultLines)
         {

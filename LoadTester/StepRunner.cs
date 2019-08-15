@@ -33,7 +33,7 @@ namespace LoadTester
         {
             var body = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
-                throw new ScenarioFailed(_step.Blueprint, $"{response.StatusCode}: {body}");
+                throw new RunFailed($"{response.StatusCode}: {body}");
             if (_step.Blueprint.Response != null) {
                 var pattern = _step.Blueprint.Response;
                 var source = JsonConvert.DeserializeObject<JObject>(body);
@@ -58,7 +58,7 @@ namespace LoadTester
         private void VerifyValue(string expectedValue, string actualValue)
         {
             if (expectedValue != actualValue)
-                throw new ScenarioFailed(_step.Blueprint, $"Unexpected response: {actualValue}, expected {expectedValue}");
+                throw new VerificationFailed($"Unexpected response: {actualValue}, expected {expectedValue}");
         }
 
         private async Task<(HttpResponseMessage response, TimeSpan)> RunRun()
@@ -68,13 +68,34 @@ namespace LoadTester
             for (int i = 0; i < _step.Blueprint.Times; i++)
             {
                 await Task.Delay(_step.Blueprint.Delay);
+                Console.WriteLine($"Calling {_step.Blueprint.Endpoint}, attempt {i + 1}");
                 lastResponse = await _step.Run(_variables);
-                if (lastResponse.IsSuccessStatusCode && _step.Blueprint.AbortOnSuccess
-                    || !lastResponse.IsSuccessStatusCode && _step.Blueprint.AbortOnFail)
+                var isSuccessful = await IsSuccessful(lastResponse);
+                if (isSuccessful && _step.Blueprint.AbortOnSuccess
+                    || !isSuccessful && _step.Blueprint.AbortOnFail)
                     break;
             }
             sw.Stop();
             return (lastResponse, sw.Elapsed);
+        }
+
+        public async Task<bool> IsSuccessful(HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+                return false;
+            var body = await response.Content.ReadAsStringAsync();
+            var pattern = _step.Blueprint.Response;
+            if (pattern == null)
+                return true;
+            try
+            {
+                VerifyResponse(pattern, JsonConvert.DeserializeObject<JObject>(body));
+            }
+            catch (VerificationFailed)
+            {
+                return false;
+            }
+            return true;
         }
 
         private void BindVariables(JObject pattern, JObject source)

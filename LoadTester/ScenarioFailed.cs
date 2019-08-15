@@ -2,9 +2,16 @@
 
 namespace LoadTester
 {
-    public class ScenarioFailed : Exception
+    public class RunFailed : Exception
     {
-        public ScenarioFailed(Step step, string message) : base($"Scenario failed on step {step.Endpoint} with error {message}")
+        public RunFailed(string message) : base(message)
+        {
+        }
+    }
+
+    public class VerificationFailed : RunFailed
+    {
+        public VerificationFailed(string message) : base(message)
         {
         }
     }
