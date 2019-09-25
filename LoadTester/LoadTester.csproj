@@ -6,15 +6,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="TestSuites\test1.json" />
-    <None Remove="TestSuites\test2.json" />
+    <None Remove="TestSuites\pdf.json" />
+    <None Remove="TestSuites\purchase.json" />
+    <None Remove="TestSuites\tickettypes.json" />
+    <None Remove="TestSuites\various.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="TestSuites\test2.json">
+    <Content Include="TestSuites\pdf.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestSuites\test1.json">
+    <Content Include="TestSuites\purchase.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestSuites\tickettypes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestSuites\various.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

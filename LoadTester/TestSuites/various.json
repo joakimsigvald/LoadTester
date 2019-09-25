@@ -1,5 +1,5 @@
 ﻿{
-  "Name": "Test2",
+  "Name": "Various",
   "Constants": [
     {
       "Name": "TravelDate",
@@ -18,28 +18,26 @@
     },
     {
       "Name": "EncryptedCardNumber",
-      "Value": "adyenjs_0_1_24$KtspOfCcuKdDGZNB7+l+4Y0CvigaMzwoAApmMUVYaHZQUHVRIpWJgxXM2LOMbtTcaNWN/d+W865ZXkQwVlEe+GZySrycpk/v4tkGBIMufQhLsHhduTyhiZTcHTug/PFllP2+441ykUlk1cP6SoOdYroukLUxASZ56UoU85Bc/TW6ZGMACn6FSoRA/wQv+Lf22V+qokTYAbERBuFwRiD9pt2l9y3OImY+p4DkQLiNJeqLz+WbTq4tK0KD/9z98hC9BXAYH43G9AumUfv8Bx5p04+AOOBQU/yQ+aFdAoi6/e5XtVLF16yCLcEbN9k/rHmzoFBcsfq/E6CGnaaG67yhZA==$oTLb5W7sFNxaRxFQcsO2CgGpXAVyVnpunrx2hJgXS90/nrWrs4+T5Mb7iuXT0FQ4t4CojvBSSY4ZxGXdEPbnfXxZnXOswyCBb2CjcOPAJOSiFy2yaBN1Xfy31HJGLxi4g4TnCgUbD2YRlSu3Cnhitv0QmqtumdanRIox1oNUr3qJApE+/c5nN0EovWJMBTKrFWJWEIEpJYwM7bDY4OJSBHsy4nUBZytKxjKeFxk98P2XiQzpIShAI+Q2K4HqZRs5qJEGu/xtDTj3lmLFWR2En2XaZibu7xebY4mCa9sdA5U1WNBsdxqFP8Pyrk+aUsVaNniAsJW3q12OB2J/XbvtIWSiWHCdISjsXJEU7NsdFcG6M/cBCPxKIhykZ3ohWn0x/dDeyzEWrFkyD2qbc3MdjB6/J6JVP5qeeZ3q+jPKaZB6xIRIvNJLXZLHVgS+LeEGCjn/q8RXTF0AXCbQjoMiMkknZ7wwwyXmcdql/wILyvqJ/ObNnbaVC6EJL1hObPeTpylVgssp1fPW1gJQPuiwl8zvR0OP2bLfdgiif8VYCnTvCCK1RegR7r9eY5Nuvwphmk8Lxdz1OI2l4R2XLdGU8rVYNW9Y2j4aOvRp85VpH2LeUIsWteeIb6cl8Cph1l0K15f5QUewvSpkwoF06S1ZHpbv9x3vy8lOZz6Y1Z0qVeWfpP1WPpMFhaHx2pzxdhQA3FgUHO8MohNO+LbS6z2fouvegBfeg0FrTPpoJj50tZ0aJJV99AzztW3HZSk5t3veEKtP64i+58Zx1wtMXKdpz/mbFLDAH3p+G5W5hMxMXD8sP4SA6qf3Ha/GDI5q7+IhjdkuML4Gw6gk3yP4WfvpzyNco2kKTDMPGLhkV62/DFYHVx6S2+XMqxRrI9nGr5Qy8kNiBWZ2WmOFzl9ZnvNf77ZiXWf1lafR2JyoDj5jgpilKYAN"
+      "Value": "adyenjs_0_1_18$EdFw2k66xwYq6h90SxL/raOD2noYjaIATaoDJgbQD8201l5P78zAdtTV4HP7PA8vql1jUnZSHDCTUYVJWpdT6s42ZJGki7QR/I3sQUdZ7qi5QTGL7ewemjQWKUSAeP7QFrln2Ea08kxr22FZJK6UULcu/ahEXintq3IrkxkRu4TKGI1uFVvdrPV0+vebXF7FjdpLfHG3fEGxyyw0EzJ5oEGL4u297DgMoI7XaEF5TwspQ3TmpVbx1jU7anNlrGNbulXng+TbsMMZTQiwril9OucJNPhMXEBd+tXzt4Q9tRzYj34QVktNE9i3njmWx8A04SfZTWpou9e2fsWgpGKNXw==$koy7xpAK5WlKoJ8ApGLVVQfLCYrBvAQRL2VUVyXdUzK7QBcxCfS/rUK/ocHpeiNR9K/GASLzSvYhtg3E1JIvXNfDHZMekYgMhep+IRkB8+7MK99yJlphmofN6PrppD8Ew+AQZ2RQaVoroguE+wNpf1wmhIjFSlAG8mZCd7cpyxOBviLw5T0jqXZ8xj5rreJNspV18ijaF8wP8iw4xaTh5C4H27mV34SGwPijdzq2cONlkB6A+21A1yD7wP6tfSXBUwxzBEtCFdciUhpx328qb7OhcZRLZrd8VCbHTuzce6KZgpLjX+61MLRUlwDGGL18aJglCt9KyeIe6SPgKpzM3vqaYlVdUrcPhoEVK+bB7cxoWlMLgwj2TjJmu3LD1r2o4OTXXlgXmgciW5cRInvJPK9RK0IwNiGQmy0ZbP5p5hFhcQToowGEmpELblnKfZcf8t0JNVkE4eqV9w=="
     },
     {
       "Name": "EncryptedExpiryMonth",
-      "Value": "adyenjs_0_1_24$ulLve2eFtJjPTqHXrTwbb1ZwQv/pc0Lx6JHCmF9upe0p3OQCGllUDgLLepNPVCLTHHbbYyeyUIAui1zm3pyy5TB4O4zEWNT2gKwSER+5HK/5BEmZ+r92x+4Igk+Uwzhogi+T2qGvRycUUvTBlk505mDXu5Bu8bNI9UW9HstEO+TsuwlWIjstVs6ANOXo9UTA1TPrA22ccQ35pliXVegt3NrHzE4cl16Yq3EIpyzh1IkbHRrYVyOI5rmnvj4HqKCnV2XUlw/d89k3TQXx+vGfvMSzx96C3y1qHOudxlb027sRiS/cQfQXqqZaMUsV8uxKqswJaYb2fyeDOt8+1yNbuQ==$3d8EKFXJZuylRFZiMXqami8VZU1yb+CgWJeW3rnEvZKIbMRd3Por4RciF9O0ByvF+GZK8u66irXWXYFkPhd2DKBikm7Gx2pGMRkkP2VyhTMthOFIJbv66G9OzAbgSQc4G+TOmGcn+7lJDoKz3TIpwCjPhWyBSXUb2XoE6Mr6hoQ82w+o4IfLwgEdUCUd5nYybglImnyL1i+3gCnlFkT8KNVDBmbo2HCALyfhdcdPBBUNyv0YBegCslRUAzDsxY6eaYYehgYpU0jh1rFUc8rRyTM88abWwLRw1K5aHcMBoozxbr2pAB0FOmgx/m9hGI6qJXCvkgESCSjDL4jh710u/O5qP9ItQabaBNW2shwhGSEPocTNjuno4Zt7poQ93+8hyhGxycCnbxR186cybFGBcl+X68UyylGxh0mS8LK+VJOor+fotHPfGyyBaU493KnQGVjZdo+IuIwBL6FzTHQg3OZMcjg="
+      "Value": "adyenjs_0_1_18$FJ1o29RAcdIE0ekBT7MRG6UPfc2W0vS/MweqZY9wF8lyXJEisEk0SjslzuMw/b6/VUcWIQ0pqGkhgFaKrimIzuqDKvosqblxO0cpLVKYLQXHVcYq1xBSCtZrTmWT7y82pZ0BbCvUW/1DWgwhYzVGqhNke2jHgZOgQKrhPig5tRt8qgu58mnXJ8YE81JNOV6+RPIC1CT7ha4kVtjPSP/jUey7GhBSLpzTfUqKVU05+LpQcnborhr6yjdrKWb/b552oFiuBOukSz5LQiBXV5FdObBBp5aEB4YZwN0u6ybezxAHESQ1iwnLPqkZyV0WKcKE5VpcWVIzaGZI3B4RXF224g==$mpAEg2ztIkBJB67C73DJdccbcVrvnkc6KcV67gNTvCZP1A2vEjl2qL5OuzzCJ5bAQPkFRX8vP/SaUetgb9qj8x2bWYdLXQAEusw+BvhVkb4QHV7FxnUkujJXDyJNDQEYyJlvZ4xCTV8FvegbUI356OSGuotQnY+ciRauUs5ROaTTl/ecX5xDG9FCfEe8IP4eo/pnnJBhWvivh0UlyqAYwzzDUyXoiqQXhcb0XdBURKXxADwO5tQnMQOox/hxFPmu/A/aT5HQkN1jTfpDz6+WMZ4T9VzxDm3DfJ11px622iEHFTzp9rvRrcEw0ZNQJ2PAL4t7znyAGsnvNN1SnyaMLUY="
     },
     {
       "Name": "EncryptedExpiryYear",
-      "Value": "adyenjs_0_1_24$Sa2ZM0K5SOmiD5Vmm1jndMpr5CPP1jQUhD5MDxnVc6geGZCmZ+mUAAKD15ZbSSj1TF7zpnJam/rsEbidT+Z8wv7LwoWqj+6nD8R974Wj4mfk8VINpxsT4zQJhWBCK7nWnN6qhw/h26orvItWccQJmjSBgr0/t6nAJSelOmQRhWAX4LK1wjPMYNmLw42uu6IvV4o10uKSr2dVGt6gT8TgPqv5EywpbiZpSXTN3wukoMt/cQmRMoip272FbVNaS+Je2Is07QswgyuXQasG8315aR2hcPCL04cMvof4UuJ0/sR8Kq2jQb0IzrYH6CL5fXDdUYyxhry6CWkx0KqypTodGQ==$gbGMkS10sR43zu5kVXaDw6TjIXb7uTCzt/2Yjo4sWDCe11rHL8a6Fvzr6gcPAR/w5pY7cwPtAOMGQqZbz+suqv/VTlkvECUrx3NHZYkZo6mU+QymJgNO3raxYuoEmP8E+29fxZP4meCFy86zZgr2Zn1UkkIhTwqGLFy8zYha8qAdxLPidAnbfE15pp03I2NFxxXaZinR0H4/ZD21ZgMq91H+PQ+67YiBxraXRjQDzqMJpLgUsquPeAXseut5c66fNevLCnU4idolM9bHYuQ8aP/vBPTgHEKOEsDOG5t3PEiSUJIILrUhUjzSxEbUJusxpFUTQj35rTCGFHNnstR4LD2t3JpnNyMDdNlXXaxB03CzEzLJOX+lQOJDPwCvZHbipSZoL2FCtS6SfCfGyIsuIg9HLRFW9DUfAj7PTeqr2UqyoU7nfmhRfjMyvLJE3gqldbchy4vjn5F3OLrHFmvmL7WfKptt"
+      "Value": "adyenjs_0_1_18$tGHvXm2ydqq8ytFOeMl7J6E15If9uEfH8sT3jIFHSF6S+ufZX2wvVEPISXi+dwuWzXbJTrYWUmHu1AWB07V4B6DNiPtC0U1kxSYEpNeX0/7UFa/YKrrDB+3M7peS8f5bYPw++bFge3QcEmzg/wbtx01/keXjFLQUf4OYFj6UR0ps+M/vhIOUyHgGsVFSy9BizDxHSYMt0U0Wsl7Advwxq8XECbzyvc5go5DoRBlCG7qqLgX/zJy9CBMS5ipqJo02Q6IO3LbNTDs0Lwx6dblyW49bdK+pE+6VqvtuIwkn8hodSfL7RSa/g13dLXh3dOP7ZylBKkZsygPM19asiqulpw==$27xuHvibW8zpzD4dIxtydn8CRYMlxotS+fhHSO2gxbcvX4dbi1PvAQsQMr+IFNvLDmv2um8y60XnMPVYZ9c0HxyfvFw+GTQ4LNkWHNtg0RaiktDkv+qE6tgqfJ31nDJkKhSTRIE7UIrEkNdVGPFoMNvhF1sm9r5OcssuQPIW3kFY6iGavYyYZI5OOLlsPsx83ejO89HWBly/QzCnDr2J0PptM78Ep6JfsKqrd26/U6Gq4u2/SYpHnlApOhIQz+J0j/ttqsPxSwcrWUO8G/Orjp4S7pWVqadtmqzBWqeZVhgnBqCFEiT5h33id4Ba+Bu76uCOEkZQS0NsZUjMRtrl2G5f"
     },
     {
       "Name": "EncryptedSecurityCode",
-      "Value": "adyenjs_0_1_24$VKnmQpdd7RLnb2L8/FjnD1hNFKszY/Ul2oZxFikZsn1O8x7VmEedpWvBHnfxGD4hcWY/x4+IVMf2eptOFMrm8UsntgDMiAgmq6Y4kGK8vCmKzfnjJceNX8xUrZv4N3sp6lOrNS0I4Ug/uFf7lmfYPH01IxSAoxqmZLVju1m0fLPASHwVM/cITlBmouxUldm5mXv4aJvHfgWXTztuFBW51vCfPEqILFQNF8piIaBVvmwrVw0qvsn+6BWZG1Zd5wTByW6sHvN58HY/CvQaGqWnvmEWyabFM5ygJRs9LN9H6wfPz00y8nzzTO6Qvo+5EzcZdR+QaQypkse0+z2eNtQ4ag==$jwHjegHDcQ/ghD45Mi8Yv+pAG7Vti40EVlsgmBcBx6v1RT465oNz+kFuAbpPWApOM/YlX1QSR/dTgBzS7CIoGMz52NKbMlWmMLMmdbY99dyK1U1bITjxDU0/g6gBSCaW2NvkSQtcDhpcFRyUEtWUmJWwTKMYAnQZY8i5xnH4LZI+xUDnIL/DbklzF6w6jS/dtwW6VE0qacmVRDL8q9TDv/tOkV/ct1wE7zhFNjp6JulMBrcHcRHsv5CViPkYR/czzRUK7nC0KcshTrg6SoNqg85AeCeYC1Tdq6pZgIlkDdCEXPjh1Y837QVGpEuMXdQ68c7NSiKAEuAxT8rnvhH1420+B8Qac9qZ6RdTmH1WjLwTjo16oMNGN4usfWf/0UYjr8H9IdS4SMvzPFcjYlx31o6hospuGf/IjcNZMvdse3g1RxzTI3qZjE6QzZW3TDYxvRm8Lcd1uzzPZqIUJw=="
+      "Value": "adyenjs_0_1_18$isH1u5PJZjO80ziUYQ97vjAZhpW+0HQD+XgmMONBZ3RWAOAwpdRjWu30OnRGDQmobL6jb9Gwl9F4bmR5KbkWrEY+Skb6sAdv5JIlbNjvqt/Z0GItEfb9MKPat+7aQwV9vH5G/p1bUzV3AUGTPpCMHrbEsfNpT7yMOoJkk2N2JI5vWB7CnBxGpBHgFXU4JKewLl0rN3qNBSpvysFfRCfV8h3yJXt20LGMV4NG4lp2lkCymrbu9AdDWbdUcRNWc6rBegKevvtWgOg1wKsmX8MRggkLHXdDQAQ+pfkGDtmpSQz8vbn6anLLpATZNMdMe7clrLlCVTntpYy9OffNJHR6WA==$lBvdxqj2LUrowONwi9i6IU47HSOO2Xj4b/VNEP0Ie1We716f11Hd8CnxUHoQ5yYTOZndxaDIcyg57n0glHTc375UBWfd3F4PDaPxH0HVZmSRxC/OjHRhuDKHAex8ahmUfUlgMjIy0+SCx+FpiprR0ot7DXS9su/GWTCajMbOiL1aij3KjMn9cHr+9PaKfdMrFVpdr1hAs3JSymbaCY6vwnVrII02cwAPk3Ao1ZFlix21nsjCJSYA7Y0UZd5KxU9AGdwS9uIGx3dB5zbp3fM9wN26D+9bsFjyJcWlALLK1DmrSgd8UfRy36Wcd5Vva1GMY/On4ozycrS9Lw=="
     }
   ],
   "Services": [
     {
       "Name": "Shopping",
-      "BaseUrl": "http://localhost:8001",
-      "BasePath": "",
-      //"BaseUrl": "https://api-test.atrain.se",
-      //"BasePath": "ecom/shopping",
+      "BaseUrl": "https://api-test.atrain.se",
+      "BasePath": "ecom/shopping",
       "ApiKey": "AEX123",
       "Endpoints": [
         {
@@ -71,10 +69,8 @@
     },
     {
       "Name": "Payment",
-      "BaseUrl": "http://localhost:8003",
-      "BasePath": "",
-      //"BaseUrl": "https://api-test.atrain.se",
-      //"BasePath": "ecom/payment",
+      "BaseUrl": "https://api-test.atrain.se",
+      "BasePath": "ecom/payment",
       "ApiKey": "AEX123",
       "Endpoints": [
         {
@@ -87,8 +83,39 @@
   ],
   "Scenarios": [
     {
+      "Name": "GetTicketTypes",
+      "Instances": 100,
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetTicketTypes",
+          "Args": "lang=sv",
+          "Times": 1,
+          "DelayMs": 0
+        }
+      ]
+    },
+    {
+      "Name": "GetJourney",
+      "Instances": 100,
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetJourney",
+          "Args": "lang=sv",
+          "Body": {
+            "adultCount": 1,
+            "youthCount": 2,
+            "childCount": 3,
+            "departureDate": "2019-09-01",
+            "returnDate": null
+          },
+          "Times": 1,
+          "DelayMs": 0
+        }
+      ]
+    },
+    {
       "Name": "BuyTicket",
-      "Instances": 1,
+      "Instances": 10,
       "Steps": [
         {
           "Endpoint": "Shopping.GetJourney",
@@ -128,7 +155,7 @@
               "lastName": "Testsson",
               "email": "test.testsson{{InstanceId}}@mailinator.com"
             },
-            "suppressEmail": true
+            "suppressCreatedEvent": true
           },
           "Response": {
             "data": {

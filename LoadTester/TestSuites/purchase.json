@@ -1,0 +1,206 @@
+﻿{
+  "Name": "Purchase",
+  "Constants": [
+    {
+      "Name": "TravelDate",
+      "Value": "2019-10-01",
+      "Type": "date"
+    },
+    {
+      "Name": "AdultCount",
+      "Value": "1",
+      "Type": "int"
+    },
+    {
+      "Name": "YouthCount",
+      "Value": "2",
+      "Type": "int"
+    },
+    {
+      "Name": "EncryptedCardNumber",
+      "Value": "adyenjs_0_1_25$LKSrSeGFZVkDGrXMmoSXHFgV36hsST/j4mPM0C92qao3+7L7hbGArEo0Yy7AuYHewgebUWLVemPCN9TUcgRr/E/QlOdQTbycd1sl7fO2ncCWctH4RxTl4ZvGLbOu3mW0MfR7zYS0RkAzCkLRrRMO2q5YR9AefQaA4CvKxGLkyzwGrk52Ocflt93LT60ur4C2npk9PMjAE1cxidsIe/uDT2wLAcdA3AAPL5/y72lve0Dagr2JeD3RYtC0TBfZ9w3KRbruWR8g761cJlNeBOsRTfbMBUGcIroLwYX3jHktIBefZyM6U4t3Vcy8FuN1UtLB5S0AZdyf/KqAepacq/fJ5g==$OwTjX63x3rj4Te8abY3SJySf+R3k7193z2/pg5TSju5pehuaAD7vjNhKvXH6UhCpaG02jhCI1CtvoJVahoJCH+YR+JRJnsfnxSrSlBNsEvmipC8Ooyrt+MYnbW8cI1IKbGgii8SsNuM1QzpiZ2Z33tDVrx3OJCncpsMwHZlEoaEjNcCuOz33FeLuf3W7YwztDGK+5ELXVD0H5DxQYMSha37BfL6AkRzg1b8MspuaIjoxUfpn6OHH1JcxhhzVM/8ehpTpdR1vxCjIqrkF6h0xffNnmHPCM+DxmfaTALsoh6dxLC218FRbAmRO6IOyb13I2ftL8pAYjfPiXBDxWP1LVwm2j+wWcCREHvKu1gMXUY+1hBrypVM0QF5osnvVIb2zuqMKJvhpibac2SGcDm3oAISYxO0UEGeHwHWP5xIep8MpYwZXRpCgE/iy4EcVJQC+1kWnG53O9zmsIcI6S3YxTmVYoMxOFG87LqSYXHLHW+vmfOV3vlN+5Uo/38mOJ8oafBT2PdLf+uPEzqLup2siga5BKzqKYM3Th0fpl6ZCpUEcJ8qqeTbCSOMeXQqpEdplG1yrfBdTaQI2JzAH4n6fRS9FsPpp1K852a4LwCxmQUnBv0BF59ue/AP0oH8zQ5G55VweEuZWbW3h8FGTZVl6lruwxuIeqtc+4stQcKJ38dVMmw1Md5DP8x/uEWx32qM04BvRITyzT254FUBGmNTQEr7mWDYghlbotIEVfzVf4/jONoghLLIUR7+biCnB0xV+ZVqUKFNdeTz1KlXLAdbs76FdWh72nRPeJbff5u4wqFZG4xsQAlzpvVBwQmyCOziBxrn7I3tm5dWFfHKTTg=="
+    },
+    {
+      "Name": "EncryptedExpiryMonth",
+      "Value": "adyenjs_0_1_25$sDwl5VV8NvqAYLpOvrjEDhrqJ97ctyXM73X7IXADG7FwHyaaH6AGf/ggLpf1slqp2h1opmiqv7IWa6OrQ2oPYXkc1ITZd7xjeSJURW3I65LucAvmpnvwZp4KGwbRITL7RkOVsY1T/vQOvOIoajJRiN3aSeEs47TNgiOpGHHT+RsecH2fNGlH1p4RjQ5KD3qfljsPU0FhQnt3XWfBIuJAxPozk3Hpz93rZOcJV1ckxtKUEmsXuUBmmQPTrhoqLw56Ajt965xP4c9v0SYL9D8h9tZNDbKd3pZ+YcasP+BNE60sg5zhXFe2MKedLatSKcY0b9poCSPmAABOjIBy8IyO+g==$6SEo2Xe6q3+toXzdq4wKSOjKf9Y/nfx0VlHZcjmBO1bJNOon8bVb7CTKoy2dJDkrbukrWNKBQ4Z5PLskUuXuhuYi8lMRi6Vr8FlQJAs3lFnSO0tZlUcNJj15uC7mOXD6PIPyTTp1ghR4Eo4UmsSzdCdtu/OnNTSGpjf0u5kd0d3qnLKAHSrTEQ8dui2t/5s8TqrBggUn2GX5r/cdX0l+fnOhU5VT2JL+FMau26LPffA2sK9newD3ioCbPjeCmCHG4GFeWwohhRiJ1GCFuXTzhvxBpE3iRc8YI2t/XsRvOMmoc57N4n3GKaLRl9h0/3fTylbAwEdwPDxzxvap03thzJe9x0FoG+9cWYpYkUApz818/xnaRQGIw4KKizE+kTXOPjqtan9fSEFUL5vUBLTRNEoMg+qtG8qXVx7wJKIk7ZIDSeoSnG3d4/NgOU3WFcZLX0nmUiPUIOi2I6UKNUvPHiVo1DQ="
+    },
+    {
+      "Name": "EncryptedExpiryYear",
+      "Value": "adyenjs_0_1_25$HMbEBODUSM+XcLrdgGG21Fs05c5awfdq9rIQKL6c+WkVBeGO8f5PriFdGdTe2+eWYg5e7D5NV6yoPAdSPkoxCCG+wPs3QmrW6aeClnt1rpDnaLpCDh3/SFr3abakvA15X8Yhfl4NI0Fuu0BpH2sMnuf+oZVc26kC6eZ/j9TDqalPfT7naS7pxXnL8PyxpWYZrlXTCsj5jCUgRzF0uhXy8PghaRzJ67SLodRX3wPNh258AQGhZcA0DrQL7oE/M/feg2Hd1630f17HwvUF67E4YZAIN8OMAQRNV2ZXh7Yn7jzRDNHwp+TNp3YLp5YBURaxsFln89aGKbi8aEcUwpOO0w==$wqOENY2pGMMFxNSgS7mfghUtkg8/VssyWQ9Q9gn2FS73K1jIBtTxb3h4Zr7DsWn+pyOur2XLEsePQ+Lgw8jxJq75ccV8z5V4MUuR2pQz7Wxtf6eXfKl+Xi3zLuRHjgbVxuDRosCSWsRLepSP+/3HXZF8lVDuAQBB7NXPLkOZ9nN7/R+6+h8ld0vktN9x8pop7jc6T/tuyh4uwrHyn9Uqka6aSFspswZf7jFwk6zr95Wx5QuiV0ohWEWkc2itiqHPpPW//V351YqA4+VvYx3cT9J+FfhIpInPlod3YGGO6N8gF7bezs/Jg7T9T6Ueqwp73CWS+xqD11oSmAYwPw/w+bCyqtIKZP3cuM6t4J2PcW/xmhH2747CB8+Yk6+qYMNBJI3+/sWBoB056K9S+nkWieZ+0ediDtYxD8SYjpDZlzyxk4ZlvE1NTNq+nc6tZ2H7dJ0WNWCAu4k3iBF9gzZCfpnzgUAM"
+    },
+    {
+      "Name": "EncryptedSecurityCode",
+      "Value": "adyenjs_0_1_25$lUOEB7AcYtihyPfMobM8BmxITdRpUC3LpnUefJkjzQen8LaLRpLYfK5epA7MbirWATOT8oVLDHscG80/bJGzL2Syuha8ipoqi68Jqj5nAzSgs2On41tXe32YbusvZfJlURDWtyV4pjv7kpK+rBe/T8pfSTY5yq2SBgnFxL1vVOCxSXhsMVuceX4BUHIbUnT1WW886tBC88GqI1K/3txkthflnXZAAr6whRIc42ynuMnXOU3RZpr5LN1JWOGA/vajNLi3U+nL7TsfaAm74iZ27Z0Nh9m+wxeI+VGx1R87f46bCRtDNccQKSoozcZda3P4ovOTbTHqezoL33cM5k7dfQ==$o5udITrvItL5qflOhA+uy3EsaZU2BOy565kD7KSiqDEeOTqLsLU/1YpdvrbI7ZyFhAKCLVSD0y5K6fv/8OuQu7m06pMAtnR55Oav1hviafkPu+sB7BbxBouS8Ne4paH4kkj24szZBqjdTlJOj8YZ/mi4azinMeggrMC77/xR2AGzi/LV9FhAt5yeofPeNfAG0TU5iFw0d+gx5uqEGAIG5DNkYGgKeyMSnhZk9KN8xrWUGUq+kQZhTTWYq75QTdS1nOPURzwUEpZPtbPfFcRYN81IXlH02Wh+7aVdjT3uuQjwClNKNI8JFDSctc/umGZykePx13LUL5VD45Zo+4jRhzwuFGK4nik/ZxF8mfWFeSeF6q4pMzHZDpg4GEHmyE2CUb80bXIVpiWST7FZBVMi2/vQqsgFF7PZ5sb7Hu0wedBBooGj2sfxCoPfY86ko+pVB0b1BjxhE/Nzbhg6Vw=="
+    }
+  ],
+  "Services": [
+    {
+      "Name": "Shopping",
+      "BaseUrl": "https://api-stage.atrain.se",
+      "BasePath": "v1/ecom/shopping",
+      "ApiKey": "AEX123",
+      "Endpoints": [
+        {
+          "Name": "Checkout",
+          "Method": "Post",
+          "Path": "Bookings/Checkout"
+        },
+        {
+          "Name": "GetBooking",
+          "Method": "Get",
+          "Path": "Bookings/{{OrderNumber}}"
+        },
+        {
+          "Name": "GetPdf",
+          "Method": "Get",
+          "Path": "Bookings/{{OrderNumber}}/pdf"
+        }
+      ]
+    },
+    {
+      "Name": "Product",
+      "BaseUrl": "https://api-stage.atrain.se",
+      "BasePath": "v1/ecom/product",
+      "ApiKey": "AEX123",
+      "Endpoints": [
+        {
+          "Name": "GetJourney",
+          "Method": "Post",
+          "Path": "Journey"
+        }
+      ]
+    },
+    {
+      "Name": "Payment",
+      //"BaseUrl": "http://localhost:8003",
+      //"BasePath": "",
+      "BaseUrl": "https://api-stage.atrain.se",
+      "BasePath": "v1/ecom/payment",
+      "ApiKey": "AEX123",
+      "Endpoints": [
+        {
+          "Name": "Pay",
+          "Method": "Post",
+          "Path": "Payment"
+        }
+      ]
+    }
+  ],
+  "Scenarios": [
+    {
+      "Name": "BuyTicket",
+      "Instances": 1,
+      "Steps": [
+        {
+          "Endpoint": "Product.GetJourney",
+          "Args": "lang=sv",
+          "Body": {
+            "adultCount": "{{AdultCount}}",
+            "youthCount": "{{YouthCount}}",
+            "childCount": 3,
+            "departureDate": "{{TravelDate}}",
+            "returnDate": null
+          },
+          "Times": 1,
+          "DelayMs": 600
+        },
+        {
+          "Endpoint": "Shopping.Checkout",
+          "Args": "lang=sv",
+          "Body": {
+            "ticketRequests": [
+              {
+                "ticketTypeId": 101,
+                "count": "{{AdultCount}}",
+                "departureDate": "{{TravelDate}}",
+                "returnDate": null
+              },
+              {
+                "ticketTypeId": 103,
+                "count": "{{YouthCount}}",
+                "departureDate": "{{TravelDate}}",
+                "returnDate": null
+              }
+            ],
+            "departureDate": "{{TravelDate}}",
+            "returnDate": null,
+            "customer": {
+              "firstName": "Test",
+              "lastName": "Testsson",
+              "email": "test.testsson{{InstanceId}}@mailinator.com"
+            },
+            "suppressCreatedEvent": true
+          },
+          "Response": {
+            "Data": {
+              "Total": {
+                "AmountIncVat": "{{Amount:int}}",
+                "CurrencyCode": "{{Currency}}"
+              },
+              "OrderNumber": "{{OrderNumber:int}}",
+              "Handle": "{{Handle}}"
+            }
+          },
+          "Times": 1,
+          "DelayMs": 500
+        },
+        {
+          "Endpoint": "Payment.Pay",
+          "Args": "secure=false",
+          "Body": {
+            "amount": {
+              "currency": "{{Currency}}",
+              "value": "{{Amount}}"
+            },
+            "paymentMethodDetails": {
+              "type": "scheme",
+              "encryptedCardNumber": "{{EncryptedCardNumber}}",
+              "encryptedExpiryMonth": "{{EncryptedExpiryMonth}}",
+              "encryptedExpiryYear": "{{EncryptedExpiryYear}}",
+              "encryptedSecurityCode": "{{EncryptedSecurityCode}}",
+              "holderName": "Test Testsson"
+            },
+            "orderNumber": "{{OrderNumber}}",
+            "returnUrl": "string",
+            "browserInfo": {
+              "userAgent": "string",
+              "acceptHeader": "string",
+              "language": "string",
+              "colorDepth": 0,
+              "screenHeight": 0,
+              "screenWidth": 0,
+              "javaEnabled": true,
+              "timeZoneOffset": 0
+            }
+          },
+          "Response": {
+            "data": {
+              "resultCode": "Authorised"
+            }
+          },
+          "Times": 1,
+          "DelayMs": 500
+        },
+        {
+          "Endpoint": "Shopping.GetBooking",
+          "Args": "lang=sv&handle={{Handle}}",
+          "Response": {
+            "Data": {
+              "Status": "Created"
+            }
+          },
+          "Times": 1,
+          "AbortOnSuccess": true,
+          "AbortOnFail": false,
+          "DelayMs": 1000
+        },
+        {
+          "Endpoint": "Shopping.GetPdf",
+          "Args": "handle={{Handle}}&lang=sv",
+          "Times": 1,
+          "DelayMs": 1000
+        }
+      ]
+    }
+  ]
+}

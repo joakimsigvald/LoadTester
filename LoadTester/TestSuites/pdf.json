@@ -1,0 +1,90 @@
+﻿{
+  "Name": "Pdf",
+  "Constants": [
+  ],
+  "Services": [
+    {
+      "Name": "PdfGenerator",
+      //"BaseUrl": "http://localhost:8002",
+      //"BasePath": "",
+      "BaseUrl": "https://api-test.atrain.se",
+      "BasePath": "ecom/pdfgenerator",
+      "ApiKey": "AEX123",
+      "Endpoints": [
+        {
+          "Name": "GetPdf",
+          "Method": "Post",
+          "Path": "Bookings/pdf"
+        }
+      ]
+    }
+  ],
+  "Scenarios": [
+    {
+      "Name": "GetPdf",
+      "Instances": 1,
+      "Steps": [
+        {
+          "Endpoint": "PdfGenerator.GetPdf",
+          "Args": "lang=sv",
+          "Body": {
+            "foid": "12345",
+            "journey": {
+              "departureDate": "2019-08-15T11:43:04.764Z",
+              "returnDate": "2019-08-15T11:43:04.764Z",
+              "tickets": [
+                {
+                  "ticketType": {
+                    "id": 101,
+                    "languageCode": "sv",
+                    "name": "string",
+                    "title": "string",
+                    "description": "string",
+                    "isRoundTrip": true,
+                    "isRebookable": true,
+                    "listPrice": {
+                      "amountIncVat": 123,
+                      "vatAmount": 0,
+                      "currencyCode": "SEK"
+                    }
+                  },
+                  "count": 1,
+                  "price": {
+                    "amountIncVat": 123,
+                    "vatAmount": 0,
+                    "currencyCode": "SEK"
+                  },
+                  "sum": {
+                    "amountIncVat": 123,
+                    "vatAmount": 0,
+                    "currencyCode": "SEK"
+                  },
+                  "departureDate": "2019-08-15T11:43:04.764Z",
+                  "returnDate": "2019-08-15T11:43:04.764Z"
+                }
+              ],
+              "isRoundtrip": true,
+              "total": {
+                "amountIncVat": 123,
+                "vatAmount": 0,
+                "currencyCode": "SEK"
+              }
+            },
+            "customer": {
+              "firstName": "string",
+              "lastName": "string",
+              "email": "str@i.ng"
+            },
+            "bookingDate": "2019-08-15T11:43:04.764Z",
+            "paymentReference": "string",
+            "orderNumber": "string",
+            "handle": "string",
+            "languageCode": "sv"
+          },
+          "Times": 1,
+          "DelayMs": 0
+        }
+      ]
+    }
+  ]
+}
