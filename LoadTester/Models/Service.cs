@@ -9,7 +9,7 @@ namespace LoadTester
         public Uri BaseAddress => new Uri(BaseUrl);
         public string BaseUrl { get; set; }
         public string BasePath { get; set; }
-        public string ApiKey { get; set; }
+        public ApiKey ApiKey { get; set; }
         public Endpoint[] Endpoints { get; set; }
 
         public HttpClient CreateClient()
@@ -18,7 +18,7 @@ namespace LoadTester
             {
                 BaseAddress = BaseAddress,
             };
-            client.DefaultRequestHeaders.Add("apikey", ApiKey);
+            client.DefaultRequestHeaders.Add(ApiKey.Name, ApiKey.Value);
             return client;
         }
     }

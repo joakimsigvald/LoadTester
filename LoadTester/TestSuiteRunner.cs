@@ -36,7 +36,7 @@ namespace LoadTester
                 .ToArray();
             var runs = await Task.WhenAll(instances.Select(i => i.Run()));
             if (!runs.All(r => r.Success))
-                return ScenarioResult.Failed(scenario, string.Join(", ", runs.Where(r => !r.Success).Select(r => r.Error)));
+                return ScenarioResult.Failed(scenario, runs.First(r => !r.Success));
             return ScenarioResult.Succeeded(scenario,
                 runs.OrderBy(d => d.Duration)
                 .ToArray());

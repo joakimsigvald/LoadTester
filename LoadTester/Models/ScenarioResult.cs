@@ -5,17 +5,18 @@ namespace LoadTester
 {
     public class ScenarioResult
     {
-        public static ScenarioResult Failed(Scenario scenario, string error)
+        public static ScenarioResult Failed(Scenario scenario, ScenarioInstanceResult failedRun)
             => new ScenarioResult
             {
                 Scenario = scenario,
-                Error = error
+                Error = failedRun.Error
             };
 
         public static ScenarioResult Succeeded(Scenario scenario, ScenarioInstanceResult[] orderedResults)
             => new ScenarioResult(scenario, orderedResults.Select(or => or.Duration).ToArray())
             {
-                StepResults = GetStepResults(scenario, orderedResults)
+                StepResults = GetStepResults(scenario, orderedResults),
+                AssertResults = orderedResults.Last().AssertResults.ToArray()
             };
 
         private ScenarioResult(Scenario scenario, TimeSpan[] durations)
@@ -43,6 +44,7 @@ namespace LoadTester
 
         public Scenario Scenario { get; private set; }
         public string Error { get; private set; }
+        public AssertResult[] AssertResults { get; private set; }
         public bool Success { get; private set; }
         public TimeSpan Min { get; private set; }
         public TimeSpan Max { get; private set; }

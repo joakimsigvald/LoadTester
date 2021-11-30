@@ -2,7 +2,7 @@
   "profiles": {
     "LoadTester": {
       "commandName": "Project",
-      "commandLineArgs": "TestSuites/purchase.json"
+      "commandLineArgs": "TestSuites/Adlibris/getCompany.json"
     }
   }
 }

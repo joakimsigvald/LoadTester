@@ -49,7 +49,12 @@ namespace LoadTester
                 }
             }
             sw.Stop();
-            return ScenarioInstanceResult.Succeeded(sw.Elapsed, stepTimes);
+            var assertResults = Scenario.Asserts
+                .Select(assert => assert.Apply(variables.TryGetValue(assert.Name, out var variable) ? variable : null))
+                .ToArray();
+            return assertResults.All(ar => ar.Success) 
+                ? ScenarioInstanceResult.Succeeded(sw.Elapsed, stepTimes, assertResults)
+                : ScenarioInstanceResult.Failed(assertResults.Where(ar => !ar.Success));
         }
 
         private IDictionary<string, object> CreateVariables()

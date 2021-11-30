@@ -121,7 +121,7 @@ namespace LoadTester
                 return false;
             var val = p.Value.Value<string>();
             if (IsVariable(val))
-                varName = val.Substring(2..^2);
+                varName = val[2..^2];
             return true;
         }
 

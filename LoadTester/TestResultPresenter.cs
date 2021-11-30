@@ -53,6 +53,8 @@ namespace LoadTester
                 + Print(res.Q90);
             foreach (var stepResult in res.StepResults)
                 yield return Print(stepResult);
+            foreach (var assertResult in res.AssertResults)
+                yield return assertResult.Message;
         }
 
         private static IEnumerable<string> PrintFailed(ScenarioResult res)
