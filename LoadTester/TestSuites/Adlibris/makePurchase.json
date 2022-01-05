@@ -1,0 +1,69 @@
+﻿{
+  "Name": "MakePurchase",
+  "Constants": [
+    {
+      "Name": "CompanyId",
+      "Value": "290411"
+    },
+    {
+      "Name": "CustomerId",
+      "Value": "1809144"
+    }
+  ],
+  "Services": [
+    {
+      "Name": "Shopping",
+      "BaseUrl": "http://localhost:58957/", //"https://b2l-shopping-stage.azurewebsites.net",
+      "BasePath": "carts",
+      "ApiKey": {
+        "Name": "apiKey",
+        "Value": "MER123"
+      },
+      "Endpoints": [
+        {
+          "Name": "GetCurrent",
+          "Method": "Get",
+          "Path": "current",
+          "Headers": [
+            {
+              "Name": "B2LCompanyId",
+              "Value": "{{CompanyId}}"
+            },
+            {
+              "Name": "B2LCustomerId",
+              "Value": "{{CustomerId}}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "Scenarios": [
+    {
+      "Name": "GetCart",
+      "Instances": 1,
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetCurrent",
+          "Response": {
+            "id": "{{CartId:int}}",
+            "companyId": "{{CartCompanyId:int}}",
+            "customerId": "{{CartCustomerId:int}}"
+          },
+          "Times": 1,
+          "DelayMs": 0
+        }
+      ],
+      "Asserts": [
+        {
+          "Name": "CartCompanyId",
+          "Value": "{{CompanyId}}"
+        },
+        {
+          "Name": "CartCustomerId",
+          "Value": "{{CustomerId}}"
+        }
+      ]
+    }
+  ]
+}

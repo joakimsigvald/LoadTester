@@ -6,7 +6,7 @@ namespace LoadTester
     public class Step
     {
         public string Endpoint { get; set; }
-        public string Args { get; set; }
+        public string Args { get; set; } = string.Empty;
         public dynamic Body { get; set; }
         public JObject Response { get; set; }
         public int DelayMs { get; set; }

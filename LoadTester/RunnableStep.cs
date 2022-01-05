@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace LoadTester
@@ -19,9 +18,9 @@ namespace LoadTester
             Service = service;
         }
 
-        public Task<HttpResponseMessage> Run(IDictionary<string, object> variables)
+        public Task<HttpResponseMessage> Run(Bindings bindings)
         {
-            var request = _endpoint.GetRequest(Service.BasePath, Blueprint, variables);
+            var request = _endpoint.GetRequest(Service.BasePath, Blueprint, bindings);
             return _client.SendAsync(request);
         }
     }

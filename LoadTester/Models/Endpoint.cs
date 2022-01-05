@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Net.Http;
 
 namespace LoadTester
@@ -8,11 +7,11 @@ namespace LoadTester
     {
         public string Name { get; set; }
         public string Path { get; set; }
-
         public string Method { get; set; }
+        public Header[] Headers { get; set; } = Array.Empty<Header>();
         public HttpMethod HttpMethod => new HttpMethod(Method);
 
-        public HttpRequestMessage GetRequest(string basePath, Step step, IDictionary<string, object> variables)
-            => RequestFactory.GetRequest(basePath, this, step, variables);
+        public HttpRequestMessage GetRequest(string basePath, Step step, Bindings bindings)
+            => RequestFactory.GetRequest(basePath, this, step, bindings);
     }
 }

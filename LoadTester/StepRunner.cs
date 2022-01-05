@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -11,15 +10,15 @@ namespace LoadTester
     public class StepRunner
     {
         private readonly RunnableStep _step;
-        private readonly IDictionary<string, object> _variables;
+        private readonly Bindings _bindings;
 
-        public static Task<TimeSpan> Run(RunnableStep step, IDictionary<string, object> variables)
-            => new StepRunner(step, variables).Run();
+        public static Task<TimeSpan> Run(RunnableStep step, Bindings bindings)
+            => new StepRunner(step, bindings).Run();
 
-        private StepRunner(RunnableStep step, IDictionary<string, object> variables)
+        private StepRunner(RunnableStep step, Bindings bindings)
         {
             _step = step;
-            _variables = variables;
+            _bindings = bindings;
         }
 
         private async Task<TimeSpan> Run()
@@ -69,7 +68,7 @@ namespace LoadTester
             {
                 await Task.Delay(_step.Blueprint.Delay);
                 Console.WriteLine($"Calling {_step.Blueprint.Endpoint}, attempt {i + 1}");
-                lastResponse = await _step.Run(_variables);
+                lastResponse = await _step.Run(_bindings);
                 var isSuccessful = await IsSuccessful(lastResponse);
                 if (isSuccessful && _step.Blueprint.AbortOnSuccess
                     || !isSuccessful && _step.Blueprint.AbortOnFail)
@@ -109,7 +108,7 @@ namespace LoadTester
                 else if (TryGetVariableName(pp, out var varName) && varName != null)
                 {
                     var constant = new Constant(varName, val.Value<string>());
-                    _variables[constant.Name] = constant.CreateValue();
+                    _bindings.Add(constant.Name, constant.CreateValue());
                 }
             }
         }

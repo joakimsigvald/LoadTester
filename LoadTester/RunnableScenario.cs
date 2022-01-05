@@ -34,13 +34,13 @@ namespace LoadTester
         public async Task<ScenarioInstanceResult> Run()
         {
             var sw = Stopwatch.StartNew();
-            var variables = CreateVariables();
+            var bindings = CreateBindings();
             var stepTimes = new List<TimeSpan>();
             foreach (var step in Steps)
             {
                 try
                 {
-                    var elapsed = await StepRunner.Run(step, variables);
+                    var elapsed = await StepRunner.Run(step, bindings);
                     stepTimes.Add(elapsed);
                 }
                 catch (RunFailed sf)
@@ -50,12 +50,14 @@ namespace LoadTester
             }
             sw.Stop();
             var assertResults = Scenario.Asserts
-                .Select(assert => assert.Apply(variables.TryGetValue(assert.Name, out var variable) ? variable : null))
+                .Select(assert => assert.Apply(bindings, bindings.Get(assert.Name)))
                 .ToArray();
             return assertResults.All(ar => ar.Success) 
                 ? ScenarioInstanceResult.Succeeded(sw.Elapsed, stepTimes, assertResults)
                 : ScenarioInstanceResult.Failed(assertResults.Where(ar => !ar.Success));
         }
+
+        private Bindings CreateBindings() => new Bindings(CreateVariables());
 
         private IDictionary<string, object> CreateVariables()
             => _suite.Constants
