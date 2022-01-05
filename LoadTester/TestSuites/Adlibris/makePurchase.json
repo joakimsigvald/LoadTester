@@ -45,6 +45,32 @@
           "Path": "{{CartId}}/items"
         }
       ]
+    },
+    {
+      "Name": "Checkout",
+      "BaseUrl": "https://b2l-shopping-stage.azurewebsites.net",
+      "BasePath": "checkout/v2",
+      "ApiKey": {
+        "Name": "apiKey",
+        "Value": "MER123"
+      },
+      "DefaultHeaders": [
+        {
+          "Name": "B2LCompanyId",
+          "Value": "{{CompanyId}}"
+        },
+        {
+          "Name": "B2LCustomerId",
+          "Value": "{{CustomerId}}"
+        }
+      ],
+      "Endpoints": [
+        {
+          "Name": "Purchase",
+          "Method": "Post",
+          "Path": "{{CartId}}/purchase"
+        }
+      ]
     }
   ],
   "Scenarios": [
@@ -86,6 +112,51 @@
           "Response": {
             "count": "{{CountAfter:decimal}}"
           }
+        }
+      ]
+    },
+    {
+      "Name": "BuyOneItem",
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetCurrent",
+          "Response": {
+            "id": "{{CartId:int}}",
+            "count": "{{CountBefore:decimal}}"
+          }
+        },
+        {
+          "Endpoint": "Shopping.AddItem",
+          "Args": "sku={{NEJ_AR_INTE_NOG}}&quantity=1",
+          "Response": {
+            "count": "{{CountAfter:decimal}}"
+          }
+        },
+        {
+          "Endpoint": "Checkout.Purchase",
+          "Body": {
+            "ipAddress": "172.16.5.115",
+            "cartId": "{{CartId}}",
+            "deliveryAddress": {
+              "line1": "Gatan 1",
+              "zip": "61430",
+              "city": "Söderköping",
+              "shippingPhoneNumber": "0123456789"
+            },
+            "invoiceReference": {
+              "reference1": "123",
+              "reference2": "456"
+            }
+          },
+          "Response": {
+            "orderNumber": "{{OrderNumber:string}}"
+          }
+        }
+      ],
+      "Asserts": [
+        {
+          "Name": "OrderNumber",
+          "Value": "{{CartId}}"
         }
       ]
     }
