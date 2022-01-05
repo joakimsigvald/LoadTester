@@ -10,16 +10,11 @@ namespace LoadTester
     public class StepRunner
     {
         private readonly RunnableStep _step;
-        private readonly Bindings _bindings;
 
-        public static Task<TimeSpan> Run(RunnableStep step, Bindings bindings)
-            => new StepRunner(step, bindings).Run();
+        public static Task<TimeSpan> Run(RunnableStep step)
+            => new StepRunner(step).Run();
 
-        private StepRunner(RunnableStep step, Bindings bindings)
-        {
-            _step = step;
-            _bindings = bindings;
-        }
+        private StepRunner(RunnableStep step) => _step = step;
 
         private async Task<TimeSpan> Run()
         {
@@ -36,28 +31,9 @@ namespace LoadTester
             if (_step.Blueprint.Response != null) {
                 var pattern = _step.Blueprint.Response;
                 var source = JsonConvert.DeserializeObject<JObject>(body);
-                VerifyResponse(pattern, source);
-                BindVariables(pattern, source);
+                _step.VerifyResponse(pattern, source);
+                _step.BindVariables(pattern, source);
             }
-        }
-
-        private void VerifyResponse(JObject pattern, JObject source)
-        {
-            var patternProperties = pattern.Properties();
-            foreach (var pp in patternProperties)
-            {
-                var val = source.GetValue(pp.Name);
-                if (pp.Value is JObject ppObject && val is JObject valObject)
-                    VerifyResponse(ppObject, valObject);
-                else if (TryGetValue(pp, out var expectedValue) && expectedValue != null)
-                    VerifyValue(expectedValue, val.Value<string>());
-            }
-        }
-
-        private void VerifyValue(string expectedValue, string actualValue)
-        {
-            if (expectedValue != actualValue)
-                throw new VerificationFailed($"Unexpected response: {actualValue}, expected {expectedValue}");
         }
 
         private async Task<(HttpResponseMessage response, TimeSpan)> RunRun()
@@ -68,7 +44,7 @@ namespace LoadTester
             {
                 await Task.Delay(_step.Blueprint.Delay);
                 Console.WriteLine($"Calling {_step.Blueprint.Endpoint}, attempt {i + 1}");
-                lastResponse = await _step.Run(_bindings);
+                lastResponse = await _step.Run();
                 var isSuccessful = await IsSuccessful(lastResponse);
                 if (isSuccessful && _step.Blueprint.AbortOnSuccess
                     || !isSuccessful && _step.Blueprint.AbortOnFail)
@@ -88,7 +64,7 @@ namespace LoadTester
                 return true;
             try
             {
-                VerifyResponse(pattern, JsonConvert.DeserializeObject<JObject>(body));
+                _step.VerifyResponse(pattern, JsonConvert.DeserializeObject<JObject>(body));
             }
             catch (VerificationFailed)
             {
@@ -96,49 +72,5 @@ namespace LoadTester
             }
             return true;
         }
-
-        private void BindVariables(JObject pattern, JObject source)
-        {
-            var patternProperties = pattern.Properties();
-            foreach (var pp in patternProperties)
-            {
-                var val = source.GetValue(pp.Name);
-                if (pp.Value is JObject ppObject && val is JObject valObject)
-                    BindVariables(ppObject, valObject);
-                else if (TryGetVariableName(pp, out var varName) && varName != null)
-                {
-                    var constant = new Constant(varName, val.Value<string>());
-                    _bindings.Add(constant.Name, constant.CreateValue());
-                }
-            }
-        }
-
-        private bool TryGetVariableName(JProperty p, out string varName)
-        {
-            varName = null;
-            if (!IsString(p))
-                return false;
-            var val = p.Value.Value<string>();
-            if (IsVariable(val))
-                varName = val[2..^2];
-            return true;
-        }
-
-        private bool TryGetValue(JProperty p, out string value)
-        {
-            value = null;
-            if (!IsString(p))
-                return false;
-            var val = p.Value.Value<string>();
-            if (!IsVariable(val))
-                value = val;
-            return true;
-        }
-
-        private bool IsVariable(string val)
-            => val.StartsWith("{{") && val.EndsWith("}}");
-
-        private bool IsString(JProperty p)
-            => p.Value.Type == JTokenType.String;
     }
 }

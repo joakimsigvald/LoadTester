@@ -8,32 +8,41 @@
     {
       "Name": "CustomerId",
       "Value": "1809144"
+    },
+    {
+      "Name": "NEJ_AR_INTE_NOG",
+      "Value": "P31541255"
     }
   ],
   "Services": [
     {
       "Name": "Shopping",
-      "BaseUrl": "http://localhost:58957/", //"https://b2l-shopping-stage.azurewebsites.net",
+      "BaseUrl": "https://b2l-shopping-stage.azurewebsites.net",
       "BasePath": "carts",
       "ApiKey": {
         "Name": "apiKey",
         "Value": "MER123"
       },
+      "DefaultHeaders": [
+        {
+          "Name": "B2LCompanyId",
+          "Value": "{{CompanyId}}"
+        },
+        {
+          "Name": "B2LCustomerId",
+          "Value": "{{CustomerId}}"
+        }
+      ],
       "Endpoints": [
         {
           "Name": "GetCurrent",
           "Method": "Get",
-          "Path": "current",
-          "Headers": [
-            {
-              "Name": "B2LCompanyId",
-              "Value": "{{CompanyId}}"
-            },
-            {
-              "Name": "B2LCustomerId",
-              "Value": "{{CustomerId}}"
-            }
-          ]
+          "Path": "current"
+        },
+        {
+          "Name": "AddItem",
+          "Method": "Post",
+          "Path": "{{CartId}}/items"
         }
       ]
     }
@@ -41,17 +50,13 @@
   "Scenarios": [
     {
       "Name": "GetCart",
-      "Instances": 1,
       "Steps": [
         {
           "Endpoint": "Shopping.GetCurrent",
           "Response": {
-            "id": "{{CartId:int}}",
             "companyId": "{{CartCompanyId:int}}",
             "customerId": "{{CartCustomerId:int}}"
-          },
-          "Times": 1,
-          "DelayMs": 0
+          }
         }
       ],
       "Asserts": [
@@ -62,6 +67,25 @@
         {
           "Name": "CartCustomerId",
           "Value": "{{CustomerId}}"
+        }
+      ]
+    },
+    {
+      "Name": "AddToCart",
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetCurrent",
+          "Response": {
+            "id": "{{CartId:int}}",
+            "count": "{{CountBefore:decimal}}"
+          }
+        },
+        {
+          "Endpoint": "Shopping.AddItem",
+          "Args": "sku={{NEJ_AR_INTE_NOG}}&quantity=1",
+          "Response": {
+            "count": "{{CountAfter:decimal}}"
+          }
         }
       ]
     }

@@ -12,11 +12,13 @@ namespace LoadTester
         public RunnableStep[] Steps { get; private set; }
         private readonly TestSuite _suite;
         private readonly int _instanceId;
+        private Bindings _bindings;
 
         public RunnableScenario(TestSuite suite, Scenario scenario, int instanceId)
         {
             _instanceId = instanceId;
             _suite = suite;
+            _bindings = CreateBindings();
             Scenario = scenario;
             Steps = scenario.Steps.Select(Instanciate).ToArray();
         }
@@ -28,19 +30,18 @@ namespace LoadTester
             var endpointName = pair[1];
             var service = _suite.Services.Single(s => s.Name == serviceName);
             var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
-            return new RunnableStep(step, service, endpoint);
+            return new RunnableStep(step, service, endpoint, _bindings);
         }
 
         public async Task<ScenarioInstanceResult> Run()
         {
             var sw = Stopwatch.StartNew();
-            var bindings = CreateBindings();
             var stepTimes = new List<TimeSpan>();
             foreach (var step in Steps)
             {
                 try
                 {
-                    var elapsed = await StepRunner.Run(step, bindings);
+                    var elapsed = await StepRunner.Run(step);
                     stepTimes.Add(elapsed);
                 }
                 catch (RunFailed sf)
@@ -50,7 +51,7 @@ namespace LoadTester
             }
             sw.Stop();
             var assertResults = Scenario.Asserts
-                .Select(assert => assert.Apply(bindings, bindings.Get(assert.Name)))
+                .Select(assert => assert.Apply(_bindings, _bindings.Get(assert.Name)))
                 .ToArray();
             return assertResults.All(ar => ar.Success) 
                 ? ScenarioInstanceResult.Succeeded(sw.Elapsed, stepTimes, assertResults)
