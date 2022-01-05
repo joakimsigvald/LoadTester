@@ -138,6 +138,7 @@
             "ipAddress": "172.16.5.115",
             "cartId": "{{CartId}}",
             "deliveryAddress": {
+              "careOf": "Företaget",
               "line1": "Gatan 1",
               "zip": "61430",
               "city": "Söderköping",
