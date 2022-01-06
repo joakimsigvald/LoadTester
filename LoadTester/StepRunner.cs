@@ -46,8 +46,9 @@ namespace LoadTester
                 Console.WriteLine($"Calling {_step.Blueprint.Endpoint}, attempt {i + 1}");
                 lastResponse = await _step.Run();
                 var isSuccessful = await IsSuccessful(lastResponse);
-                if (isSuccessful && _step.Blueprint.AbortOnSuccess
-                    || !isSuccessful && _step.Blueprint.AbortOnFail)
+                if (isSuccessful 
+                    ? _step.Blueprint.BreakOnSuccess 
+                    : !_step.Blueprint.RetryOnFail)
                     break;
             }
             sw.Stop();

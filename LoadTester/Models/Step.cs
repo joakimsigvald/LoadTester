@@ -13,7 +13,7 @@ namespace LoadTester
         public int Times { get; set; } = 1;
         public TimeSpan? _delay;
         public TimeSpan Delay => _delay ?? (_delay = TimeSpan.FromMilliseconds(DelayMs)).Value;
-        public bool AbortOnSuccess { get; set; }
-        public bool AbortOnFail { get; set; } = true;
+        public bool BreakOnSuccess { get; set; }
+        public bool RetryOnFail { get; set; }
     }
 }

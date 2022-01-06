@@ -190,8 +190,8 @@
             }
           },
           "Times": 1,
-          "AbortOnSuccess": true,
-          "AbortOnFail": false,
+          "BreakOnSuccess": true,
+          "RetryOnFail": true,
           "DelayMs": 1000
         },
         {

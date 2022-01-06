@@ -71,6 +71,22 @@
           "Path": "{{CartId}}/purchase"
         }
       ]
+    },
+    {
+      "Name": "Order",
+      "BaseUrl": "https://b2l-order-stage.azurewebsites.net",
+      "BasePath": "orders",
+      "ApiKey": {
+        "Name": "apiKey",
+        "Value": "MER123"
+      },
+      "Endpoints": [
+        {
+          "Name": "GetOrder",
+          "Method": "Get",
+          "Path": "{{OrderNumber}}"
+        }
+      ]
     }
   ],
   "Scenarios": [
@@ -152,11 +168,23 @@
           "Response": {
             "orderNumber": "{{OrderNumber:string}}"
           }
+        },
+        {
+          "Endpoint": "Order.GetOrder",
+          "Response": {
+            "status": "Confirmed",
+            "orderNo": "{{WebOrderNumber:int}}",
+            "externalOrderRef": "{{LogisticsOrderNumber:string}}"
+          },
+          "DelayMs": 2000,
+          "Times": 10,
+          "BreakOnSuccess": true,
+          "RetryOnFail": true
         }
       ],
       "Asserts": [
         {
-          "Name": "OrderNumber",
+          "Name": "WebOrderNumber",
           "Value": "{{CartId}}"
         }
       ]

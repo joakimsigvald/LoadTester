@@ -6,7 +6,8 @@ namespace LoadTester
 {
     public class ScenarioInstanceResult
     {
-        public static ScenarioInstanceResult Succeeded(TimeSpan duration, IList<TimeSpan> stepTimes, AssertResult[] assertResults) => new ScenarioInstanceResult
+        public static ScenarioInstanceResult Succeeded(TimeSpan duration, IList<TimeSpan> stepTimes, AssertResult[] assertResults) 
+            => new ScenarioInstanceResult
         {
             Success = true,
             Duration = duration,
