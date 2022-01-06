@@ -2,6 +2,10 @@
   "Name": "MakePurchase",
   "Constants": [
     {
+      "Name": "Now",
+      "Value": "|CurrentTime|"
+    },
+    {
       "Name": "CompanyId",
       "Value": "290411"
     },
@@ -12,6 +16,10 @@
     {
       "Name": "NEJ_AR_INTE_NOG",
       "Value": "P31541255"
+    },
+    {
+      "Name": "DeliveryNoteNumber",
+      "Value": "200000000"
     }
   ],
   "Services": [
@@ -85,67 +93,31 @@
           "Name": "GetOrder",
           "Method": "Get",
           "Path": "{{OrderNumber}}"
+        },
+        {
+          "Name": "Shipped",
+          "Method": "Post",
+          "Path": "{{OrderNumber}}/items/shipped"
         }
       ]
     }
   ],
   "Scenarios": [
     {
-      "Name": "GetCart",
-      "Steps": [
-        {
-          "Endpoint": "Shopping.GetCurrent",
-          "Response": {
-            "companyId": "{{CartCompanyId:int}}",
-            "customerId": "{{CartCustomerId:int}}"
-          }
-        }
-      ],
-      "Asserts": [
-        {
-          "Name": "CartCompanyId",
-          "Value": "{{CompanyId}}"
-        },
-        {
-          "Name": "CartCustomerId",
-          "Value": "{{CustomerId}}"
-        }
-      ]
-    },
-    {
-      "Name": "AddToCart",
+      "Name": "BuyAndDeliver",
       "Steps": [
         {
           "Endpoint": "Shopping.GetCurrent",
           "Response": {
             "id": "{{CartId:int}}",
-            "count": "{{CountBefore:decimal}}"
+            "count": "{{CountBefore:decimal->int}}"
           }
         },
         {
           "Endpoint": "Shopping.AddItem",
           "Args": "sku={{NEJ_AR_INTE_NOG}}&quantity=1",
           "Response": {
-            "count": "{{CountAfter:decimal}}"
-          }
-        }
-      ]
-    },
-    {
-      "Name": "BuyOneItem",
-      "Steps": [
-        {
-          "Endpoint": "Shopping.GetCurrent",
-          "Response": {
-            "id": "{{CartId:int}}",
-            "count": "{{CountBefore:decimal}}"
-          }
-        },
-        {
-          "Endpoint": "Shopping.AddItem",
-          "Args": "sku={{NEJ_AR_INTE_NOG}}&quantity=1",
-          "Response": {
-            "count": "{{CountAfter:decimal}}"
+            "count": "{{CountAfter:decimal->int}}"
           }
         },
         {
@@ -166,7 +138,7 @@
             }
           },
           "Response": {
-            "orderNumber": "{{OrderNumber:string}}"
+            "orderNumber": "{{OrderNumber:int}}"
           }
         },
         {
@@ -174,12 +146,30 @@
           "Response": {
             "status": "Confirmed",
             "orderNo": "{{WebOrderNumber:int}}",
-            "externalOrderRef": "{{LogisticsOrderNumber:string}}"
+            "externalOrderRef": "{{LogisticsOrderNumber:int}}"
           },
-          "DelayMs": 2000,
+          "DelayMs": 3000,
           "Times": 10,
           "BreakOnSuccess": true,
           "RetryOnFail": true
+        },
+        {
+          "Endpoint": "Order.Shipped",
+          "Body": {
+            "externalOrderRef": "{{LogisticsOrderNumber}}",
+            "eventTime": "{{Now}}",
+            "deliveryNoteNumber": "{{DeliveryNoteNumber}}",
+            "packageNumber": "{{DeliveryNoteNumber}}",
+            "trackingLink": "",
+            "carrier": "",
+            "items": [
+              {
+                "rowNumber": "1",
+                "sku": "{{NEJ_AR_INTE_NOG}}",
+                "quantity": "{{CountAfter}}"
+              }
+            ]
+          }
         }
       ],
       "Asserts": [
