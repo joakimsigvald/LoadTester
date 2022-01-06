@@ -7,11 +7,13 @@
     },
     {
       "Name": "CompanyId",
-      "Value": "290411"
+      "Value": "290411",
+      "Type": "int"
     },
     {
       "Name": "CustomerId",
-      "Value": "1809144"
+      "Value": "1809144",
+      "Type": "int"
     },
     {
       "Name": "NEJ_AR_INTE_NOG",
@@ -19,7 +21,8 @@
     },
     {
       "Name": "DeliveryNoteNumber",
-      "Value": "200000000"
+      "Value": "200000001",
+      "Type": "seed"
     }
   ],
   "Services": [

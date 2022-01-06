@@ -11,6 +11,8 @@ namespace Applique.LoadTester.Business.Design
         {
             var parts = nameAndType.Split(':');
             Name = parts[0];
+            if (value?.StartsWith("Seed(") == true)
+                throw new NotImplementedException();
             Value = value;
             if (parts.Length == 2)
             {
@@ -21,42 +23,10 @@ namespace Applique.LoadTester.Business.Design
             }
         }
 
-        public const string Int = "int";
-        public const string Decimal = "decimal";
-        public const string DateTime = "date";
-        public const string String = "string";
-
         public string Name { get; set; }
         public string Value { get; set; }
         public string Type { get; set; } = "string";
+        public bool Seed { get; set; }
         public string[] Conversions { get; private set; } = Array.Empty<string>();
-
-        public object CreateValue()
-        {
-            var value = ParseValue();
-            var from = Type;
-            foreach (var conversion in Conversions)
-            {
-                value = Cast(value, from, conversion);
-                from = conversion;
-            }
-            return value;
-        }
-
-        private static object Cast(object value, string from, string to)
-            => to switch
-            {
-                Int when from == Decimal => decimal.ToInt32((decimal)value),
-                _ => throw new InvalidOperationException($"Cannot cast {value} from {from} to {to}")
-            };
-
-        private object ParseValue()
-            => Type switch
-            {
-                DateTime => System.DateTime.Parse(Value),
-                Int => int.Parse(Value),
-                Decimal => decimal.Parse(Value),
-                _ => Value,
-            };
     }
 }

@@ -21,7 +21,7 @@ namespace Applique.LoadTester.Business.Runtime
         {
             _instanceId = instanceId;
             _suite = suite;
-            Bindings = CreateBindings();
+            Bindings = new Bindings(suite, GetConstants());
             Scenario = scenario;
             Steps = scenario.Steps.Select(Instanciate).ToArray();
         }
@@ -44,7 +44,7 @@ namespace Applique.LoadTester.Business.Runtime
             {
                 try
                 {
-                    var elapsed = await StepRunner.Run(step);
+                    var elapsed = await StepRunner.Run(step, Bindings);
                     stepTimes.Add(elapsed);
                 }
                 catch (RunFailed sf)
@@ -61,11 +61,7 @@ namespace Applique.LoadTester.Business.Runtime
                 : ScenarioInstanceResult.Failed(this, assertResults.Where(ar => !ar.Success));
         }
 
-        private Bindings CreateBindings() => new(CreateVariables());
-
-        private IDictionary<string, object> CreateVariables()
-            => _suite.Constants
-                .Prepend(new Constant("InstanceId", $"{_instanceId}"))
-                .ToDictionary(c => c.Name, c => c.CreateValue());
+        private IEnumerable<Constant> GetConstants()
+            => _suite.Constants.Prepend(new Constant("InstanceId", $"{_instanceId}"));
     }
 }

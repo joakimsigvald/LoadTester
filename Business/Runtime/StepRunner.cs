@@ -11,11 +11,16 @@ namespace Applique.LoadTester.Business.Runtime
     public class StepRunner
     {
         private readonly RunnableStep _step;
+        private readonly Bindings _bindings;
 
-        public static Task<TimeSpan> Run(RunnableStep step)
-            => new StepRunner(step).Run();
+        public static Task<TimeSpan> Run(RunnableStep step, Bindings bindings)
+            => new StepRunner(step, bindings).Run();
 
-        private StepRunner(RunnableStep step) => _step = step;
+        private StepRunner(RunnableStep step, Bindings bindings)
+        {
+            _step = step;
+            _bindings = bindings;
+        }
 
         private async Task<TimeSpan> Run()
         {
@@ -34,7 +39,7 @@ namespace Applique.LoadTester.Business.Runtime
                 var pattern = _step.Blueprint.Response;
                 var source = JsonConvert.DeserializeObject<JObject>(body);
                 _step.VerifyResponse(pattern, source);
-                _step.BindVariables(pattern, source);
+                _bindings.BindVariables(pattern, source);
             }
         }
 

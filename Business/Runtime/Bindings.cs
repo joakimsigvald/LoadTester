@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Applique.LoadTester.Business.Design;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +10,14 @@ namespace Applique.LoadTester.Business.Runtime
 {
     public class Bindings : IEnumerable<Binding>
     {
-
+        private readonly ValueRetriever _valueRetriever;
         private readonly IDictionary<string, object> _variables;
 
-        public Bindings(IDictionary<string, object> variables) => _variables = variables;
+        public Bindings(TestSuite suite, IEnumerable<Constant> constants)
+        {
+            _valueRetriever = new ValueRetriever(suite);
+            _variables = CreateVariables(constants);
+        }
 
         public string SubstituteVariables(string target) => _variables.Aggregate(target, Substitute);
 
@@ -39,8 +45,27 @@ namespace Applique.LoadTester.Business.Runtime
 
         public object Get(string name) => _variables.TryGetValue(name, out var variable) ? variable : null;
 
+        public void BindVariables(JObject pattern, JObject source)
+        {
+            var patternProperties = pattern.Properties();
+            foreach (var pp in patternProperties)
+            {
+                var val = source.GetValue(pp.Name);
+                if (pp.Value is JObject ppObject && val is JObject valObject)
+                    BindVariables(ppObject, valObject);
+                else if (pp.TryGetVariableName(out var varName) && varName != null)
+                {
+                    var constant = new Constant(varName, val.Value<string>());
+                    Add(constant.Name, ValueRetriever.ValueOf(constant));
+                }
+            }
+        }
+
         public IEnumerator<Binding> GetEnumerator() => new BindingsEnumerator(_variables);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        private IDictionary<string, object> CreateVariables(IEnumerable<Constant> constants)
+            => constants.ToDictionary(c => c.Name, _valueRetriever.GetValue);
     }
 }
