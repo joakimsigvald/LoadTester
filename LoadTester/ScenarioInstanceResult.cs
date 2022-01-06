@@ -6,21 +6,23 @@ namespace LoadTester
 {
     public class ScenarioInstanceResult
     {
-        public static ScenarioInstanceResult Succeeded(TimeSpan duration, IList<TimeSpan> stepTimes, AssertResult[] assertResults) 
+        public static ScenarioInstanceResult Succeeded(RunnableScenario scenario, TimeSpan duration, IList<TimeSpan> stepTimes, AssertResult[] assertResults) 
             => new ScenarioInstanceResult
         {
             Success = true,
             Duration = duration,
             StepTimes = stepTimes.ToArray(),
-            AssertResults = assertResults
+            AssertResults = assertResults,
+            Bindings = scenario.Bindings
         };
 
-        public static ScenarioInstanceResult Failed(IEnumerable<AssertResult> failedResults)
-            => Failed($"Asserts failed: {string.Join(", ", failedResults.Select(fr => fr.Message))}");
+        public static ScenarioInstanceResult Failed(RunnableScenario scenario, IEnumerable<AssertResult> failedResults)
+            => Failed(scenario, $"Asserts failed: {string.Join(", ", failedResults.Select(fr => fr.Message))}");
 
-        public static ScenarioInstanceResult Failed(string error) => new ScenarioInstanceResult
+        public static ScenarioInstanceResult Failed(RunnableScenario scenario, string error) => new ScenarioInstanceResult
         {
-            Error = error
+            Error = error,
+            Bindings = scenario.Bindings
         };
 
         public bool Success { get; set; }
@@ -28,5 +30,6 @@ namespace LoadTester
         public TimeSpan[] StepTimes { get; set; }
         public string Error { get; set; }
         public AssertResult[] AssertResults { get; set; }
+        public Bindings Bindings { get; private set; }
     }
 }

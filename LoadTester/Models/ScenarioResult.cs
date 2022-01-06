@@ -5,30 +5,32 @@ namespace LoadTester
 {
     public class ScenarioResult
     {
+        public static ScenarioResult Succeeded(Scenario scenario, ScenarioInstanceResult[] orderedResults)
+        {
+            var lastResult = orderedResults.Last();
+            var durations = orderedResults.Select(or => or.Duration).ToArray();
+            return new ScenarioResult
+            {
+                Scenario = scenario,
+                Success = true,
+                Max = durations.Last(),
+                Min = durations.First(),
+                Mean = GetQuantile(durations, 0.5f),
+                Q75 = GetQuantile(durations, 0.75f),
+                Q90 = GetQuantile(durations, 0.9f),
+                StepResults = GetStepResults(scenario, orderedResults),
+                AssertResults = lastResult.AssertResults.ToArray(),
+                Bindings = lastResult.Bindings
+            };
+        }
+
         public static ScenarioResult Failed(Scenario scenario, ScenarioInstanceResult failedRun)
             => new ScenarioResult
             {
                 Scenario = scenario,
-                Error = failedRun.Error
+                Error = failedRun.Error,
+                Bindings = failedRun.Bindings
             };
-
-        public static ScenarioResult Succeeded(Scenario scenario, ScenarioInstanceResult[] orderedResults)
-            => new ScenarioResult(scenario, orderedResults.Select(or => or.Duration).ToArray())
-            {
-                StepResults = GetStepResults(scenario, orderedResults),
-                AssertResults = orderedResults.Last().AssertResults.ToArray()
-            };
-
-        private ScenarioResult(Scenario scenario, TimeSpan[] durations)
-        {
-            Scenario = scenario;
-            Success = true;
-            Max = durations.Last();
-            Min = durations.First();
-            Mean = GetQuantile(durations, 0.5f);
-            Q75 = GetQuantile(durations, 0.75f);
-            Q90 = GetQuantile(durations, 0.9f);
-        }
 
         private static StepResult[] GetStepResults(Scenario scenario, ScenarioInstanceResult[] results)
         => results
@@ -43,6 +45,7 @@ namespace LoadTester
         private ScenarioResult() { }
 
         public Scenario Scenario { get; private set; }
+        public Bindings Bindings { get; private set; }
         public string Error { get; private set; }
         public AssertResult[] AssertResults { get; private set; }
         public bool Success { get; private set; }

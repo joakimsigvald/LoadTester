@@ -19,6 +19,7 @@ namespace LoadTester
             var results = new List<ScenarioResult>();
             foreach (var scenario in _suite.Scenarios)
             {
+                Console.WriteLine("--------------------------");
                 Console.WriteLine($"Running scenario: {scenario.Name} with {scenario.Instances} instances");
                 var result = await Run(scenario);
                 results.Add(result);

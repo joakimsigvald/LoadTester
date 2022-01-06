@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LoadTester
 {
-    public class Bindings
+    public class Bindings : IEnumerable<Binding>
     {
         private readonly IDictionary<string, object> _variables;
 
@@ -27,5 +28,9 @@ namespace LoadTester
         private string Embrace(string value) => "{{" + value + "}}";
 
         public object Get(string name) => _variables.TryGetValue(name, out var variable) ? variable : null;
+
+        public IEnumerator<Binding> GetEnumerator() => new BindingsEnumerator(_variables);
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

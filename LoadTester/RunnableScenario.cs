@@ -12,13 +12,13 @@ namespace LoadTester
         public RunnableStep[] Steps { get; private set; }
         private readonly TestSuite _suite;
         private readonly int _instanceId;
-        private Bindings _bindings;
+        public Bindings Bindings { get; private set; }
 
         public RunnableScenario(TestSuite suite, Scenario scenario, int instanceId)
         {
             _instanceId = instanceId;
             _suite = suite;
-            _bindings = CreateBindings();
+            Bindings = CreateBindings();
             Scenario = scenario;
             Steps = scenario.Steps.Select(Instanciate).ToArray();
         }
@@ -30,7 +30,7 @@ namespace LoadTester
             var endpointName = pair[1];
             var service = _suite.Services.Single(s => s.Name == serviceName);
             var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
-            return new RunnableStep(step, service, endpoint, _bindings);
+            return new RunnableStep(step, service, endpoint, Bindings);
         }
 
         public async Task<ScenarioInstanceResult> Run()
@@ -46,16 +46,16 @@ namespace LoadTester
                 }
                 catch (RunFailed sf)
                 {
-                    return ScenarioInstanceResult.Failed($"Step: {step.Blueprint.Endpoint} failed with error {sf.Message}");
+                    return ScenarioInstanceResult.Failed(this, $"Step: {step.Blueprint.Endpoint} failed with error {sf.Message}");
                 }
             }
             sw.Stop();
             var assertResults = Scenario.Asserts
-                .Select(assert => assert.Apply(_bindings, _bindings.Get(assert.Name)))
+                .Select(assert => assert.Apply(Bindings, Bindings.Get(assert.Name)))
                 .ToArray();
             return assertResults.All(ar => ar.Success) 
-                ? ScenarioInstanceResult.Succeeded(sw.Elapsed, stepTimes, assertResults)
-                : ScenarioInstanceResult.Failed(assertResults.Where(ar => !ar.Success));
+                ? ScenarioInstanceResult.Succeeded(this, sw.Elapsed, stepTimes, assertResults)
+                : ScenarioInstanceResult.Failed(this, assertResults.Where(ar => !ar.Success));
         }
 
         private Bindings CreateBindings() => new Bindings(CreateVariables());

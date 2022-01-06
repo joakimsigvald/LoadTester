@@ -16,17 +16,17 @@ namespace LoadTester
                 Console.WriteLine("Running test suite: " + testSuite.Name);
                 var result = await RunTestSuite(testSuite);
                 var resultLines = OutputResult(testSuite.Name, result);
-                if (OutputResult())
-                    OutputResultToFile(testSuite.Name, resultLines);
+                if (ShouldSaveResult())
+                    SaveResultToFile(testSuite.Name, resultLines);
             }
-            while (RunAgain());
+            while (ShouldRunAgain());
         }
 
-        private static bool OutputResult() => Interactor.Ask("Output result to text-file");
+        private static bool ShouldSaveResult() => Interactor.Ask("Output result to text-file");
 
-        private static bool RunAgain() => Interactor.Ask("Run again");
+        private static bool ShouldRunAgain() => Interactor.Ask("Run again");
 
-        private static void OutputResultToFile(string testName, string[] resultLines)
+        private static void SaveResultToFile(string testName, string[] resultLines)
         {
             int i = 1;
             while (File.Exists(GetFileName(testName, i)))
