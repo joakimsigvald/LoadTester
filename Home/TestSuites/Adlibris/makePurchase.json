@@ -24,16 +24,21 @@
       "Value": "200000001",
       "Type": "seed"
     },
-    {
-      "Name": "OrderNumber",
-      "Value": "174461",
-      "Type": "int"
-    },
-    {
-      "Name": "CountOrdered",
-      "Value": "1",
-      "Type": "int"
-    }
+    //{
+    //  "Name": "OrderNumber",
+    //  "Value": "174461",
+    //  "Type": "int"
+    //},
+    //{
+    //  "Name": "CountOrdered",
+    //  "Value": "1",
+    //  "Type": "int"
+    //},
+    //{
+    //  "Name": "DeliveryNoteNumber",
+    //  "Value": "200000010",
+    //  "Type": "int"
+    //}
   ],
   "Services": [
     {
@@ -113,12 +118,28 @@
           "Path": "{{OrderNumber}}/items/shipped"
         }
       ]
+    },
+    {
+      "Name": "Invoicing",
+      "BaseUrl": "https://b2l-invoicing-stage.azurewebsites.net",
+      "BasePath": "invoices",
+      "ApiKey": {
+        "Name": "apiKey",
+        "Value": "MER123"
+      },
+      "Endpoints": [
+        {
+          "Name": "GetInvoice",
+          "Method": "Get",
+          "Path": "{{DeliveryNoteNumber}}"
+        }
+      ]
     }
   ],
   "Scenarios": [
     {
       "Name": "BuyAndDeliver",
-      "Disabled": true,
+      "Disabled": false,
       "Steps": [
         {
           "Endpoint": "Shopping.GetCurrent",
@@ -184,6 +205,21 @@
               }
             ]
           }
+        },
+        {
+          "Endpoint": "Invoicing.GetInvoice",
+          "Response": {
+            "paymentProviderInvoiceNumber": "{{PaymentProviderInvoiceNumber:int}}",
+            "items": [
+              {
+                "quantity": "{{CountOrdered}}"
+              },
+              {
+                "ean": "Frakt",
+                "quantity": 1
+              }
+            ]
+          }
         }
       ],
       "Asserts": [
@@ -195,6 +231,7 @@
     },
     {
       "Name": "GetOrderAndDeliver",
+      "Disabled": true,
       "Steps": [
         {
           "Endpoint": "Order.GetOrder",
@@ -222,6 +259,42 @@
                 "rowNumber": "1",
                 "sku": "{{NEJ_AR_INTE_NOG}}",
                 "quantity": "{{CountOrdered}}"
+              }
+            ]
+          }
+        },
+        {
+          "Endpoint": "Invoicing.GetInvoice",
+          "Response": {
+            "paymentProviderInvoiceNumber": "{{PaymentProviderInvoiceNumber:int}}",
+            "items": [
+              {
+                "quantity": "{{CountOrdered}}"
+              },
+              {
+                "ean": "Frakt",
+                "quantity": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "Name": "GetInvoice",
+      "Disabled": true,
+      "Steps": [
+        {
+          "Endpoint": "Invoicing.GetInvoice",
+          "Response": {
+            "paymentProviderInvoiceNumber": "{{PaymentProviderInvoiceNumber:int}}",
+            "items": [
+              {
+                "quantity": "{{CountOrdered}}"
+              },
+              {
+                "ean": "Frakt",
+                "quantity": 1
               }
             ]
           }

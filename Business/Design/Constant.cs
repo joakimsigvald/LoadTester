@@ -26,7 +26,6 @@ namespace Applique.LoadTester.Business.Design
         public string Name { get; set; }
         public string Value { get; set; }
         public string Type { get; set; } = "string";
-        public bool Seed { get; set; }
         public string[] Conversions { get; private set; } = Array.Empty<string>();
     }
 }

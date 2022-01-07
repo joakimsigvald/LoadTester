@@ -2,7 +2,7 @@
 {
     public class VerificationFailed : RunFailed
     {
-        public VerificationFailed(string message) : base(message)
+        public VerificationFailed(string property, string message) : base($"{property}: {message}")
         {
         }
     }

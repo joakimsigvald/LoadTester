@@ -30,23 +30,36 @@ namespace Applique.LoadTester.Business.Runtime
             return _client.SendAsync(request);
         }
 
-        public void VerifyResponse(JObject pattern, JObject source)
+        public void VerifyResponse(JObject pattern, JObject source, string prefix = "")
         {
             var patternProperties = pattern.Properties();
             foreach (var pp in patternProperties)
             {
                 var val = source.GetValue(pp.Name);
-                if (pp.Value is JObject ppObject && val is JObject valObject)
-                    VerifyResponse(ppObject, valObject);
+                if (pp.Value is JObject ppObject)
+                    VerifyObject(pp, ppObject, val as JObject, prefix);
+                else if (pp.Value is JArray ppArray)
+                    VerifyArray(pp, ppArray, val as JArray, prefix);
                 else if (pp.TryGetValue(out var expectedValue) && expectedValue != null)
-                    VerifyValue(expectedValue, val.Value<string>());
+                    VerifyValue($"{prefix}{pp.Name}", expectedValue, val.Value<string>());
             }
         }
 
-        private static void VerifyValue(string expectedValue, string actualValue)
+        private void VerifyObject(JProperty pp, JObject ppObject, JObject valObject, string prefix)
+            => VerifyResponse(ppObject, valObject, $"{prefix}{pp.Name}.");
+
+        private void VerifyArray(JProperty pp, JArray ppArray, JArray valArray, string prefix)
+        {
+            if (ppArray.Count != valArray.Count)
+                throw new VerificationFailed($"{prefix}{pp.Name}", $"Array have different lengths: {valArray.Count}, expected {ppArray.Count}");
+            for (var i = 0; i < valArray.Count; i++)
+                VerifyResponse((JObject)ppArray[i], (JObject)valArray[i], $"{prefix}{pp.Name}.");
+        }
+
+        private static void VerifyValue(string property, string expectedValue, string actualValue)
         {
             if (expectedValue != actualValue)
-                throw new VerificationFailed($"Unexpected response: {actualValue}, expected {expectedValue}");
+                throw new VerificationFailed(property, $"Unexpected response: {actualValue}, expected {expectedValue}");
         }
     }
 }
