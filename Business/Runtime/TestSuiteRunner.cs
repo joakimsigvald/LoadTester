@@ -19,7 +19,7 @@ namespace Applique.LoadTester.Business.Runtime
         public async Task<TestSuiteResult> Run()
         {
             var results = new List<ScenarioResult>();
-            foreach (var scenario in _suite.Scenarios)
+            foreach (var scenario in _suite.RunnableScenarios)
             {
                 Console.WriteLine("--------------------------");
                 Console.WriteLine($"Running scenario: {scenario.Name} with {scenario.Instances} instances");

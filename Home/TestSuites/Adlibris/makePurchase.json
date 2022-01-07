@@ -23,6 +23,16 @@
       "Name": "DeliveryNoteNumber",
       "Value": "200000001",
       "Type": "seed"
+    },
+    {
+      "Name": "OrderNumber",
+      "Value": "174461",
+      "Type": "int"
+    },
+    {
+      "Name": "CountOrdered",
+      "Value": "1",
+      "Type": "int"
     }
   ],
   "Services": [
@@ -108,6 +118,7 @@
   "Scenarios": [
     {
       "Name": "BuyAndDeliver",
+      "Disabled": true,
       "Steps": [
         {
           "Endpoint": "Shopping.GetCurrent",
@@ -120,7 +131,7 @@
           "Endpoint": "Shopping.AddItem",
           "Args": "sku={{NEJ_AR_INTE_NOG}}&quantity=1",
           "Response": {
-            "count": "{{CountAfter:decimal->int}}"
+            "count": "{{CountOrdered:decimal->int}}"
           }
         },
         {
@@ -169,7 +180,7 @@
               {
                 "rowNumber": "1",
                 "sku": "{{NEJ_AR_INTE_NOG}}",
-                "quantity": "{{CountAfter}}"
+                "quantity": "{{CountOrdered}}"
               }
             ]
           }
@@ -179,6 +190,41 @@
         {
           "Name": "WebOrderNumber",
           "Value": "{{CartId}}"
+        }
+      ]
+    },
+    {
+      "Name": "GetOrderAndDeliver",
+      "Steps": [
+        {
+          "Endpoint": "Order.GetOrder",
+          "Response": {
+            "status": "Confirmed",
+            "orderNo": "{{WebOrderNumber:int}}",
+            "externalOrderRef": "{{LogisticsOrderNumber:int}}"
+          },
+          "DelayMs": 3000,
+          "Times": 10,
+          "BreakOnSuccess": true,
+          "RetryOnFail": true
+        },
+        {
+          "Endpoint": "Order.Shipped",
+          "Body": {
+            "externalOrderRef": "{{LogisticsOrderNumber}}",
+            "eventTime": "{{Now}}",
+            "deliveryNoteNumber": "{{DeliveryNoteNumber}}",
+            "packageNumber": "{{DeliveryNoteNumber}}",
+            "trackingLink": "",
+            "carrier": "",
+            "items": [
+              {
+                "rowNumber": "1",
+                "sku": "{{NEJ_AR_INTE_NOG}}",
+                "quantity": "{{CountOrdered}}"
+              }
+            ]
+          }
         }
       ]
     }
