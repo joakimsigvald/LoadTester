@@ -23,22 +23,7 @@
       "Name": "DeliveryNoteNumber",
       "Value": "200000001",
       "Type": "seed"
-    },
-    //{
-    //  "Name": "OrderNumber",
-    //  "Value": "174461",
-    //  "Type": "int"
-    //},
-    //{
-    //  "Name": "CountOrdered",
-    //  "Value": "1",
-    //  "Type": "int"
-    //},
-    //{
-    //  "Name": "DeliveryNoteNumber",
-    //  "Value": "200000010",
-    //  "Type": "int"
-    //}
+    }
   ],
   "Services": [
     {
@@ -138,8 +123,8 @@
   ],
   "Scenarios": [
     {
-      "Name": "BuyAndDeliver",
-      "Disabled": false,
+      "Name": "BuyAndGetInvoice",
+      "Disabled": true,
       "Steps": [
         {
           "Endpoint": "Shopping.GetCurrent",
@@ -230,14 +215,62 @@
       ]
     },
     {
-      "Name": "GetOrderAndDeliver",
+      "Name": "Buy",
+      "Disabled": false,
+      "Steps": [
+        {
+          "Endpoint": "Shopping.GetCurrent",
+          "Response": {
+            "id": "{{CartId:int}}",
+            "count": "{{CountBefore:decimal->int}}"
+          }
+        },
+        {
+          "Endpoint": "Shopping.AddItem",
+          "Args": "sku={{NEJ_AR_INTE_NOG}}&quantity=1",
+          "Response": {
+            "count": "{{CountOrdered:decimal->int}}"
+          }
+        },
+        {
+          "Endpoint": "Checkout.Purchase",
+          "Body": {
+            "ipAddress": "172.16.5.115",
+            "cartId": "{{CartId}}",
+            "deliveryAddress": {
+              "careOf": "Företaget",
+              "line1": "Gatan 1",
+              "zip": "61430",
+              "city": "Söderköping",
+              "shippingPhoneNumber": "0123456789"
+            },
+            "invoiceReference": {
+              "reference1": "123",
+              "reference2": "456"
+            }
+          },
+          "Response": {
+            "orderNumber": "{{OrderNumber:int}}"
+          }
+        }
+      ],
+      "Asserts": [
+        {
+          "Name": "OrderNumber",
+          "Value": "{{CartId}}"
+        }
+      ],
+      "Persist": [ "CountOrdered", "OrderNumber" ]
+    },
+    {
+      "Name": "GetOrderAndInvoice",
       "Disabled": true,
+      "Load": [ "CountOrdered", "OrderNumber" ],
       "Steps": [
         {
           "Endpoint": "Order.GetOrder",
           "Response": {
             "status": "Confirmed",
-            "orderNo": "{{WebOrderNumber:int}}",
             "externalOrderRef": "{{LogisticsOrderNumber:int}}"
           },
           "DelayMs": 3000,
@@ -278,26 +311,11 @@
             ]
           }
         }
-      ]
-    },
-    {
-      "Name": "GetInvoice",
-      "Disabled": true,
-      "Steps": [
+      ],
+      "Asserts": [
         {
-          "Endpoint": "Invoicing.GetInvoice",
-          "Response": {
-            "paymentProviderInvoiceNumber": "{{PaymentProviderInvoiceNumber:int}}",
-            "items": [
-              {
-                "quantity": "{{CountOrdered}}"
-              },
-              {
-                "ean": "Frakt",
-                "quantity": 1
-              }
-            ]
-          }
+          "Name": "WebOrderNumber",
+          "Value": "{{CartId}}"
         }
       ]
     }

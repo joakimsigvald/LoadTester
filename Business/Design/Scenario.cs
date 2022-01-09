@@ -1,4 +1,5 @@
-﻿using Applique.LoadTester.Business.Runtime;
+﻿using Applique.LoadTester.Business.External;
+using Applique.LoadTester.Business.Runtime;
 using System;
 
 namespace Applique.LoadTester.Business.Design
@@ -8,10 +9,12 @@ namespace Applique.LoadTester.Business.Design
         public string Name { get; set; }
         public bool Disabled { get; set; }
         public int Instances { get; set; } = 1;
+        public string[] Load { get; set; } = Array.Empty<string>();
+        public string[] Persist { get; set; } = Array.Empty<string>();
         public Step[] Steps { get; set; }
         public Assert[] Asserts { get; set; } = Array.Empty<Assert>();
 
-        public RunnableScenario CreateInstance(TestSuite suite, int instanceId)
-            => new(suite, this, instanceId);
+        public RunnableScenario CreateInstance(IFileSystem fileSystem, TestSuite suite, int instanceId)
+            => new(fileSystem, suite, this, instanceId);
     }
 }

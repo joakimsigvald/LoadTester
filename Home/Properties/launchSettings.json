@@ -2,7 +2,7 @@
   "profiles": {
     "LoadTester": {
       "commandName": "Project",
-      "commandLineArgs": "TestSuites/Adlibris/makePurchase.json"
+      "commandLineArgs": "\"C:\\Development\\Adlibris\\Repos\\Merkurius\\Dok\\documentation\\Svea faktorering\\E2ETests\" makePurchase.json"
     }
   }
 }

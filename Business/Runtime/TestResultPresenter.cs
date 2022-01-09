@@ -1,4 +1,5 @@
-﻿using Applique.LoadTester.Business.Result;
+﻿using Applique.LoadTester.Business.Design;
+using Applique.LoadTester.Business.Result;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,8 +89,8 @@ namespace Applique.LoadTester.Business.Runtime
 
         private static string ScenarioDivider => "===========================";
 
-        private static string Print(Binding binding)
-            => $"| {binding.Name} = {binding.Value}";
+        private static string Print(Constant constant)
+            => $"| {constant.Name} = {constant.Value}";
 
         private static string PrintScenarioName(ScenarioResult res) => res.Scenario.Name.PadRight(2 * _columnWidth - 2) + "  ";
 

@@ -1,9 +1,8 @@
 ﻿using Applique.LoadTester.Business.Design;
+using Applique.LoadTester.Business.External;
 using Applique.LoadTester.Business.Result;
 using Applique.LoadTester.Business.Runtime;
-using Newtonsoft.Json;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,9 +10,12 @@ namespace Applique.LoadTester.Home
 {
     class Program
     {
+        private static IFileSystem _fileSystem;
+
         static async Task Main(string[] args)
         {
-            var testSuite = LoadTestSuite(args.FirstOrDefault());
+            _fileSystem = new FileSystem(args.FirstOrDefault());
+            var testSuite = LoadTestSuite(args.Skip(1).FirstOrDefault());
             do
             {
                 Console.WriteLine("Running test suite: " + testSuite.Name);
@@ -32,9 +34,9 @@ namespace Applique.LoadTester.Home
         private static void SaveResultToFile(string testName, string[] resultLines)
         {
             int i = 1;
-            while (File.Exists(GetFileName(testName, i)))
+            while (_fileSystem.Exists(GetFileName(testName, i)))
                 i++;
-            File.WriteAllLines(GetFileName(testName, i), resultLines);
+            _fileSystem.WriteLines(GetFileName(testName, i), resultLines);
         }
 
         private static string GetFileName(string name, int n) => $"{name}_{n}.txt";
@@ -51,12 +53,11 @@ namespace Applique.LoadTester.Home
         {
             try
             {
-                var json = File.ReadAllText(filename);
-                return JsonConvert.DeserializeObject<TestSuite>(json);
+                return _fileSystem.Read<TestSuite>(filename);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to load testsuite because: '{ex.Message}'. Write filename of test suite as first program argument.");
+                Console.WriteLine($"Failed to load testsuite because: '{ex.Message}'. Write basePath as first argument and filename of test suite as second program argument.");
                 Console.WriteLine("Press a key to continue.");
                 Console.ReadKey();
                 throw;
@@ -64,6 +65,6 @@ namespace Applique.LoadTester.Home
         }
 
         private static Task<TestSuiteResult> RunTestSuite(TestSuite testSuite)
-            => new TestSuiteRunner(testSuite).Run();
+            => new TestSuiteRunner(_fileSystem, testSuite).Run();
     }
 }

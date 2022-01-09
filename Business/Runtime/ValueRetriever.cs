@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using Applique.LoadTester.Business.External;
+using System;
 
 namespace Applique.LoadTester.Business.Design
 {
@@ -10,9 +10,14 @@ namespace Applique.LoadTester.Business.Design
         public const string DateTime = "date";
         public const string String = "string";
         public const string Seed = "seed";
+        private readonly IFileSystem _fileSystem;
         private readonly TestSuite _testSuite;
 
-        public ValueRetriever(TestSuite testSuite) => _testSuite = testSuite;
+        public ValueRetriever(IFileSystem fileSystem, TestSuite testSuite)
+        {
+            _fileSystem = fileSystem;
+            _testSuite = testSuite;
+        }
 
         public object GetValue(Constant constant)
             => constant.Type == Seed ? GetSeed(constant) : ValueOf(constant);
@@ -28,6 +33,12 @@ namespace Applique.LoadTester.Business.Design
             }
             return value;
         }
+
+        public static string GetType(object obj)
+            => obj is int? ? Int
+            : obj is decimal? ? Decimal
+            : obj is DateTime? ? DateTime
+            : String;
 
         private object GetSeed(Constant constant)
         {
@@ -53,11 +64,11 @@ namespace Applique.LoadTester.Business.Design
             };
 
         private void SaveSeed(Constant constant, int seed)
-            => File.WriteAllText(GetSeedPath(constant), $"{seed}");
+            => _fileSystem.Write(GetSeedPath(constant), seed);
 
         private int? LoadSeed(Constant constant)
-            => File.Exists(GetSeedPath(constant)) 
-            ? int.Parse(File.ReadAllText(GetSeedPath(constant))) 
+            => _fileSystem.Exists(GetSeedPath(constant)) 
+            ? _fileSystem.Read<int>(GetSeedPath(constant)) 
             : null;
 
         private string GetSeedPath(Constant constant) => $"{_testSuite.Name}_{constant.Name}_Seed";

@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Applique.LoadTester.Business.Design;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Applique.LoadTester.Business.Runtime
 {
-    public class BindingsEnumerator : IEnumerator<Binding>
+    public class BindingsEnumerator : IEnumerator<Constant>
     {
         private readonly IEnumerator<KeyValuePair<string, object>> _enumerator;
 
         public BindingsEnumerator(IDictionary<string, object> variables) => _enumerator = variables.GetEnumerator();
 
-        public Binding Current => Map(_enumerator.Current);
+        public Constant Current => Map(_enumerator.Current);
 
         object IEnumerator.Current => Current;
 
@@ -24,7 +25,7 @@ namespace Applique.LoadTester.Business.Runtime
 
         public void Reset() => _enumerator.Reset();
 
-        private static Binding Map(KeyValuePair<string, object> kvp)
-            => new() { Name = kvp.Key, Value = $"{kvp.Value}" };
+        private static Constant Map(KeyValuePair<string, object> kvp)
+            => new() { Name = kvp.Key, Value = $"{kvp.Value}", Type = ValueRetriever.GetType(kvp.Value) };
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Applique.LoadTester.Business.Design;
+using Applique.LoadTester.Business.External;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
@@ -8,20 +9,22 @@ using static Applique.LoadTester.Business.Runtime.SpecialVariables;
 
 namespace Applique.LoadTester.Business.Runtime
 {
-    public class Bindings : IEnumerable<Binding>
+    public class Bindings : IEnumerable<Constant>
     {
-        private readonly ValueRetriever _valueRetriever;
         private readonly IDictionary<string, object> _variables;
 
-        public Bindings(TestSuite suite, IEnumerable<Constant> constants)
-        {
-            _valueRetriever = new ValueRetriever(suite);
-            _variables = CreateVariables(constants);
-        }
+        public Bindings(IFileSystem fileSystem, TestSuite suite, params Constant[] constants) 
+            => _variables = CreateVariables(fileSystem, suite, constants);
 
         public string SubstituteVariables(string target) => _variables.Aggregate(target, Substitute);
 
         public void Add(string name, object value) => _variables[name] = value;
+
+        public void Append(Bindings bindings)
+        {
+            foreach (var kvp in bindings._variables)
+                _variables[kvp.Key] = kvp.Value;
+        }
 
         private static string Substitute(string target, KeyValuePair<string, object> variable)
             => variable.Value is int?
@@ -61,11 +64,14 @@ namespace Applique.LoadTester.Business.Runtime
             }
         }
 
-        public IEnumerator<Binding> GetEnumerator() => new BindingsEnumerator(_variables);
+        public IEnumerator<Constant> GetEnumerator() => new BindingsEnumerator(_variables);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private IDictionary<string, object> CreateVariables(IEnumerable<Constant> constants)
-            => constants.ToDictionary(c => c.Name, _valueRetriever.GetValue);
+        private static IDictionary<string, object> CreateVariables(IFileSystem fileSystem, TestSuite suite, IEnumerable<Constant> constants)
+        {
+            var valueRetriever = new ValueRetriever(fileSystem, suite);
+            return constants.ToDictionary(c => c.Name, valueRetriever.GetValue);
+        }
     }
 }

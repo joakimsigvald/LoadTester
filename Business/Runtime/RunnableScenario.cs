@@ -1,4 +1,5 @@
 ﻿using Applique.LoadTester.Business.Design;
+using Applique.LoadTester.Business.External;
 using Applique.LoadTester.Business.Result;
 using Applique.LoadTester.Business.Runtime.Exceptions;
 using System;
@@ -17,11 +18,11 @@ namespace Applique.LoadTester.Business.Runtime
         private readonly int _instanceId;
         public Bindings Bindings { get; private set; }
 
-        public RunnableScenario(TestSuite suite, Scenario scenario, int instanceId)
+        public RunnableScenario(IFileSystem fileSystem, TestSuite suite, Scenario scenario, int instanceId)
         {
             _instanceId = instanceId;
             _suite = suite;
-            Bindings = new Bindings(suite, GetConstants());
+            Bindings = new Bindings(fileSystem, suite, GetConstants());
             Scenario = scenario;
             Steps = scenario.Steps.Select(Instanciate).ToArray();
         }
@@ -61,7 +62,7 @@ namespace Applique.LoadTester.Business.Runtime
                 : ScenarioInstanceResult.Failed(this, assertResults.Where(ar => !ar.Success));
         }
 
-        private IEnumerable<Constant> GetConstants()
-            => _suite.Constants.Prepend(new Constant("InstanceId", $"{_instanceId}"));
+        private Constant[] GetConstants()
+            => _suite.Constants.Prepend(new Constant("InstanceId", $"{_instanceId}")).ToArray();
     }
 }
