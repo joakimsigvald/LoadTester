@@ -27,7 +27,7 @@ namespace Applique.LoadTester.Business.Runtime
         {
             var url = GetUrl();
             var content = CreateContent();
-            var requestMessage = new HttpRequestMessage(_endpoint.HttpMethod, url)
+            var requestMessage = new HttpRequestMessage(HttpMethod, url)
             {
                 Content = content == null ? null : new StringContent(content, Encoding.UTF8, "application/json")
             };
@@ -35,6 +35,8 @@ namespace Applique.LoadTester.Business.Runtime
                 requestMessage.Headers.Add(header.Name, _bindings.SubstituteVariables(header.Value));
             return requestMessage;
         }
+
+        private HttpMethod HttpMethod => new (_endpoint.Method);
 
         private string CreateContent()
             => _step.Body is null

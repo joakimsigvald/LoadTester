@@ -26,7 +26,7 @@ namespace Applique.LoadTester.Business.Runtime
 
         public Task<HttpResponseMessage> Run()
         {
-            var request = _endpoint.GetRequest(Service.BasePath, Blueprint, _bindings);
+            var request = RequestFactory.GetRequest(Service.BasePath, _endpoint, Blueprint, _bindings);
             return _client.SendAsync(request);
         }
 

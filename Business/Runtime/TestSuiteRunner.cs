@@ -57,7 +57,7 @@ namespace Applique.LoadTester.Business.Runtime
         private RunnableScenario CreateRunnableScenario(Scenario scenario, int i, Bindings loadedBindings)
         {
             var instance = scenario.CreateInstance(_fileSystem, _testSuite, i);
-            instance.Bindings.Append(loadedBindings);
+            instance.Bindings.MergeWith(loadedBindings);
             return instance;
         }
 

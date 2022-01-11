@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Applique.LoadTester.Business.Design
@@ -6,7 +7,7 @@ namespace Applique.LoadTester.Business.Design
     public class TestSuite
     {
         public string Name { get; set; }
-        public Constant[] Constants { get; set; }
+        public Constant[] Constants { get; set; } = Array.Empty<Constant>();
         public Service[] Services { get; set; }
         public Scenario[] Scenarios { private get; set; }
 

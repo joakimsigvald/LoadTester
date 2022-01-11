@@ -22,8 +22,8 @@ namespace Applique.LoadTester.Business.Runtime
         {
             _instanceId = instanceId;
             _suite = suite;
-            Bindings = new Bindings(fileSystem, suite, GetConstants());
             Scenario = scenario;
+            Bindings = new Bindings(fileSystem, suite, GetConstants());
             Steps = scenario.Steps.Select(Instanciate).ToArray();
         }
 
@@ -63,6 +63,10 @@ namespace Applique.LoadTester.Business.Runtime
         }
 
         private Constant[] GetConstants()
-            => _suite.Constants.Prepend(new Constant("InstanceId", $"{_instanceId}")).ToArray();
+            => _suite.Constants.Concat(Scenario.Constants)
+            .Prepend(new Constant("InstanceId", $"{_instanceId}"))
+            .GroupBy(c => c.Name)
+            .Select(g => g.Last()) // override earlier declared constant with later declared constant
+            .ToArray();
     }
 }

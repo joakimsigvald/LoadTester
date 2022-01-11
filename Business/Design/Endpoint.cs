@@ -1,6 +1,4 @@
-﻿using Applique.LoadTester.Business.Runtime;
-using System;
-using System.Net.Http;
+﻿using System;
 
 namespace Applique.LoadTester.Business.Design
 {
@@ -10,9 +8,5 @@ namespace Applique.LoadTester.Business.Design
         public string Path { get; set; }
         public string Method { get; set; }
         public Header[] Headers { get; set; } = Array.Empty<Header>();
-        public HttpMethod HttpMethod => new(Method);
-
-        public HttpRequestMessage GetRequest(string basePath, Step step, Bindings bindings)
-            => RequestFactory.GetRequest(basePath, this, step, bindings);
     }
 }
