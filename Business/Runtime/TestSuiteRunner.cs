@@ -29,6 +29,8 @@ namespace Applique.LoadTester.Business.Runtime
                 var result = await Run(scenario);
                 results.Add(result);
                 Console.WriteLine("Scenario " + (result.Success ? "succeeded" : "failed"));
+                if (!result.Success)
+                    break;
             }
             return new TestSuiteResult(results.OrderByDescending(res => res.Success).ToArray());
         }
