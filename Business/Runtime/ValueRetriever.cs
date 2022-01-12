@@ -1,5 +1,6 @@
 ﻿using Applique.LoadTester.Business.External;
 using System;
+using System.Globalization;
 
 namespace Applique.LoadTester.Business.Design
 {
@@ -59,7 +60,7 @@ namespace Applique.LoadTester.Business.Design
             {
                 DateTime => System.DateTime.Parse(constant.Value),
                 Int => int.Parse(constant.Value),
-                Decimal => decimal.Parse(constant.Value),
+                Decimal => decimal.Parse(constant.Value, CultureInfo.InvariantCulture),
                 _ => constant.Value,
             };
 

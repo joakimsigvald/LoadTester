@@ -40,7 +40,7 @@ namespace Applique.LoadTester.Business.Runtime
                     VerifyObject(pp, ppObject, val as JObject, prefix);
                 else if (pp.Value is JArray ppArray)
                     VerifyArray(pp, ppArray, val as JArray, prefix);
-                else if (pp.TryGetValue(out var expectedValue) && expectedValue != null)
+                else if (_bindings.TryGetValue(pp, out var expectedValue))
                     VerifyValue($"{prefix}{pp.Name}", expectedValue, val.Value<string>());
             }
         }

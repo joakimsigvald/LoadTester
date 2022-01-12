@@ -29,12 +29,17 @@ namespace Applique.LoadTester.Business.Runtime
                     BindVariables(ppObject, val as JObject);
                 else if (pp.Value is JArray ppArray)
                     BindVariables(pp, ppArray, val as JArray);
-                else if (pp.TryGetVariableName(out var varName) && varName != null)
-                {
-                    var constant = new Constant(varName, val.Value<string>());
-                    Add(constant.Name, ValueRetriever.ValueOf(constant));
-                }
+                else if (TryGetVariableName(pp, out var varName) && varName != null)
+                    SetValue(varName, val);
             }
+        }
+
+        private void SetValue(string varName, JToken val)
+        {
+            var constant = new Constant(varName, val.Value<string>());
+            if (TryGet(constant.Name, out var existing))
+                constant.Type = ValueRetriever.GetType(existing);
+            Add(constant.Name, ValueRetriever.ValueOf(constant));
         }
 
         public void Add(string name, object value) => _variables[name] = value;
@@ -44,7 +49,20 @@ namespace Applique.LoadTester.Business.Runtime
             foreach (var kvp in bindings._variables)
                 _variables[kvp.Key] = kvp.Value;
         }
-        public object Get(string name) => _variables.TryGetValue(name, out var variable) ? variable : null;
+
+        public bool TryGetValue(JProperty p, out string value)
+        {
+            value = p.Value?.ToString();
+            if (!IsVariable(value))
+                return true;
+            var retVal = TryGet(Unembrace(value), out var val);
+            value = val?.ToString();
+            return retVal;
+        }
+
+        public object Get(string name) => TryGet(name, out var variable) ? variable : null;
+
+        private bool TryGet(string name, out object variable) => _variables.TryGetValue(name, out variable);
 
         public IEnumerator<Constant> GetEnumerator() => new BindingsEnumerator(_variables);
 
@@ -84,9 +102,6 @@ namespace Applique.LoadTester.Business.Runtime
                 _ => variableValue.ToString()
             };
 
-        private static string Embrace(string value) => "{{" + value + "}}";
-
-
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private static IDictionary<string, object> CreateVariables(IFileSystem fileSystem, TestSuite suite, IEnumerable<Constant> constants)
@@ -94,5 +109,27 @@ namespace Applique.LoadTester.Business.Runtime
             var valueRetriever = new ValueRetriever(fileSystem, suite);
             return constants.ToDictionary(c => c.Name, valueRetriever.GetValue);
         }
+
+        private static bool TryGetVariableName(JProperty p, out string varName)
+        {
+            varName = null;
+            if (!IsString(p))
+                return false;
+            var val = p.Value.Value<string>();
+            if (IsVariable(val))
+                varName = Unembrace(val);
+            return true;
+        }
+
+        private static string Embrace(string value) => "{{" + value + "}}";
+
+        private static string Unembrace(string variable) => variable[2..^2];
+
+        private static bool IsVariable(string val)
+            => val.StartsWith("{{") && val.EndsWith("}}");
+
+        private static bool IsString(JProperty p)
+            => p.Value.Type == JTokenType.String;
+
     }
 }

@@ -3,6 +3,7 @@ using Applique.LoadTester.Business.External;
 using Applique.LoadTester.Business.Result;
 using Applique.LoadTester.Business.Runtime;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace Applique.LoadTester.Home
 
         static async Task Main(string[] args)
         {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             _fileSystem = new FileSystem(args.FirstOrDefault());
             var testSuite = LoadTestSuite(args.Skip(1).FirstOrDefault());
             do
