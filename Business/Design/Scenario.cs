@@ -1,12 +1,12 @@
-﻿using Applique.LoadTester.Business.External;
-using Applique.LoadTester.Business.Runtime;
-using System;
+﻿using System;
+using System.Linq;
 
 namespace Applique.LoadTester.Business.Design
 {
     public class Scenario
     {
         public string Name { get; set; }
+        public string Template { get; set; }
         public bool Disabled { get; set; }
         public int Instances { get; set; } = 1;
         public string[] Load { get; set; } = Array.Empty<string>();
@@ -15,7 +15,16 @@ namespace Applique.LoadTester.Business.Design
         public Step[] Steps { get; set; }
         public Assert[] Asserts { get; set; } = Array.Empty<Assert>();
 
-        public RunnableScenario CreateInstance(IFileSystem fileSystem, TestSuite suite, int instanceId)
-            => new(fileSystem, suite, this, instanceId);
+        public Scenario MergeWith(Scenario scenario)
+            => new()
+            {
+                Asserts = Asserts,
+                Constants = Constants.Concat(scenario.Constants).ToArray(),
+                Instances = scenario.Instances,
+                Load = scenario.Load,
+                Name = scenario.Name,
+                Persist = scenario.Persist,
+                Steps = Steps
+            };
     }
 }

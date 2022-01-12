@@ -35,31 +35,40 @@ namespace Applique.LoadTester.Business.Runtime
 
         public async Task<ScenarioResult> Run(Scenario scenario)
         {
-            var instances = CreateRunnableScenarios(scenario);
+            var scenarioToRun = GetScenarioToRun(scenario);
+            var instances = CreateRunnableScenarios(scenarioToRun);
             var runs = await Task.WhenAll(instances.Select(i => i.Run()));
             if (!runs.All(r => r.Success))
-                return ScenarioResult.Failed(scenario, runs.First(r => !r.Success));
-            if (scenario.Persist.Any())
-                PersistBindings(instances.Last().Bindings, scenario.Persist);
-            return ScenarioResult.Succeeded(scenario,
+                return ScenarioResult.Failed(scenarioToRun, runs.First(r => !r.Success));
+            if (scenarioToRun.Persist.Any())
+                PersistBindings(instances.Last().Bindings, scenarioToRun.Persist);
+            return ScenarioResult.Succeeded(scenarioToRun,
                 runs.OrderBy(d => d.Duration)
                 .ToArray());
         }
 
-        private RunnableScenario[] CreateRunnableScenarios(Scenario scenario)
+        private RunnableScenario[] CreateRunnableScenarios(Scenario scenarioToRun)
         {
-            var loadedBindings = LoadBindings(scenario.Load);
-            return Enumerable.Range(1, scenario.Instances)
-                .Select(i => CreateRunnableScenario(scenario, i, loadedBindings))
+            var loadedBindings = LoadBindings(scenarioToRun.Load);
+            return Enumerable.Range(1, scenarioToRun.Instances)
+                .Select(i => CreateRunnableScenario(scenarioToRun, i, loadedBindings))
                 .ToArray();
         }
 
-        private RunnableScenario CreateRunnableScenario(Scenario scenario, int i, Bindings loadedBindings)
+        private RunnableScenario CreateRunnableScenario(Scenario scenarioToRun, int i, Bindings loadedBindings)
         {
-            var instance = scenario.CreateInstance(_fileSystem, _testSuite, i);
+            var instance = CreateInstance(scenarioToRun, i);
             instance.Bindings.MergeWith(loadedBindings);
             return instance;
         }
+
+        public RunnableScenario CreateInstance(Scenario scenarioToRun, int instanceId)
+            => new(_fileSystem, _testSuite, scenarioToRun, instanceId);
+
+        private Scenario GetScenarioToRun(Scenario scenario)
+            => scenario.Template == null
+            ? scenario
+            : _testSuite.GetTemplate(scenario.Template).MergeWith(scenario);
 
         private void PersistBindings(Bindings bindings, string[] propertiesToPersist)
             => _fileSystem.Write(BindingsPath, bindings

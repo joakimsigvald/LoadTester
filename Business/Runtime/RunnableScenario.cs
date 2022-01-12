@@ -66,7 +66,23 @@ namespace Applique.LoadTester.Business.Runtime
             => _suite.Constants.Concat(Scenario.Constants)
             .Prepend(new Constant("InstanceId", $"{_instanceId}"))
             .GroupBy(c => c.Name)
-            .Select(g => g.Last()) // override earlier declared constant with later declared constant
+            .Select(Merge)
             .ToArray();
+
+        private Constant Merge(IEnumerable<Constant> constants)
+        {
+            var arr = constants.ToArray();
+            if (arr.Length == 0)
+                return arr.Single();
+            var first = arr.First();
+            var last = arr.Last();
+            return new Constant
+            {
+                Conversions = first.Conversions,
+                Name = first.Name,
+                Type = first.Type,
+                Value = last.Value
+            };
+        }
     }
 }
