@@ -80,10 +80,10 @@ namespace Applique.LoadTester.Business.Runtime
         private Bindings LoadBindings(string[] loadProperties)
         {
             if (!_fileSystem.Exists(BindingsPath) || !loadProperties.Any())
-                return new Bindings(_fileSystem, _testSuite);
+                return new Bindings(_fileSystem, _testSuite, Array.Empty<Constant>(), Array.Empty<Model>());
             var constants = _fileSystem.Read<Constant[]>(BindingsPath);
             var constantsToLoad = constants.Join(loadProperties, b => b.Name, p => p, (b, _) => b).ToArray();
-            return new Bindings(_fileSystem, _testSuite, constantsToLoad);
+            return new Bindings(_fileSystem, _testSuite, constantsToLoad, Array.Empty<Model>());
         }
 
         private string BindingsPath => $"{_testSuite.Name}_Bindings";

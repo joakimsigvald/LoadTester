@@ -1,6 +1,7 @@
 ﻿using Applique.LoadTester.Business.Design;
 using Applique.LoadTester.Business.External;
 using Applique.LoadTester.Business.Runtime.Exceptions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
@@ -14,8 +15,8 @@ namespace Applique.LoadTester.Business.Runtime
     {
         private readonly IDictionary<string, object> _variables;
 
-        public Bindings(IFileSystem fileSystem, TestSuite suite, params Constant[] constants)
-            => _variables = CreateVariables(fileSystem, suite, constants);
+        public Bindings(IFileSystem fileSystem, TestSuite suite, Constant[] constants, Model[] models)
+            => _variables = CreateVariables(fileSystem, suite, constants, models);
 
         public string SubstituteVariables(string target) => _variables.Aggregate(target, Substitute);
 
@@ -66,6 +67,12 @@ namespace Applique.LoadTester.Business.Runtime
 
         public IEnumerator<Constant> GetEnumerator() => new BindingsEnumerator(_variables);
 
+        public string CreateContent(object body)
+            => body is null
+            ? null
+            : body is string s && IsVariable(s) ? CreateContent(Get(Unembrace(s)))
+            : SubstituteVariables(JsonConvert.SerializeObject(body));
+
         private void BindVariables(JProperty pp, JArray ppArray, JArray valArray)
         {
             if (ppArray.Count != valArray.Count)
@@ -104,10 +111,17 @@ namespace Applique.LoadTester.Business.Runtime
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private static IDictionary<string, object> CreateVariables(IFileSystem fileSystem, TestSuite suite, IEnumerable<Constant> constants)
+        private static IDictionary<string, object> CreateVariables(
+            IFileSystem fileSystem, 
+            TestSuite suite, 
+            IEnumerable<Constant> constants, 
+            Model[] models)
         {
             var valueRetriever = new ValueRetriever(fileSystem, suite);
-            return constants.ToDictionary(c => c.Name, valueRetriever.GetValue);
+            var variables = constants.ToDictionary(c => c.Name, valueRetriever.GetValue);
+            foreach (var model in models)
+                variables[model.Name] = model.Value;
+            return variables;
         }
 
         private static bool TryGetVariableName(JProperty p, out string varName)
@@ -126,7 +140,7 @@ namespace Applique.LoadTester.Business.Runtime
         private static string Unembrace(string variable) => variable[2..^2];
 
         private static bool IsVariable(string val)
-            => val.StartsWith("{{") && val.EndsWith("}}");
+            => val?.StartsWith("{{") == true && val?.EndsWith("}}") == true;
 
         private static bool IsString(JProperty p)
             => p.Value.Type == JTokenType.String;

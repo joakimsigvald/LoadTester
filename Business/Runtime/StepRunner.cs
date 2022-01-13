@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -32,15 +33,23 @@ namespace Applique.LoadTester.Business.Runtime
         private async Task HandleResponse(HttpResponseMessage response)
         {
             var body = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-                throw new RunFailed($"{response.StatusCode}: {body}");
+            ValidateResponseStatus(_step.Blueprint.ExpectedStatusCode, response.StatusCode, body);
             if (_step.Blueprint.Response != null)
-            {
-                var pattern = _step.Blueprint.Response;
-                var source = JsonConvert.DeserializeObject<JObject>(body);
-                _step.VerifyResponse(pattern, source);
-                _bindings.BindVariables(pattern, source);
-            }
+                HandleResponseBody(body);
+        }
+
+        private static void ValidateResponseStatus(HttpStatusCode expectedStatus, HttpStatusCode actualStatus, string body)
+        {
+            if (actualStatus != expectedStatus)
+                throw new RunFailed($"Expected {expectedStatus} but got {actualStatus}: {body}");
+        }
+
+        private void HandleResponseBody(string body)
+        {
+            var pattern = _step.Blueprint.Response;
+            var source = JsonConvert.DeserializeObject<JObject>(body);
+            _step.VerifyResponse(pattern, source);
+            _bindings.BindVariables(pattern, source);
         }
 
         private async Task<(HttpResponseMessage response, TimeSpan)> RunRun()

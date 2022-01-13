@@ -8,6 +8,7 @@ namespace Applique.LoadTester.Business.Design
     {
         public string Name { get; set; }
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
+        public Model[] Models { get; set; } = Array.Empty<Model>();
         public Service[] Services { get; set; }
         public Scenario[] Templates { private get; set; }
         public Scenario[] Scenarios { private get; set; }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Net;
 
 namespace Applique.LoadTester.Business.Design
 {
@@ -7,6 +8,7 @@ namespace Applique.LoadTester.Business.Design
     {
         public string Endpoint { get; set; }
         public string Args { get; set; } = string.Empty;
+        public HttpStatusCode ExpectedStatusCode { get; set; } = HttpStatusCode.OK;
         public dynamic Body { get; set; }
         public JObject Response { get; set; }
         public int DelayMs { get; set; } = 0;

@@ -23,7 +23,7 @@ namespace Applique.LoadTester.Business.Runtime
             _instanceId = instanceId;
             _suite = suite;
             Scenario = scenario;
-            Bindings = new Bindings(fileSystem, suite, GetConstants());
+            Bindings = new Bindings(fileSystem, suite, GetConstants(), GetModels());
             Steps = scenario.Steps.Select(Instanciate).ToArray();
         }
 
@@ -68,6 +68,8 @@ namespace Applique.LoadTester.Business.Runtime
             .GroupBy(c => c.Name)
             .Select(Merge)
             .ToArray();
+
+        private Model[] GetModels() => _suite.Models;
 
         private Constant Merge(IEnumerable<Constant> constants)
         {

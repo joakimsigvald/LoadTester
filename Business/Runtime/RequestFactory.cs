@@ -1,5 +1,4 @@
 ﻿using Applique.LoadTester.Business.Design;
-using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
 
@@ -26,7 +25,7 @@ namespace Applique.LoadTester.Business.Runtime
         private HttpRequestMessage GetRequest()
         {
             var url = GetUrl();
-            var content = CreateContent();
+            var content = _bindings.CreateContent(_step.Body);
             var requestMessage = new HttpRequestMessage(HttpMethod, url)
             {
                 Content = content == null ? null : new StringContent(content, Encoding.UTF8, "application/json")
@@ -37,11 +36,6 @@ namespace Applique.LoadTester.Business.Runtime
         }
 
         private HttpMethod HttpMethod => new (_endpoint.Method);
-
-        private string CreateContent()
-            => _step.Body is null
-            ? null
-            : _bindings.SubstituteVariables(JsonConvert.SerializeObject(_step.Body));
 
         private string GetUrl() => $"{GetPath()}{GetQuery()}";
 
