@@ -70,7 +70,7 @@ namespace Applique.LoadTester.Business.Runtime
         private Scenario GetScenarioToRun(Scenario scenario)
             => scenario.Template == null
             ? scenario
-            : _testSuite.GetTemplate(scenario.Template).MergeWith(scenario);
+            : GetScenarioToRun(_testSuite.GetTemplate(scenario.Template)).MergeWith(scenario);
 
         private void PersistBindings(Bindings bindings, string[] propertiesToPersist)
             => _fileSystem.Write(BindingsPath, bindings

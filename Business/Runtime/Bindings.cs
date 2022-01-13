@@ -99,7 +99,7 @@ namespace Applique.LoadTester.Business.Runtime
             (variableValue as string) switch
             {
                 CurrentTime => $"{DateTime.Now}",
-                _ => variableValue.ToString()
+                _ => $"{variableValue}"
             };
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

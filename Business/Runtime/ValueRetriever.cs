@@ -56,7 +56,9 @@ namespace Applique.LoadTester.Business.Design
             };
 
         private static object ParseValue(Constant constant)
-            => constant.Type switch
+            => constant.Value is null
+            ? null
+            : constant.Type switch
             {
                 DateTime => System.DateTime.Parse(constant.Value),
                 Int => int.Parse(constant.Value),
@@ -68,8 +70,8 @@ namespace Applique.LoadTester.Business.Design
             => _fileSystem.Write(GetSeedPath(constant), seed);
 
         private int? LoadSeed(Constant constant)
-            => _fileSystem.Exists(GetSeedPath(constant)) 
-            ? _fileSystem.Read<int>(GetSeedPath(constant)) 
+            => _fileSystem.Exists(GetSeedPath(constant))
+            ? _fileSystem.Read<int>(GetSeedPath(constant))
             : null;
 
         private string GetSeedPath(Constant constant) => $"{_testSuite.Name}_{constant.Name}_Seed";

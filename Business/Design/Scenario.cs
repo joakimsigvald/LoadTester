@@ -12,19 +12,19 @@ namespace Applique.LoadTester.Business.Design
         public string[] Load { get; set; } = Array.Empty<string>();
         public string[] Persist { get; set; } = Array.Empty<string>();
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
-        public Step[] Steps { get; set; }
+        public Step[] Steps { get; set; } = Array.Empty<Step>();
         public Assert[] Asserts { get; set; } = Array.Empty<Assert>();
 
         public Scenario MergeWith(Scenario scenario)
             => new()
             {
-                Asserts = Asserts,
+                Asserts = Asserts.Concat(scenario.Asserts).ToArray(),
                 Constants = Constants.Concat(scenario.Constants).ToArray(),
                 Instances = scenario.Instances,
                 Load = scenario.Load,
                 Name = scenario.Name,
                 Persist = scenario.Persist,
-                Steps = Steps
+                Steps = Steps.Concat(scenario.Steps).ToArray()
             };
     }
 }
