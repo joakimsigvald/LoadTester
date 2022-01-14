@@ -11,6 +11,8 @@ using static Applique.LoadTester.Business.Runtime.SpecialVariables;
 
 namespace Applique.LoadTester.Business.Runtime
 {
+    public enum Constraint { None, Mandatory }
+
     public class Bindings : IEnumerable<Constant>
     {
         private readonly IDictionary<string, object> _variables;
@@ -30,20 +32,26 @@ namespace Applique.LoadTester.Business.Runtime
                     BindVariables(ppObject, val as JObject);
                 else if (pp.Value is JArray ppArray)
                     BindVariables(pp, ppArray, val as JArray);
-                else if (TryGetVariableName(pp, out var varName) && varName != null)
-                    SetValue(varName, val);
+                else if (TryGetVariableName(pp, out var varExpression) && varExpression != null)
+                    SetValue(varExpression, val);
             }
         }
 
-        private void SetValue(string varName, JToken val)
+        public static Constraint GetConstraint(JProperty pp)
         {
-            var constant = new Constant(varName, val.Value<string>());
-            if (TryGet(constant.Name, out var existing))
-                constant.Type = ValueRetriever.GetType(existing);
-            Add(constant.Name, ValueRetriever.ValueOf(constant));
+            if (!IsString(pp))
+                return default;
+            var val = pp.Value.Value<string>();
+            if (!IsVariable(val))
+                return default;
+            var expr = Unembrace(val);
+            var parts = expr.Split(' ');
+            if (parts.Length != 2)
+                return default;
+            return ParseConstraint(parts[1]);
         }
 
-        public void Add(string name, object value) => _variables[name] = value;
+        public void Set(string name, object value) => _variables[name] = value;
 
         public void MergeWith(Bindings bindings)
         {
@@ -56,14 +64,12 @@ namespace Applique.LoadTester.Business.Runtime
             value = p.Value?.ToString();
             if (!IsVariable(value))
                 return true;
-            var retVal = TryGet(Unembrace(value), out var val);
+            var hasValue = TryGet(Unembrace(value), out var val);
             value = val?.ToString();
-            return retVal;
+            return hasValue;
         }
 
         public object Get(string name) => TryGet(name, out var variable) ? variable : null;
-
-        private bool TryGet(string name, out object variable) => _variables.TryGetValue(name, out variable);
 
         public IEnumerator<Constant> GetEnumerator() => new BindingsEnumerator(_variables);
 
@@ -72,6 +78,20 @@ namespace Applique.LoadTester.Business.Runtime
             ? null
             : body is string s && IsVariable(s) ? CreateContent(Get(Unembrace(s)))
             : SubstituteVariables(JsonConvert.SerializeObject(body));
+
+        private static Constraint ParseConstraint(string str)
+            => Enum.TryParse<Constraint>(str, out var val) ? val : default;
+
+        private void SetValue(string varExpression, JToken val)
+        {
+            var constant = new Constant(varExpression, val.Value<string>());
+            if (!varExpression.StartsWith(':') // Replace existing constant, including type
+                && TryGet(constant.Name, out var existing))
+                constant.Type = ValueRetriever.GetType(existing);
+            Set(constant.Name, ValueRetriever.ValueOf(constant));
+        }
+
+        private bool TryGet(string name, out object variable) => _variables.TryGetValue(name, out variable);
 
         private void BindVariables(JProperty pp, JArray ppArray, JArray valArray)
         {
@@ -112,9 +132,9 @@ namespace Applique.LoadTester.Business.Runtime
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private static IDictionary<string, object> CreateVariables(
-            IFileSystem fileSystem, 
-            TestSuite suite, 
-            IEnumerable<Constant> constants, 
+            IFileSystem fileSystem,
+            TestSuite suite,
+            IEnumerable<Constant> constants,
             Model[] models)
         {
             var valueRetriever = new ValueRetriever(fileSystem, suite);

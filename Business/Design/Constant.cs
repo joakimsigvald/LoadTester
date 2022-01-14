@@ -7,12 +7,11 @@ namespace Applique.LoadTester.Business.Design
     {
         public Constant() { }
 
-        public Constant(string nameAndType, string value)
+        public Constant(string constantExpression, string value)
         {
-            var parts = nameAndType.Split(':');
+            constantExpression = constantExpression.Split(' ')[0]; // skip constraints
+            var parts = constantExpression.Split(':', StringSplitOptions.RemoveEmptyEntries);
             Name = parts[0];
-            if (value?.StartsWith("Seed(") == true)
-                throw new NotImplementedException();
             Value = value;
             if (parts.Length == 2)
             {

@@ -40,8 +40,27 @@ namespace Applique.LoadTester.Business.Runtime
                     VerifyObject(pp, ppObject, val as JObject, prefix);
                 else if (pp.Value is JArray ppArray)
                     VerifyArray(pp, ppArray, val as JArray, prefix);
-                else if (_bindings.TryGetValue(pp, out var expectedValue))
-                    VerifyValue($"{prefix}{pp.Name}", expectedValue, val.Value<string>());
+                else
+                    VerifyValue($"{prefix}{pp.Name}", pp, val?.ToString());
+            }
+        }
+
+        private void VerifyValue(string prefix, JProperty pp, string actualValue)
+        {
+            if (!_bindings.TryGetValue(pp, out var expectedValue))
+                CheckConstraints(prefix, Bindings.GetConstraint(pp), actualValue);
+            else if (expectedValue != actualValue)
+                throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");
+        }
+
+        private static void CheckConstraints(string property, Constraint constraint, string actualValue)
+        {
+            switch (constraint) {
+                case Constraint.Mandatory:
+                    if (string.IsNullOrEmpty(actualValue))
+                        throw new VerificationFailed(property, $"Constrain violated: {constraint}, value: {actualValue}");
+                    break;
+                default: break;
             }
         }
 
@@ -54,12 +73,6 @@ namespace Applique.LoadTester.Business.Runtime
                 throw new VerificationFailed($"{prefix}{pp.Name}", $"Array have different lengths: {valArray.Count}, expected {ppArray.Count}");
             for (var i = 0; i < valArray.Count; i++)
                 VerifyResponse((JObject)ppArray[i], (JObject)valArray[i], $"{prefix}{pp.Name}.");
-        }
-
-        private static void VerifyValue(string property, string expectedValue, string actualValue)
-        {
-            if (expectedValue != actualValue)
-                throw new VerificationFailed(property, $"Unexpected response: {actualValue}, expected {expectedValue}");
         }
     }
 }
