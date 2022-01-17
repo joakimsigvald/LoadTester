@@ -64,7 +64,10 @@ namespace Applique.LoadTester.Business.Runtime
             value = p.Value?.ToString();
             if (!IsVariable(value))
                 return true;
-            var hasValue = TryGet(Unembrace(value), out var val);
+            var constant = new Constant(Unembrace(value), null);
+            if (constant.Overshadow)
+                return false;
+            var hasValue = TryGet(constant.Name, out var val);
             value = val?.ToString();
             return hasValue;
         }
@@ -151,7 +154,7 @@ namespace Applique.LoadTester.Business.Runtime
                 return false;
             var val = p.Value.Value<string>();
             if (IsVariable(val))
-                varName = Unembrace(val);
+                varName = new Constant(Unembrace(val), null).Name;
             return true;
         }
 

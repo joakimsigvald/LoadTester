@@ -8,7 +8,7 @@ namespace Applique.LoadTester.Business.Design
     {
         public string Endpoint { get; set; }
         public string Args { get; set; } = string.Empty;
-        public HttpStatusCode ExpectedStatusCode { get; set; } = HttpStatusCode.OK;
+        public HttpStatusCode[] ExpectedStatusCodes { get; set; } = new[] { HttpStatusCode.OK };
         public dynamic Body { get; set; }
         public JObject Response { get; set; }
         public int DelayMs { get; set; } = 0;

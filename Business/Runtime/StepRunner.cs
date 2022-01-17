@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -33,15 +34,9 @@ namespace Applique.LoadTester.Business.Runtime
         private async Task HandleResponse(HttpResponseMessage response)
         {
             var body = await response.Content.ReadAsStringAsync();
-            ValidateResponseStatus(_step.Blueprint.ExpectedStatusCode, response.StatusCode, body);
+            ValidateResponseStatus(response.StatusCode, body);
             if (_step.Blueprint.Response != null)
                 HandleResponseBody(body);
-        }
-
-        private static void ValidateResponseStatus(HttpStatusCode expectedStatus, HttpStatusCode actualStatus, string body)
-        {
-            if (actualStatus != expectedStatus)
-                throw new RunFailed($"Expected {expectedStatus} but got {actualStatus}: {body}");
         }
 
         private void HandleResponseBody(string body)
@@ -73,7 +68,7 @@ namespace Applique.LoadTester.Business.Runtime
 
         public async Task<bool> IsSuccessful(HttpResponseMessage response)
         {
-            if (!response.IsSuccessStatusCode)
+            if (!IsResponseStatusValid(response.StatusCode))
                 return false;
             var body = await response.Content.ReadAsStringAsync();
             var pattern = _step.Blueprint.Response;
@@ -89,5 +84,14 @@ namespace Applique.LoadTester.Business.Runtime
             }
             return true;
         }
+
+        private void ValidateResponseStatus(HttpStatusCode actualStatus, string body)
+        {
+            if (!IsResponseStatusValid(actualStatus))
+                throw new RunFailed($"Expected {string.Join(", ", _step.Blueprint.ExpectedStatusCodes)} but got {actualStatus}: {body}");
+        }
+
+        private bool IsResponseStatusValid(HttpStatusCode actualStatus) 
+            => _step.Blueprint.ExpectedStatusCodes.Contains(actualStatus);
     }
 }

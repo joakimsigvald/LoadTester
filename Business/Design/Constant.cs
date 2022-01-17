@@ -11,6 +11,7 @@ namespace Applique.LoadTester.Business.Design
         {
             constantExpression = constantExpression.Split(' ')[0]; // skip constraints
             var parts = constantExpression.Split(':', StringSplitOptions.RemoveEmptyEntries);
+            Overshadow = constantExpression.StartsWith(':');
             Name = parts[0];
             Value = value;
             if (parts.Length == 2)
@@ -23,6 +24,7 @@ namespace Applique.LoadTester.Business.Design
         }
 
         public string Name { get; set; }
+        public bool Overshadow { get; set; }
         public string Value { get; set; }
         public string Type { get; set; } = "string";
         public string[] Conversions { get; set; } = Array.Empty<string>();
