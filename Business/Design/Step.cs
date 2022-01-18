@@ -10,7 +10,7 @@ namespace Applique.LoadTester.Business.Design
         public string Args { get; set; } = string.Empty;
         public HttpStatusCode[] ExpectedStatusCodes { get; set; } = new[] { HttpStatusCode.OK };
         public dynamic Body { get; set; }
-        public JObject Response { get; set; }
+        public JToken Response { get; set; }
         public int DelayMs { get; set; } = 0;
         public int Times { get; set; } = 1;
         public TimeSpan? _delay;

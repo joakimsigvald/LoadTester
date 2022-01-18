@@ -1,6 +1,8 @@
 ﻿using Applique.LoadTester.Business.Design;
 using Applique.LoadTester.Business.Runtime.Exceptions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -30,7 +32,19 @@ namespace Applique.LoadTester.Business.Runtime
             return _client.SendAsync(request);
         }
 
-        public void VerifyResponse(JObject pattern, JObject source, string prefix = "")
+        public JToken VerifyResponse(JToken pattern, string source, string prefix = "")
+        {
+            JToken responseToken;
+            if (pattern is JObject pObject)
+                VerifyModel(pObject, (JObject)(responseToken = JsonConvert.DeserializeObject<JObject>(source)), prefix);
+            else if (pattern is JArray pArray)
+                VerifyArray(pArray, (JArray)(responseToken = JsonConvert.DeserializeObject<JArray>(source)), prefix);
+            else throw new NotImplementedException(
+                $"Response is expected to be either object or array, but was {source}");
+            return responseToken;
+        }
+
+        private void VerifyModel(JObject pattern, JObject source, string prefix = "")
         {
             var patternProperties = pattern.Properties();
             foreach (var pp in patternProperties)
@@ -39,7 +53,7 @@ namespace Applique.LoadTester.Business.Runtime
                 if (pp.Value is JObject ppObject)
                     VerifyObject(pp, ppObject, val as JObject, prefix);
                 else if (pp.Value is JArray ppArray)
-                    VerifyArray(pp, ppArray, val as JArray, prefix);
+                    VerifyArray(ppArray, val as JArray, $"{prefix}{pp.Name}");
                 else
                     VerifyValue($"{prefix}{pp.Name}", pp, val?.ToString());
             }
@@ -55,7 +69,8 @@ namespace Applique.LoadTester.Business.Runtime
 
         private static void CheckConstraints(string property, Constraint constraint, string actualValue)
         {
-            switch (constraint) {
+            switch (constraint)
+            {
                 case Constraint.Mandatory:
                     if (string.IsNullOrEmpty(actualValue))
                         throw new VerificationFailed(property, $"Constrain violated: {constraint}, value: {actualValue}");
@@ -65,14 +80,14 @@ namespace Applique.LoadTester.Business.Runtime
         }
 
         private void VerifyObject(JProperty pp, JObject ppObject, JObject valObject, string prefix)
-            => VerifyResponse(ppObject, valObject, $"{prefix}{pp.Name}.");
+            => VerifyModel(ppObject, valObject, $"{prefix}{pp.Name}.");
 
-        private void VerifyArray(JProperty pp, JArray ppArray, JArray valArray, string prefix)
+        private void VerifyArray(JArray ppArray, JArray valArray, string prefix)
         {
             if (ppArray.Count != valArray.Count)
-                throw new VerificationFailed($"{prefix}{pp.Name}", $"Array have different lengths: {valArray.Count}, expected {ppArray.Count}");
+                throw new VerificationFailed(prefix, $"Array have different lengths: {valArray.Count}, expected {ppArray.Count}");
             for (var i = 0; i < valArray.Count; i++)
-                VerifyResponse((JObject)ppArray[i], (JObject)valArray[i], $"{prefix}{pp.Name}.");
+                VerifyModel((JObject)ppArray[i], (JObject)valArray[i], $"{prefix}.");
         }
     }
 }

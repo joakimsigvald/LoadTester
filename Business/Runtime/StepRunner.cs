@@ -42,9 +42,10 @@ namespace Applique.LoadTester.Business.Runtime
         private void HandleResponseBody(string body)
         {
             var pattern = _step.Blueprint.Response;
-            var source = JsonConvert.DeserializeObject<JObject>(body);
-            _step.VerifyResponse(pattern, source);
-            _bindings.BindVariables(pattern, source);
+            var responseToken = _step.VerifyResponse(pattern, body);
+            if (pattern is JObject pObject)
+                _bindings.BindVariables(pObject, (JObject)responseToken);
+            //else throw new NotImplementedException("Cannot bind variables from array");
         }
 
         private async Task<(HttpResponseMessage response, TimeSpan)> RunRun()
@@ -76,7 +77,7 @@ namespace Applique.LoadTester.Business.Runtime
                 return true;
             try
             {
-                _step.VerifyResponse(pattern, JsonConvert.DeserializeObject<JObject>(body));
+                _step.VerifyResponse(pattern, body);
             }
             catch (VerificationFailed)
             {
@@ -91,7 +92,7 @@ namespace Applique.LoadTester.Business.Runtime
                 throw new RunFailed($"Expected {string.Join(", ", _step.Blueprint.ExpectedStatusCodes)} but got {actualStatus}: {body}");
         }
 
-        private bool IsResponseStatusValid(HttpStatusCode actualStatus) 
+        private bool IsResponseStatusValid(HttpStatusCode actualStatus)
             => _step.Blueprint.ExpectedStatusCodes.Contains(actualStatus);
     }
 }
