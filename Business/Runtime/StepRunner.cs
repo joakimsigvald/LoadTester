@@ -44,8 +44,20 @@ namespace Applique.LoadTester.Business.Runtime
             var pattern = _step.Blueprint.Response;
             var responseToken = _step.VerifyResponse(pattern, body);
             if (pattern is JObject pObject)
-                _bindings.BindVariables(pObject, (JObject)responseToken);
-            //else throw new NotImplementedException("Cannot bind variables from array");
+                BindObject(pObject, (JObject)responseToken);
+            else if (pattern is JArray pArray)
+                BindArray(pArray, (JArray)responseToken);
+        }
+
+        private void BindObject(JObject pObject, JObject val)
+            => _bindings.BindVariables(pObject, val);
+
+        private void BindArray(JArray pArray, JArray valArray)
+        {
+            if (pArray.Count != valArray.Count)
+                throw new BindingFailed("", $"Array have different lengths: {valArray.Count}, expected {pArray.Count}");
+            for (var i = 0; i < valArray.Count; i++)
+                BindObject((JObject)pArray[i], (JObject)valArray[i]);
         }
 
         private async Task<(HttpResponseMessage response, TimeSpan)> RunRun()
