@@ -111,9 +111,12 @@ namespace Applique.LoadTester.Business.Runtime
 
         private static string SubstituteInt(string target, KeyValuePair<string, object> variable)
         {
-            var from = $"\"{Embrace(variable.Key)}\"";
+            var from1 = $"\"{Embrace(variable.Key)}\"";
+            var from2 = $"'{Embrace(variable.Key)}'"; // when we want to embedd an inte in a string, the variable has to be surrounded by single quotes
             var to = $"{variable.Value}";
-            var res = SubstituteValue(target.Replace(from, to), variable);
+            var res1 = target.Replace(from1, to);
+            var res2 = res1.Replace(from2, to);
+            var res = SubstituteValue(res2, variable);
             return res;
         }
 
