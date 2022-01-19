@@ -1,31 +1,37 @@
 ﻿using Applique.LoadTester.Business.Design;
+using Applique.LoadTester.Business.Runtime;
 using System.Net.Http;
 using System.Text;
 
-namespace Applique.LoadTester.Business.Runtime
+namespace Applique.LoadTester.External
 {
-    public class RequestFactory
+    internal class RequestFactory
     {
         private readonly string _basePath;
         private readonly Endpoint _endpoint;
         private readonly Bindings _bindings;
-        private readonly Step _step;
+        private readonly string _args;
 
-        public static HttpRequestMessage GetRequest(string basePath, Endpoint endpoint, Step step, Bindings bindings)
-            => new RequestFactory(basePath, endpoint, step, bindings).GetRequest();
+        public static HttpRequestMessage GetRequest(
+            string basePath,
+            Endpoint endpoint,
+            Bindings bindings,
+            object body,
+            string args)
+            => new RequestFactory(basePath, endpoint, bindings, args).GetRequest(body);
 
-        private RequestFactory(string basePath, Endpoint endpoint, Step step, Bindings bindings)
+        private RequestFactory(string basePath, Endpoint endpoint, Bindings bindings, string args)
         {
             _basePath = basePath;
             _endpoint = endpoint;
-            _step = step;
             _bindings = bindings;
+            _args = args;
         }
 
-        private HttpRequestMessage GetRequest()
+        private HttpRequestMessage GetRequest(object body)
         {
             var url = GetUrl();
-            var content = _bindings.CreateContent(_step.Body);
+            var content = _bindings.CreateContent(body);
             var requestMessage = new HttpRequestMessage(HttpMethod, url)
             {
                 Content = content == null ? null : new StringContent(content, Encoding.UTF8, "application/json")
@@ -35,12 +41,12 @@ namespace Applique.LoadTester.Business.Runtime
             return requestMessage;
         }
 
-        private HttpMethod HttpMethod => new (_endpoint.Method);
+        private HttpMethod HttpMethod => new(_endpoint.Method);
 
         private string GetUrl() => $"{GetPath()}{GetQuery()}";
 
         private string GetPath() => $"{_basePath}/{_bindings.SubstituteVariables(_endpoint.Path)}".Trim('/');
 
-        private string GetQuery() => $"?{_bindings.SubstituteVariables(_step.Args)}".TrimEnd('?');
+        private string GetQuery() => $"?{_bindings.SubstituteVariables(_args)}".TrimEnd('?');
     }
 }

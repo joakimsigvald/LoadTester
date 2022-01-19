@@ -10,11 +10,13 @@ namespace Applique.LoadTester.Business.Runtime
 {
     public class TestSuiteRunner
     {
+        private readonly IRestCallerFactory _restCallerFactory;
         private readonly IFileSystem _fileSystem;
         private readonly TestSuite _testSuite;
 
-        public TestSuiteRunner(IFileSystem fileSystem, TestSuite suite)
+        public TestSuiteRunner(IRestCallerFactory restCallerFactory, IFileSystem fileSystem, TestSuite suite)
         {
+            _restCallerFactory = restCallerFactory;
             _fileSystem = fileSystem;
             _testSuite = suite;
         }
@@ -64,8 +66,8 @@ namespace Applique.LoadTester.Business.Runtime
             return instance;
         }
 
-        public RunnableScenario CreateInstance(Scenario scenarioToRun, int instanceId)
-            => new(_fileSystem, _testSuite, scenarioToRun, instanceId);
+        private RunnableScenario CreateInstance(Scenario scenarioToRun, int instanceId)
+            => new(_restCallerFactory, _fileSystem, _testSuite, scenarioToRun, instanceId);
 
         private Scenario GetScenarioToRun(Scenario scenario)
             => scenario.Template == null

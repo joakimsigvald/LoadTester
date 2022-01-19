@@ -14,17 +14,28 @@ namespace Applique.LoadTester.Business.Runtime
     {
         public Scenario Scenario { get; set; }
         public RunnableStep[] Steps { get; private set; }
+
+        private readonly IRestCallerFactory _restCallerFactory;
         private readonly TestSuite _suite;
         private readonly int _instanceId;
         public Bindings Bindings { get; private set; }
 
-        public RunnableScenario(IFileSystem fileSystem, TestSuite suite, Scenario scenario, int instanceId)
+        public RunnableScenario(
+            IRestCallerFactory restCallerFactory, 
+            IFileSystem fileSystem, 
+            TestSuite suite, 
+            Scenario scenario, 
+            int instanceId)
         {
             _instanceId = instanceId;
+            _restCallerFactory = restCallerFactory;
             _suite = suite;
             Scenario = scenario;
             Bindings = new Bindings(fileSystem, suite, GetConstants(), GetModels());
-            Steps = scenario.Steps.Select(Instanciate).ToArray();
+            Steps = scenario.Steps
+                .Select(suite.GetStepToRun)
+                .Select(Instanciate)
+                .ToArray();
         }
 
         private RunnableStep Instanciate(Step step)
@@ -34,7 +45,8 @@ namespace Applique.LoadTester.Business.Runtime
             var endpointName = pair[1];
             var service = _suite.Services.Single(s => s.Name == serviceName);
             var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
-            return new RunnableStep(step, service, endpoint, Bindings);
+            var restCaller = _restCallerFactory.Create(service, endpoint, Bindings);
+            return new RunnableStep(restCaller, step, service, endpoint, Bindings);
         }
 
         public async Task<ScenarioInstanceResult> Run()
@@ -45,7 +57,7 @@ namespace Applique.LoadTester.Business.Runtime
             {
                 try
                 {
-                    var elapsed = await StepRunner.Run(step, Bindings);
+                    var elapsed = await step.Run();
                     stepTimes.Add(elapsed);
                 }
                 catch (RunFailed sf)

@@ -10,6 +10,7 @@ namespace Applique.LoadTester.Business.Design
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
         public Model[] Models { get; set; } = Array.Empty<Model>();
         public Service[] Services { get; set; }
+        public StepTemplate[] StepTemplates { private get; set; }
         public Scenario[] Templates { private get; set; }
         public Scenario[] Scenarios { private get; set; }
 
@@ -18,5 +19,12 @@ namespace Applique.LoadTester.Business.Design
         public Scenario GetTemplate(string name)
             => Templates.SingleOrDefault(t => t.Name == name)
             ?? throw new NotImplementedException($"Template: {name}");
+
+        public Step GetStepToRun(Step step)
+            => step.Template is null ? step : GetStepTemplate(step.Template).Step;
+
+        private StepTemplate GetStepTemplate(string name)
+            => StepTemplates.SingleOrDefault(t => t.Name == name)
+            ?? throw new NotImplementedException($"StepTemplate: {name}");
     }
 }

@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Applique.LoadTester.Business.External;
+using Newtonsoft.Json;
 using System.IO;
 
-namespace Applique.LoadTester.Business.External
+namespace Applique.LoadTester.External
 {
     public class FileSystem : IFileSystem
     {

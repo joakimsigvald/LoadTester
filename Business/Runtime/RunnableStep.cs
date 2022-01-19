@@ -1,8 +1,9 @@
 ﻿using Applique.LoadTester.Business.Design;
 using Applique.LoadTester.Business.Runtime.Exceptions;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -10,84 +11,77 @@ namespace Applique.LoadTester.Business.Runtime
 {
     public class RunnableStep
     {
-        private readonly HttpClient _client;
         private readonly Endpoint _endpoint;
         private readonly Bindings _bindings;
+        private readonly IRestCaller _restCaller;
+        private readonly StepVerifier _stepVerifier;
 
         public Step Blueprint { get; private set; }
         public Service Service { get; }
 
-        public RunnableStep(Step step, Service service, Endpoint endpoint, Bindings bindings)
+        public RunnableStep(IRestCaller restCaller, Step step, Service service, Endpoint endpoint, Bindings bindings)
         {
             _endpoint = endpoint;
             _bindings = bindings;
-            _client = service.CreateClient(_bindings);
+            _restCaller = restCaller;
             Blueprint = step;
             Service = service;
+            _stepVerifier = new StepVerifier(step, bindings);
         }
 
-        public Task<HttpResponseMessage> Run()
+        public async Task<TimeSpan> Run()
         {
-            var request = RequestFactory.GetRequest(Service.BasePath, _endpoint, Blueprint, _bindings);
-            return _client.SendAsync(request);
+            var sw = Stopwatch.StartNew();
+            HttpResponseMessage response = await DoRun();
+            sw.Stop();
+            var elapsed = sw.Elapsed;
+            await HandleResponse(response);
+            return elapsed;
         }
 
-        public JToken VerifyResponse(JToken pattern, string source, string prefix = "")
+        private async Task HandleResponse(HttpResponseMessage response)
         {
-            JToken responseToken;
+            var body = await response.Content.ReadAsStringAsync();
+            if (!_stepVerifier.IsResponseStatusValid(response.StatusCode))
+                throw new RunFailed($"Expected {string.Join(", ", Blueprint.ExpectedStatusCodes)} but got {response.StatusCode}: {body}");
+            if (Blueprint.Response != null)
+                HandleResponseBody(body);
+        }
+
+        private void HandleResponseBody(string body)
+        {
+            var pattern = Blueprint.Response;
+            var responseToken = _stepVerifier.VerifyResponse(pattern, body);
             if (pattern is JObject pObject)
-                VerifyModel(pObject, (JObject)(responseToken = JsonConvert.DeserializeObject<JObject>(source)), prefix);
+                BindObject(pObject, (JObject)responseToken);
             else if (pattern is JArray pArray)
-                VerifyArray(pArray, (JArray)(responseToken = JsonConvert.DeserializeObject<JArray>(source)), prefix);
-            else throw new NotImplementedException(
-                $"Response is expected to be either object or array, but was {source}");
-            return responseToken;
+                BindArray(pArray, (JArray)responseToken);
         }
 
-        private void VerifyModel(JObject pattern, JObject source, string prefix = "")
-        {
-            var patternProperties = pattern.Properties();
-            foreach (var pp in patternProperties)
-            {
-                var val = source.GetValue(pp.Name);
-                if (pp.Value is JObject ppObject)
-                    VerifyObject(pp, ppObject, val as JObject, prefix);
-                else if (pp.Value is JArray ppArray)
-                    VerifyArray(ppArray, val as JArray, $"{prefix}{pp.Name}");
-                else
-                    VerifyValue($"{prefix}{pp.Name}", pp, val?.ToString());
-            }
-        }
+        private void BindObject(JObject pObject, JObject val)
+            => _bindings.BindVariables(pObject, val);
 
-        private void VerifyValue(string prefix, JProperty pp, string actualValue)
+        private void BindArray(JArray pArray, JArray valArray)
         {
-            if (!_bindings.TryGetValue(pp, out var expectedValue))
-                CheckConstraints(prefix, Bindings.GetConstraint(pp), actualValue);
-            else if (expectedValue != actualValue)
-                throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");
-        }
-
-        private static void CheckConstraints(string property, Constraint constraint, string actualValue)
-        {
-            switch (constraint)
-            {
-                case Constraint.Mandatory:
-                    if (string.IsNullOrEmpty(actualValue))
-                        throw new VerificationFailed(property, $"Constrain violated: {constraint}, value: {actualValue}");
-                    break;
-                default: break;
-            }
-        }
-
-        private void VerifyObject(JProperty pp, JObject ppObject, JObject valObject, string prefix)
-            => VerifyModel(ppObject, valObject, $"{prefix}{pp.Name}.");
-
-        private void VerifyArray(JArray ppArray, JArray valArray, string prefix)
-        {
-            if (ppArray.Count != valArray.Count)
-                throw new VerificationFailed(prefix, $"Array have different lengths: {valArray.Count}, expected {ppArray.Count}");
+            if (pArray.Count != valArray.Count)
+                throw new BindingFailed("", $"Array have different lengths: {valArray.Count}, expected {pArray.Count}");
             for (var i = 0; i < valArray.Count; i++)
-                VerifyModel((JObject)ppArray[i], (JObject)valArray[i], $"{prefix}.");
+                BindObject((JObject)pArray[i], (JObject)valArray[i]);
+        }
+
+        private async Task<HttpResponseMessage> DoRun()
+        {
+            HttpResponseMessage lastResponse = null;
+            for (int i = 0; i < Blueprint.Times; i++)
+            {
+                await Task.Delay(Blueprint.Delay);
+                Console.WriteLine($"Calling {Blueprint.Endpoint}, attempt {i + 1}");
+                lastResponse = await _restCaller.Call(Blueprint.Body, Blueprint.Args);
+                var isSuccessful = await _stepVerifier.IsSuccessful(lastResponse);
+                if (isSuccessful ? Blueprint.BreakOnSuccess : !Blueprint.RetryOnFail)
+                    break;
+            }
+            return lastResponse;
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Applique.LoadTester.Business.Design
 {
     public class Step
     {
+        public string Template { get; set; }
         public string Endpoint { get; set; }
         public string Args { get; set; } = string.Empty;
         public HttpStatusCode[] ExpectedStatusCodes { get; set; } = new[] { HttpStatusCode.OK };

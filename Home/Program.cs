@@ -2,6 +2,7 @@
 using Applique.LoadTester.Business.External;
 using Applique.LoadTester.Business.Result;
 using Applique.LoadTester.Business.Runtime;
+using Applique.LoadTester.External;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace Applique.LoadTester.Home
     class Program
     {
         private static IFileSystem _fileSystem;
+        private static IRestCallerFactory _restCallerFactory;
 
         static async Task Main(string[] args)
         {
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             _fileSystem = new FileSystem(args.FirstOrDefault());
+            _restCallerFactory = new RestCallerFactory();
             var testSuite = LoadTestSuite(args.Skip(1).FirstOrDefault());
             do
             {
@@ -67,6 +70,6 @@ namespace Applique.LoadTester.Home
         }
 
         private static Task<TestSuiteResult> RunTestSuite(TestSuite testSuite)
-            => new TestSuiteRunner(_fileSystem, testSuite).Run();
+            => new TestSuiteRunner(_restCallerFactory, _fileSystem, testSuite).Run();
     }
 }
