@@ -13,22 +13,25 @@ namespace Applique.LoadTester.Business.Runtime
     public class RunnableScenario
     {
         public Scenario Scenario { get; set; }
-        public RunnableStep[] Steps { get; private set; }
+        public IRunnableStep[] Steps { get; private set; }
 
         private readonly IRestCallerFactory _restCallerFactory;
+        private readonly IBlobRepositoryFactory _blobFactory;
         private readonly TestSuite _suite;
         private readonly int _instanceId;
         public Bindings Bindings { get; private set; }
 
         public RunnableScenario(
-            IRestCallerFactory restCallerFactory, 
-            IFileSystem fileSystem, 
-            TestSuite suite, 
-            Scenario scenario, 
+            IFileSystem fileSystem,
+            IRestCallerFactory restCallerFactory,
+            IBlobRepositoryFactory blobFactory,
+            TestSuite suite,
+            Scenario scenario,
             int instanceId)
         {
             _instanceId = instanceId;
             _restCallerFactory = restCallerFactory;
+            _blobFactory = blobFactory;
             _suite = suite;
             Scenario = scenario;
             Bindings = new Bindings(fileSystem, suite, GetConstants(), GetModels());
@@ -38,16 +41,13 @@ namespace Applique.LoadTester.Business.Runtime
                 .ToArray();
         }
 
-        private RunnableStep Instanciate(Step step)
-        {
-            var pair = step.Endpoint.Split('.');
-            var serviceName = pair[0];
-            var endpointName = pair[1];
-            var service = _suite.Services.Single(s => s.Name == serviceName);
-            var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
-            var restCaller = _restCallerFactory.Create(service, endpoint, Bindings);
-            return new RunnableStep(restCaller, step, service, endpoint, Bindings);
-        }
+        private IRunnableStep Instanciate(Step step)
+            => step.Type switch
+            {
+                StepType.Rest => RestStep.Create(_restCallerFactory, _suite, step, Bindings),
+                StepType.Blob => BlobStep.Create(_blobFactory,_suite, step, Bindings),
+                StepType t => throw new NotImplementedException($"{t}")
+            };
 
         public async Task<ScenarioInstanceResult> Run()
         {

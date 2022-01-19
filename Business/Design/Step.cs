@@ -4,8 +4,11 @@ using System.Net;
 
 namespace Applique.LoadTester.Business.Design
 {
+    public enum StepType { Rest, Blob }
+
     public class Step
     {
+        public StepType Type { get; set; } = StepType.Rest;
         public string Template { get; set; }
         public string Endpoint { get; set; }
         public string Args { get; set; } = string.Empty;

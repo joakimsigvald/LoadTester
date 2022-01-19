@@ -10,11 +10,16 @@ namespace Applique.LoadTester.Business.Design
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
         public Model[] Models { get; set; } = Array.Empty<Model>();
         public Service[] Services { get; set; }
+        public Blob[] Blobs { get; set; }
         public StepTemplate[] StepTemplates { private get; set; }
         public Scenario[] Templates { private get; set; }
         public Scenario[] Scenarios { private get; set; }
 
         public IEnumerable<Scenario> RunnableScenarios => Scenarios.Where(scenario => !scenario.Disabled);
+
+        public Blob GetBlob(string name)
+            => Blobs.SingleOrDefault(t => t.Name == name)
+            ?? throw new NotImplementedException($"Blob: {name}");
 
         public Scenario GetTemplate(string name)
             => Templates.SingleOrDefault(t => t.Name == name)

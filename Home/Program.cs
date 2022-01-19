@@ -14,12 +14,14 @@ namespace Applique.LoadTester.Home
     {
         private static IFileSystem _fileSystem;
         private static IRestCallerFactory _restCallerFactory;
+        private static IBlobRepositoryFactory _blobRepositoryFactory;
 
         static async Task Main(string[] args)
         {
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             _fileSystem = new FileSystem(args.FirstOrDefault());
             _restCallerFactory = new RestCallerFactory();
+            _blobRepositoryFactory = new BlobRepositoryFactory();
             var testSuite = LoadTestSuite(args.Skip(1).FirstOrDefault());
             do
             {
@@ -70,6 +72,6 @@ namespace Applique.LoadTester.Home
         }
 
         private static Task<TestSuiteResult> RunTestSuite(TestSuite testSuite)
-            => new TestSuiteRunner(_restCallerFactory, _fileSystem, testSuite).Run();
+            => new TestSuiteRunner(_fileSystem, _restCallerFactory, _blobRepositoryFactory, testSuite).Run();
     }
 }
