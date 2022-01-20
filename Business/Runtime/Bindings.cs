@@ -59,17 +59,17 @@ namespace Applique.LoadTester.Business.Runtime
                 _variables[kvp.Key] = kvp.Value;
         }
 
-        public bool TryGetValue(JProperty p, out string value)
+        public bool TrySubstituteVariable(string target, out string value)
         {
-            value = p.Value?.ToString();
-            if (!IsVariable(value))
-                return true;
-            var constant = new Constant(Unembrace(value), null);
+            value = target;
+            if (!TryExtractConstant(value, out var constant))
+                return true; // we successfully substituted all 0 variables in the expression (no constraints to check)
             if (constant.Overshadow)
-                return false;
-            var hasValue = TryGet(constant.Name, out var val);
-            value = val?.ToString();
-            return hasValue;
+                return false; // we didn't substitute because any stored value is disregarded and will be replaced (check constraints instead)
+            if (!TryGet(constant.Name, out var val))
+                return false; // we didn't substitute because no value is stored yet (check constraints instead)
+            value = value.Replace(Embrace(constant.Name), $"{val}");
+            return true; // we substitute existing variable value and will not store new value, so no need to check constraints
         }
 
         public object Get(string name) => TryGet(name, out var variable) ? variable : null;
@@ -157,7 +157,7 @@ namespace Applique.LoadTester.Business.Runtime
                 return false;
             var val = p.Value.Value<string>();
             if (IsVariable(val))
-                varName = new Constant(Unembrace(val), null).Name;
+                varName = new Constant(Unembrace(val)).Name;
             return true;
         }
 
@@ -167,6 +167,18 @@ namespace Applique.LoadTester.Business.Runtime
 
         private static bool IsVariable(string val)
             => val?.StartsWith("{{") == true && val?.EndsWith("}}") == true;
+
+        private static bool TryExtractConstant(string val, out Constant constant)
+        {
+            constant = default;
+            var startIndex = val?.IndexOf("{{") ?? -1;
+            var endIndex = val?.IndexOf("}}") ?? -1;
+            if (startIndex < 0 || startIndex >= endIndex)
+                return false;
+            var str = val[(startIndex + 2)..endIndex];
+            constant = new Constant(str);
+            return true;
+        }
 
         private static bool IsString(JProperty p)
             => p.Value.Type == JTokenType.String;

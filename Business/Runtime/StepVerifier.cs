@@ -72,7 +72,7 @@ namespace Applique.LoadTester.Business.Runtime
 
         private void VerifyValue(string prefix, JProperty pp, string actualValue)
         {
-            if (!_bindings.TryGetValue(pp, out var expectedValue))
+            if (!_bindings.TrySubstituteVariable(pp.Value?.ToString(), out var expectedValue))
                 CheckConstraints(prefix, Bindings.GetConstraint(pp), actualValue);
             else if (expectedValue != actualValue)
                 throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");

@@ -7,7 +7,7 @@ namespace Applique.LoadTester.Business.Design
     {
         public Constant() { }
 
-        public Constant(string constantExpression, string value)
+        public Constant(string constantExpression, string value = null)
         {
             constantExpression = constantExpression.Split(' ')[0]; // skip constraints
             var parts = constantExpression.Split(':', StringSplitOptions.RemoveEmptyEntries);
