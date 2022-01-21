@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Applique.LoadTester.Business.Design
@@ -28,5 +29,25 @@ namespace Applique.LoadTester.Business.Design
         public string Value { get; set; }
         public string Type { get; set; } = "string";
         public string[] Conversions { get; set; } = Array.Empty<string>();
+
+        public static Constant[] Merge(IEnumerable<Constant> defaults, IEnumerable<Constant> overrides)
+            => defaults.Concat(overrides).GroupBy(c => c.Name).Select(Merge).ToArray();
+
+        private static Constant Merge(IEnumerable<Constant> constants)
+        {
+            var arr = constants.ToArray();
+            var first = arr.First();
+            var last = arr.Last();
+            return first == last ? first : Merge(first, last);
+        }
+
+        private static Constant Merge(Constant first, Constant last)
+            => new()
+            {
+                Conversions = first.Conversions,
+                Name = first.Name,
+                Type = first.Type,
+                Value = last.Value
+            };
     }
 }

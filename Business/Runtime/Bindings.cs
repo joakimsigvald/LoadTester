@@ -112,18 +112,26 @@ namespace Applique.LoadTester.Business.Runtime
         }
 
         private static string Substitute(string target, KeyValuePair<string, object> variable)
-            => variable.Value is int?
-            ? SubstituteInt(target, variable)
+            => ValueRetriever.IsBool(variable.Value)
+            ? SubstituteBool(target, variable)
+            : ValueRetriever.IsScalar(variable.Value)
+            ? SubstituteScalar(target, variable)
             : SubstituteValue(target, variable);
 
-        private static string SubstituteInt(string target, KeyValuePair<string, object> variable)
+        private static string SubstituteBool(string target, KeyValuePair<string, object> variable)
+            => SubstituteScalar(target, variable.Key, $"{variable.Value}".ToLower());
+
+        private static string SubstituteScalar(string target, KeyValuePair<string, object> variable)
+            => SubstituteScalar(target, variable.Key, $"{variable.Value}");
+
+        private static string SubstituteScalar(string target, string prop, string value)
         {
-            var from1 = $"\"{Embrace(variable.Key)}\"";
-            var from2 = $"'{Embrace(variable.Key)}'"; // when we want to embedd an inte in a string, the variable has to be surrounded by single quotes
-            var to = $"{variable.Value}";
-            var res1 = target.Replace(from1, to);
-            var res2 = res1.Replace(from2, to);
-            var res = SubstituteValue(res2, variable);
+            var constantName = Embrace(prop);
+            var from1 = $"\"{constantName}\"";// replace string with value in json model
+            var from2 = $"'{constantName}'"; // when we want to embedd a scalar in a string, the variable has to be surrounded by single quotes
+            var intermediate1 = target.Replace(from1, value);
+            var intermediate2 = intermediate1.Replace(from2, value);
+            var res = intermediate2.Replace(constantName, value);
             return res;
         }
 

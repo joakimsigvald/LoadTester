@@ -7,6 +7,7 @@ namespace Applique.LoadTester.Business.Design
     public class ValueRetriever
     {
         public const string Int = "int";
+        public const string Bool = "bool";
         public const string Decimal = "decimal";
         public const string DateTime = "date";
         public const string String = "string";
@@ -35,8 +36,15 @@ namespace Applique.LoadTester.Business.Design
             return value;
         }
 
+        public static bool IsBool(object obj)
+            => obj is bool?;
+
+        public static bool IsScalar(object obj)
+            => obj is int? || obj is decimal? || obj is bool?;
+
         public static string GetType(object obj)
             => obj is int? ? Int
+            : obj is bool? ? Bool
             : obj is decimal? ? Decimal
             : obj is DateTime? ? DateTime
             : String;
@@ -62,6 +70,7 @@ namespace Applique.LoadTester.Business.Design
             {
                 DateTime => System.DateTime.Parse(constant.Value),
                 Int => int.Parse(constant.Value),
+                Bool => bool.Parse(constant.Value),
                 Decimal => decimal.Parse(constant.Value, CultureInfo.InvariantCulture),
                 _ => constant.Value,
             };

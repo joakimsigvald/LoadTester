@@ -17,6 +17,9 @@ namespace Applique.LoadTester.Business.Design
 
         public IEnumerable<Scenario> RunnableScenarios => Scenarios.Where(scenario => !scenario.Disabled);
 
+        public IEnumerable<Constant> GetInstanceConstants(int instanceId)
+            => Constants.Prepend(new Constant("InstanceId", $"{instanceId}"));
+
         public Blob GetBlob(string name)
             => Blobs.SingleOrDefault(t => t.Name == name)
             ?? throw new NotImplementedException($"Blob: {name}");
