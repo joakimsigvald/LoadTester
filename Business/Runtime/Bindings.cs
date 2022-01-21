@@ -68,8 +68,15 @@ namespace Applique.LoadTester.Business.Runtime
                 return false; // we didn't substitute because any stored value is disregarded and will be replaced (check constraints instead)
             if (!TryGet(constant.Name, out var val))
                 return false; // we didn't substitute because no value is stored yet (check constraints instead)
-            value = value.Replace(Embrace(constant.Name), $"{val}");
+            value = ReplaceConstantExpressionWithValue(value, $"{val}");
             return true; // we substitute existing variable value and will not store new value, so no need to check constraints
+        }
+
+        private static string ReplaceConstantExpressionWithValue(string target, string value)
+        {
+            var startIndex = target.IndexOf("{{");
+            var endIndex = target.IndexOf("}}");
+            return target[..startIndex] + value + target[(endIndex + 2)..];
         }
 
         public object Get(string name) => TryGet(name, out var variable) ? variable : null;
