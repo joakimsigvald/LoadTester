@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Applique.LoadTester.Domain.Design;
+using System;
 using System.Linq;
 
-namespace Applique.LoadTester.Design
+namespace Applique.LoadTester.Runtime.Assembly
 {
-    public class Scenario
+    public class Scenario : IScenario
     {
         public string Name { get; set; }
         public string Template { get; set; }
@@ -15,8 +16,8 @@ namespace Applique.LoadTester.Design
         public Step[] Steps { get; set; } = Array.Empty<Step>();
         public Assert[] Asserts { get; set; } = Array.Empty<Assert>();
 
-        public Scenario MergeWith(Scenario scenario)
-            => new()
+        public IScenario MergeWith(IScenario scenario)
+            => new Scenario()
             {
                 Asserts = Asserts.Concat(scenario.Asserts).ToArray(),
                 Constants = Constants.Concat(scenario.Constants).ToArray(),

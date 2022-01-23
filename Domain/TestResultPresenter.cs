@@ -1,6 +1,6 @@
-﻿using Applique.LoadTester.Runtime.Environment;
-using Applique.LoadTester.Runtime.Result;
-using Applique.LoadTester.Design;
+﻿using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Environment;
+using Applique.LoadTester.Domain.Result;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,26 +42,26 @@ namespace Applique.LoadTester.Home
         private static string PresentFooter()
             => "".PadRight(90, '-');
 
-        private static IEnumerable<string> Print(ScenarioResult res)
+        private static IEnumerable<string> Print(IScenarioResult res)
             => res.Success ? PrintSuccessful(res) : PrintFailed(res);
 
-        private static IEnumerable<string> PrintSuccessful(ScenarioResult res)
+        private static IEnumerable<string> PrintSuccessful(IScenarioResult res)
             => PrintExecutionTimes(res)
             .Concat(PrintStepResults(res.StepResults))
             .Concat(PrintBindings(res.Bindings));
 
-        private static IEnumerable<string> PrintFailed(ScenarioResult res)
+        private static IEnumerable<string> PrintFailed(IScenarioResult res)
             => PrintFailedScenario(res)
             .Concat(PrintBindings(res.Bindings));
 
-        private static IEnumerable<string> PrintFailedScenario(ScenarioResult res)
+        private static IEnumerable<string> PrintFailedScenario(IScenarioResult res)
         {
             yield return ScenarioDivider;
             yield return PrintScenarioName(res);
             yield return res.Error;
         }
 
-        private static IEnumerable<string> PrintExecutionTimes(ScenarioResult res)
+        private static IEnumerable<string> PrintExecutionTimes(IScenarioResult res)
         {
             yield return ScenarioDivider;
             yield return PrintScenarioName(res)
@@ -73,13 +73,13 @@ namespace Applique.LoadTester.Home
                 + Print(res.Q90);
         }
 
-        private static IEnumerable<string> PrintStepResults(StepResult[] results)
+        private static IEnumerable<string> PrintStepResults(IStepResult[] results)
         {
             foreach (var stepResult in results)
                 yield return Print(stepResult);
         }
 
-        private static IEnumerable<string> PrintBindings(Bindings bindings)
+        private static IEnumerable<string> PrintBindings(IBindings bindings)
         {
             if (!bindings.Any())
                 yield return "No bindings";
@@ -93,9 +93,9 @@ namespace Applique.LoadTester.Home
         private static string Print(Constant constant)
             => $"| {constant.Name} = {constant.Value}";
 
-        private static string PrintScenarioName(ScenarioResult res) => res.Scenario.Name.PadRight(2 * _columnWidth - 2) + "  ";
+        private static string PrintScenarioName(IScenarioResult res) => res.Scenario.Name.PadRight(2 * _columnWidth - 2) + "  ";
 
-        private static string Print(StepResult res)
+        private static string Print(IStepResult res)
             => $"  ->{res.Step.Endpoint}".PadRight(2 * _columnWidth - 2) + "  "
                 + "".PadRight(_columnWidth)
                 + Print(res.Min)

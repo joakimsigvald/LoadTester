@@ -1,7 +1,6 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 
-namespace Applique.LoadTester.Design
+namespace Applique.LoadTester.Domain.Design
 {
     public enum StepType { Rest, Blob }
 
@@ -16,8 +15,6 @@ namespace Applique.LoadTester.Design
         public dynamic Response { get; set; }
         public int DelayMs { get; set; } = 0;
         public int Times { get; set; } = 1;
-        public TimeSpan? _delay;
-        public TimeSpan Delay => _delay ?? (_delay = TimeSpan.FromMilliseconds(DelayMs)).Value;
         public bool BreakOnSuccess { get; set; }
         public bool RetryOnFail { get; set; }
     }

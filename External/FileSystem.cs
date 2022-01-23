@@ -1,4 +1,6 @@
-﻿using Applique.LoadTester.Runtime.Environment;
+﻿using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Environment;
+using Applique.LoadTester.Runtime.Assembly;
 using Newtonsoft.Json;
 using System.IO;
 
@@ -22,7 +24,14 @@ namespace Applique.LoadTester.External
             File.WriteAllLines(GetPath(fileName), lines);
         }
 
-        public TValue Read<TValue>(string fileName)
+        public ITestSuite ReadTestSuite(string filename) => Read<TestSuite>(filename);
+
+        public Constant[] LoadConstants<T>(string filename) => Read<Constant[]>(filename);
+
+        public TValue ReadValue<TValue>(string fileName) where TValue : struct
+            => Read<TValue>(fileName);
+
+        private TValue Read<TValue>(string fileName)
         {
             var json = File.ReadAllText(GetPath(fileName));
             return JsonConvert.DeserializeObject<TValue>(json);

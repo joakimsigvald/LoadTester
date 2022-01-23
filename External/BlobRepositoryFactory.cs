@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Runtime.Environment;
+﻿using Applique.LoadTester.Domain.Environment;
 using Azure.Storage.Blobs;
 
 namespace Applique.LoadTester.External

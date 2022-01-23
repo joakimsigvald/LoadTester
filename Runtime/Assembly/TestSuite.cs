@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Applique.LoadTester.Domain.Design;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Applique.LoadTester.Design
+namespace Applique.LoadTester.Runtime.Assembly
 {
-    public class TestSuite
+    public class TestSuite : ITestSuite
     {
         public string Name { get; set; }
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
@@ -15,16 +16,17 @@ namespace Applique.LoadTester.Design
         public Scenario[] Templates { private get; set; }
         public Scenario[] Scenarios { private get; set; }
 
-        public IEnumerable<Scenario> RunnableScenarios => Scenarios.Where(scenario => !scenario.Disabled);
+        public IEnumerable<IScenario> RunnableScenarios => Scenarios.Where(scenario => !scenario.Disabled);
+
 
         public IEnumerable<Constant> GetInstanceConstants(int instanceId)
-            => Constants.Prepend(new Constant("InstanceId", $"{instanceId}"));
+            => Constants.Prepend(ConstantFactory.Create("InstanceId", $"{instanceId}"));
 
         public Blob GetBlob(string name)
             => Blobs.SingleOrDefault(t => t.Name == name)
             ?? throw new NotImplementedException($"Blob: {name}");
 
-        public Scenario GetTemplate(string name)
+        public IScenario GetTemplate(string name)
             => Templates.SingleOrDefault(t => t.Name == name)
             ?? throw new NotImplementedException($"Template: {name}");
 

@@ -1,4 +1,5 @@
-﻿using Applique.LoadTester.Design;
+﻿using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Environment;
 using System;
 using System.Globalization;
 
@@ -13,9 +14,9 @@ namespace Applique.LoadTester.Runtime.Environment
         public const string String = "string";
         public const string Seed = "seed";
         private readonly IFileSystem _fileSystem;
-        private readonly TestSuite _testSuite;
+        private readonly ITestSuite _testSuite;
 
-        public ValueRetriever(IFileSystem fileSystem, TestSuite testSuite)
+        public ValueRetriever(IFileSystem fileSystem, ITestSuite testSuite)
         {
             _fileSystem = fileSystem;
             _testSuite = testSuite;
@@ -80,7 +81,7 @@ namespace Applique.LoadTester.Runtime.Environment
 
         private int? LoadSeed(Constant constant)
             => _fileSystem.Exists(GetSeedPath(constant))
-            ? _fileSystem.Read<int>(GetSeedPath(constant))
+            ? _fileSystem.ReadValue<int>(GetSeedPath(constant))
             : null;
 
         private string GetSeedPath(Constant constant) => $"{_testSuite.Name}_{constant.Name}_Seed";

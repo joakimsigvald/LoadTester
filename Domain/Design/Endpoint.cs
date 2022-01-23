@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Applique.LoadTester.Design
+namespace Applique.LoadTester.Domain.Design
 {
     public class Endpoint
     {

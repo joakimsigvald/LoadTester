@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Design;
+﻿using Applique.LoadTester.Domain.Design;
 using System;
 using System.Collections;
 using System.Collections.Generic;

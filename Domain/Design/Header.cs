@@ -1,6 +1,6 @@
-﻿namespace Applique.LoadTester.Design
+﻿namespace Applique.LoadTester.Domain.Design
 {
-    public class Assert
+    public class Header
     {
         public string Name { get; set; }
         public string Value { get; set; }

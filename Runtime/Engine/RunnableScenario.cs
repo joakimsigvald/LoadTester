@@ -1,22 +1,24 @@
 ﻿using Applique.LoadTester.Runtime.Environment;
 using Applique.LoadTester.Runtime.Result;
-using Applique.LoadTester.Design;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Applique.LoadTester.Domain.Environment;
+using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Runtime.Assembly;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
     public class RunnableScenario
     {
-        public Scenario Scenario { get; set; }
+        public IScenario Scenario { get; set; }
         public IRunnableStep[] Steps { get; private set; }
 
         private readonly IRestCallerFactory _restCallerFactory;
         private readonly IBlobRepositoryFactory _blobFactory;
-        private readonly TestSuite _suite;
+        private readonly ITestSuite _suite;
         private readonly int _instanceId;
         public Bindings Bindings { get; private set; }
 
@@ -24,8 +26,8 @@ namespace Applique.LoadTester.Runtime.Engine
             IFileSystem fileSystem,
             IRestCallerFactory restCallerFactory,
             IBlobRepositoryFactory blobFactory,
-            TestSuite suite,
-            Scenario scenario,
+            ITestSuite suite,
+            IScenario scenario,
             int instanceId)
         {
             _instanceId = instanceId;
@@ -74,7 +76,7 @@ namespace Applique.LoadTester.Runtime.Engine
         }
 
         private Constant[] GetConstants()
-            => Constant.Merge(_suite.GetInstanceConstants(_instanceId), Scenario.Constants);
+            => ConstantFactory.Merge(_suite.GetInstanceConstants(_instanceId), Scenario.Constants);
 
         private Model[] GetModels() => _suite.Models;
     }

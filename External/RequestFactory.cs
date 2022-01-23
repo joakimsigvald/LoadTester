@@ -1,7 +1,7 @@
-﻿using Applique.LoadTester.Runtime.Environment;
-using Applique.LoadTester.Design;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text;
+using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Environment;
 
 namespace Applique.LoadTester.External
 {
@@ -9,18 +9,18 @@ namespace Applique.LoadTester.External
     {
         private readonly string _basePath;
         private readonly Endpoint _endpoint;
-        private readonly Bindings _bindings;
+        private readonly IBindings _bindings;
         private readonly string _args;
 
         public static HttpRequestMessage GetRequest(
             string basePath,
             Endpoint endpoint,
-            Bindings bindings,
+            IBindings bindings,
             object body,
             string args)
             => new RequestFactory(basePath, endpoint, bindings, args).GetRequest(body);
 
-        private RequestFactory(string basePath, Endpoint endpoint, Bindings bindings, string args)
+        private RequestFactory(string basePath, Endpoint endpoint, IBindings bindings, string args)
         {
             _basePath = basePath;
             _endpoint = endpoint;

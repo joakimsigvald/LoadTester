@@ -1,6 +1,6 @@
-﻿namespace Applique.LoadTester.Design
+﻿namespace Applique.LoadTester.Domain.Design
 {
-    public class Header
+    public class ApiKey
     {
         public string Name { get; set; }
         public string Value { get; set; }

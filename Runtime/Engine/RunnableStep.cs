@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Design;
+﻿using Applique.LoadTester.Domain.Design;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -7,6 +7,8 @@ namespace Applique.LoadTester.Runtime.Engine
 {
     public abstract class RunnableStep<TResponse> : IRunnableStep
     {
+        private TimeSpan? _delay;
+
         public Step Blueprint { get; private set; }
 
         protected RunnableStep(Step step) => Blueprint = step;
@@ -26,5 +28,6 @@ namespace Applique.LoadTester.Runtime.Engine
         protected abstract Task<TResponse> DoRun();
 
         protected abstract Task HandleResponse(TResponse response);
+        protected TimeSpan Delay => _delay ?? (_delay = TimeSpan.FromMilliseconds(Blueprint.DelayMs)).Value;
     }
 }

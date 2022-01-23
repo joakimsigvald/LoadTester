@@ -1,5 +1,4 @@
 ﻿using Applique.LoadTester.Runtime.Environment;
-using Applique.LoadTester.Design;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -7,15 +6,17 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Environment;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
     public class StepVerifier
     {
-        private readonly Bindings _bindings;
+        private readonly IBindings _bindings;
         private readonly Step _blueprint;
 
-        public StepVerifier(Step step, Bindings bindings)
+        public StepVerifier(Step step, IBindings bindings)
         {
             _bindings = bindings;
             _blueprint = step;

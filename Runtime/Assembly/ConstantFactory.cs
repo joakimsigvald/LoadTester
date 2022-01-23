@@ -1,34 +1,31 @@
-﻿using System;
+﻿using Applique.LoadTester.Domain.Design;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Applique.LoadTester.Design
+namespace Applique.LoadTester.Runtime.Assembly
 {
-    public class Constant
+    public static class ConstantFactory
     {
-        public Constant() { }
-
-        public Constant(string constantExpression, string value = null)
+        public static Constant Create(string constantExpression, string value = null)
         {
             constantExpression = constantExpression.Split(' ')[0]; // skip constraints
             var parts = constantExpression.Split(':', StringSplitOptions.RemoveEmptyEntries);
-            Overshadow = constantExpression.StartsWith(':');
-            Name = parts[0];
-            Value = value;
+            var res = new Constant()
+            {
+                Overshadow = constantExpression.StartsWith(':'),
+                Name = parts[0],
+                Value = value
+            };
             if (parts.Length == 2)
             {
                 var types = parts[1];
                 var typeParts = types.Split("->");
-                Type = typeParts[0];
-                Conversions = typeParts.Skip(1).ToArray();
+                res.Type = typeParts[0];
+                res.Conversions = typeParts.Skip(1).ToArray();
             }
+            return res;
         }
-
-        public string Name { get; set; }
-        public bool Overshadow { get; set; }
-        public string Value { get; set; }
-        public string Type { get; set; } = "string";
-        public string[] Conversions { get; set; } = Array.Empty<string>();
 
         public static Constant[] Merge(IEnumerable<Constant> defaults, IEnumerable<Constant> overrides)
             => defaults.Concat(overrides).GroupBy(c => c.Name).Select(Merge).ToArray();

@@ -1,25 +1,26 @@
 ﻿using Applique.LoadTester.Runtime.Environment;
-using Applique.LoadTester.Design;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Applique.LoadTester.Domain.Environment;
+using Applique.LoadTester.Domain.Design;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
     public class RestStep : RunnableStep<HttpResponseMessage>
     {
         private readonly Endpoint _endpoint;
-        private readonly Bindings _bindings;
+        private readonly IBindings _bindings;
         private readonly IRestCaller _restCaller;
         private readonly StepVerifier _stepVerifier;
 
         public static IRunnableStep Create(
             IRestCallerFactory _restCallerFactory,
-            TestSuite suite,
+            ITestSuite suite,
             Step step,
-            Bindings bindings)
+            IBindings bindings)
         {
             var pair = step.Endpoint.Split('.');
             var serviceName = pair[0];
@@ -30,7 +31,7 @@ namespace Applique.LoadTester.Runtime.Engine
             return new RestStep(restCaller, step, endpoint, bindings);
         }
 
-        private RestStep(IRestCaller restCaller, Step step, Endpoint endpoint, Bindings bindings)
+        private RestStep(IRestCaller restCaller, Step step, Endpoint endpoint, IBindings bindings)
             : base(step)
         {
             _endpoint = endpoint;
@@ -74,7 +75,7 @@ namespace Applique.LoadTester.Runtime.Engine
             HttpResponseMessage lastResponse = null;
             for (int i = 0; i < Blueprint.Times; i++)
             {
-                await Task.Delay(Blueprint.Delay);
+                await Task.Delay(Delay);
                 Console.WriteLine($"Calling {Blueprint.Endpoint}, attempt {i + 1}");
                 lastResponse = await _restCaller.Call(Blueprint.Body, Blueprint.Args);
                 var isSuccessful = await _stepVerifier.IsSuccessful(lastResponse);

@@ -1,6 +1,6 @@
-﻿namespace Applique.LoadTester.Design
+﻿namespace Applique.LoadTester.Domain.Design
 {
-    public class ApiKey
+    public class Assert
     {
         public string Name { get; set; }
         public string Value { get; set; }

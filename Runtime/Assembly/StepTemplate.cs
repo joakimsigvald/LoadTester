@@ -1,4 +1,6 @@
-﻿namespace Applique.LoadTester.Design
+﻿using Applique.LoadTester.Domain.Design;
+
+namespace Applique.LoadTester.Runtime.Assembly
 {
     public class StepTemplate
     {

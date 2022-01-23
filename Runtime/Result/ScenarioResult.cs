@@ -1,13 +1,14 @@
-﻿using Applique.LoadTester.Runtime.Environment;
-using Applique.LoadTester.Design;
-using System;
+﻿using System;
 using System.Linq;
+using Applique.LoadTester.Domain.Result;
+using Applique.LoadTester.Domain.Environment;
+using Applique.LoadTester.Domain.Design;
 
 namespace Applique.LoadTester.Runtime.Result
 {
-    public class ScenarioResult
+    public class ScenarioResult : IScenarioResult
     {
-        public static ScenarioResult Succeeded(Scenario scenario, ScenarioInstanceResult[] orderedResults)
+        public static ScenarioResult Succeeded(IScenario scenario, ScenarioInstanceResult[] orderedResults)
         {
             var lastResult = orderedResults.Last();
             var durations = orderedResults.Select(or => or.Duration).ToArray();
@@ -26,7 +27,7 @@ namespace Applique.LoadTester.Runtime.Result
             };
         }
 
-        public static ScenarioResult Failed(Scenario scenario, ScenarioInstanceResult failedRun)
+        public static ScenarioResult Failed(IScenario scenario, ScenarioInstanceResult failedRun)
             => new()
             {
                 Scenario = scenario,
@@ -34,7 +35,7 @@ namespace Applique.LoadTester.Runtime.Result
                 Bindings = failedRun.Bindings
             };
 
-        private static StepResult[] GetStepResults(Scenario scenario, ScenarioInstanceResult[] results)
+        private static StepResult[] GetStepResults(IScenario scenario, ScenarioInstanceResult[] results)
         => results
             .SelectMany(res => res.StepTimes.Select((st, i) => (step: scenario.Steps[i], elapsed: st)))
             .GroupBy(pair => pair.step)
@@ -46,8 +47,9 @@ namespace Applique.LoadTester.Runtime.Result
 
         private ScenarioResult() { }
 
-        public Scenario Scenario { get; private set; }
-        public Bindings Bindings { get; private set; }
+        public IScenario Scenario { get; private set; }
+        public IStepResult[] StepResults { get; internal set; }
+        public IBindings Bindings { get; private set; }
         public string Error { get; private set; }
         public AssertResult[] AssertResults { get; private set; }
         public bool Success { get; private set; }
@@ -56,6 +58,5 @@ namespace Applique.LoadTester.Runtime.Result
         public TimeSpan Mean { get; private set; }
         public TimeSpan Q75 { get; private set; }
         public TimeSpan Q90 { get; private set; }
-        public StepResult[] StepResults { get; internal set; }
     }
 }

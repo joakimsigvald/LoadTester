@@ -1,10 +1,11 @@
-﻿using Applique.LoadTester.Design;
+﻿using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Result;
 using System;
 using System.Linq;
 
 namespace Applique.LoadTester.Runtime.Result
 {
-    public class StepResult
+    public class StepResult : IStepResult
     {
         public StepResult(Step step, TimeSpan[] orderedDurations)
         {

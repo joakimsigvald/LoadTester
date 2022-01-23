@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Net.Http;
 
-namespace Applique.LoadTester.Design
+namespace Applique.LoadTester.Domain.Design
 {
     public class Service
     {
         public string Name { get; set; }
-        public Uri BaseAddress => new(BaseUrl);
         public string BaseUrl { get; set; }
         public string BasePath { get; set; }
         public ApiKey ApiKey { get; set; }

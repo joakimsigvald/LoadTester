@@ -1,4 +1,6 @@
-﻿using Applique.LoadTester.Design;
+﻿using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Environment;
+using Applique.LoadTester.Runtime.Assembly;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -11,11 +13,11 @@ namespace Applique.LoadTester.Runtime.Environment
 {
     public enum Constraint { None, Mandatory }
 
-    public class Bindings : IEnumerable<Constant>
+    public class Bindings : IBindings
     {
         private readonly IDictionary<string, object> _variables;
 
-        public Bindings(IFileSystem fileSystem, TestSuite suite, Constant[] constants, Model[] models)
+        public Bindings(IFileSystem fileSystem, ITestSuite suite, Constant[] constants, Model[] models)
             => _variables = CreateVariables(fileSystem, suite, constants, models);
 
         public string SubstituteVariables(string target) => _variables.Aggregate(target, Substitute);
@@ -92,7 +94,7 @@ namespace Applique.LoadTester.Runtime.Environment
 
         private void SetValue(string varExpression, JToken val)
         {
-            var constant = new Constant(varExpression, val.Value<string>());
+            var constant = ConstantFactory.Create(varExpression, val.Value<string>());
             if (!varExpression.StartsWith(':') // Replace existing constant, including type
                 && TryGet(constant.Name, out var existing))
                 constant.Type = ValueRetriever.GetType(existing);
@@ -152,7 +154,7 @@ namespace Applique.LoadTester.Runtime.Environment
 
         private static IDictionary<string, object> CreateVariables(
             IFileSystem fileSystem,
-            TestSuite suite,
+            ITestSuite suite,
             IEnumerable<Constant> constants,
             Model[] models)
         {
@@ -170,7 +172,7 @@ namespace Applique.LoadTester.Runtime.Environment
                 return false;
             var val = p.Value.Value<string>();
             if (IsVariable(val))
-                varName = new Constant(Unembrace(val)).Name;
+                varName = ConstantFactory.Create(Unembrace(val)).Name;
             return true;
         }
 
@@ -189,7 +191,7 @@ namespace Applique.LoadTester.Runtime.Environment
             if (startIndex < 0 || startIndex >= endIndex)
                 return false;
             var str = val[(startIndex + 2)..endIndex];
-            constant = new Constant(str);
+            constant = ConstantFactory.Create(str);
             return true;
         }
 

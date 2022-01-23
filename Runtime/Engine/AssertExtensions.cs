@@ -1,6 +1,6 @@
 ﻿using Applique.LoadTester.Runtime.Environment;
 using Applique.LoadTester.Runtime.Result;
-using Applique.LoadTester.Design;
+using Applique.LoadTester.Domain.Design;
 
 namespace Applique.LoadTester.Runtime.Engine
 {

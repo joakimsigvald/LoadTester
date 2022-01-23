@@ -1,11 +1,11 @@
-﻿using Applique.LoadTester.Runtime.Environment;
-using Applique.LoadTester.Design;
+﻿using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Environment;
 
 namespace Applique.LoadTester.External
 {
     public class RestCallerFactory : IRestCallerFactory
     {
-        public IRestCaller Create(Service service, Endpoint endpoint, Bindings bindings)
+        public IRestCaller Create(Service service, Endpoint endpoint, IBindings bindings)
             => new RestCaller(service, endpoint, bindings);
     }
 }
