@@ -1,6 +1,6 @@
-﻿using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Domain;
+using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Environment;
-using Applique.LoadTester.Runtime.Assembly;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -84,8 +84,7 @@ namespace Applique.LoadTester.Runtime.Environment
         public IEnumerator<Constant> GetEnumerator() => new BindingsEnumerator(_variables);
 
         public string CreateContent(object body)
-            => body is null
-            ? null
+            => body is null ? null
             : body is string s && IsVariable(s) ? CreateContent(Get(Unembrace(s)))
             : SubstituteVariables(JsonConvert.SerializeObject(body));
 
@@ -95,8 +94,7 @@ namespace Applique.LoadTester.Runtime.Environment
         private void SetValue(string varExpression, JToken val)
         {
             var constant = ConstantFactory.Create(varExpression, val.Value<string>());
-            if (!varExpression.StartsWith(':') // Replace existing constant, including type
-                && TryGet(constant.Name, out var existing))
+            if (!constant.Overshadow && TryGet(constant.Name, out var existing))
                 constant.Type = ValueRetriever.GetType(existing);
             Set(constant.Name, ValueRetriever.ValueOf(constant));
         }

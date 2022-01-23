@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Engine;
 using Applique.LoadTester.Domain.Environment;
 using Applique.LoadTester.Domain.Result;
 using Applique.LoadTester.Home;
@@ -13,11 +14,13 @@ namespace Applique.LoadTester.Domain
     {
         private readonly IFileSystem _fileSystem;
         private readonly IScenarioRunnerFactory _scenarioRunnerFactory;
+        private readonly IAssembler _assembler;
 
-        public TestRunner(IFileSystem fileSystem, IScenarioRunnerFactory scenarioRunnerFactory)
+        public TestRunner(IFileSystem fileSystem, IScenarioRunnerFactory scenarioRunnerFactory, IAssembler assembler)
         {
             _fileSystem = fileSystem;
             _scenarioRunnerFactory = scenarioRunnerFactory;
+            _assembler = assembler;
         }
 
         public async Task Run(string testSuiteFileName)
@@ -60,7 +63,7 @@ namespace Applique.LoadTester.Domain
         {
             try
             {
-                return _fileSystem.ReadTestSuite(filename);
+                return _assembler.ReadTestSuite(filename);
             }
             catch (Exception ex)
             {

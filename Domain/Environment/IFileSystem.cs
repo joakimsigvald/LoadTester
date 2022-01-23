@@ -1,6 +1,4 @@
-﻿using Applique.LoadTester.Domain.Design;
-
-namespace Applique.LoadTester.Domain.Environment
+﻿namespace Applique.LoadTester.Domain.Environment
 {
     public interface IFileSystem
     {
@@ -10,8 +8,6 @@ namespace Applique.LoadTester.Domain.Environment
 
         void WriteLines(string fileName, string[] lines);
 
-        TValue ReadValue<TValue>(string fileName) where TValue : struct;
-        ITestSuite ReadTestSuite(string filename);
-        Constant[] LoadConstants<T>(string bindingsPath);
+        TValue Read<TValue>(string fileName);
     }
 }

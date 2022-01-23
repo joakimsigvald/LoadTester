@@ -81,7 +81,7 @@ namespace Applique.LoadTester.Runtime.Environment
 
         private int? LoadSeed(Constant constant)
             => _fileSystem.Exists(GetSeedPath(constant))
-            ? _fileSystem.ReadValue<int>(GetSeedPath(constant))
+            ? _fileSystem.Read<int>(GetSeedPath(constant))
             : null;
 
         private string GetSeedPath(Constant constant) => $"{_testSuite.Name}_{constant.Name}_Seed";

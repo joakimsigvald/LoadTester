@@ -1,9 +1,10 @@
-﻿using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Domain;
+using Applique.LoadTester.Domain.Design;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Applique.LoadTester.Runtime.Assembly
+namespace Applique.LoadTester.Assembly
 {
     public class TestSuite : ITestSuite
     {

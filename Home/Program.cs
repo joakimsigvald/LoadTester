@@ -4,25 +4,23 @@ using System.Threading.Tasks;
 using Applique.LoadTester.Domain.Environment;
 using Applique.LoadTester.Domain;
 using Applique.LoadTester.Runtime.Engine;
+using Applique.LoadTester.Assembly;
 
 namespace Applique.LoadTester.Home
 {
     class Program
     {
-        private static IFileSystem _fileSystem;
-        private static IRestCallerFactory _restCallerFactory;
-        private static IBlobRepositoryFactory _blobRepositoryFactory;
-
         static async Task Main(string[] args)
         {
             var basePath = args[0];
             var testSuiteFileName = args[1];
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-            _fileSystem = new FileSystem(basePath);
-            _restCallerFactory = new RestCallerFactory();
-            _blobRepositoryFactory = new BlobRepositoryFactory();
-            var scenarioRunnerFactory = new ScenarioRunnerFactory(_fileSystem, _restCallerFactory, _blobRepositoryFactory);
-            var testRunner = new TestRunner(_fileSystem, scenarioRunnerFactory);
+            var fileSystem = new FileSystem(basePath);
+            var restCallerFactory = new RestCallerFactory();
+            var blobRepositoryFactory = new BlobRepositoryFactory();
+            var assembler = new Assembler(fileSystem);
+            var scenarioRunnerFactory = new ScenarioRunnerFactory(fileSystem, restCallerFactory, blobRepositoryFactory, assembler);
+            var testRunner = new TestRunner(fileSystem, scenarioRunnerFactory, assembler);
             await testRunner.Run(testSuiteFileName);
         }
     }

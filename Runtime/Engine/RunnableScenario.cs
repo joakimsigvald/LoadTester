@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Applique.LoadTester.Domain.Environment;
 using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Runtime.Assembly;
+using Applique.LoadTester.Domain;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
@@ -18,35 +18,38 @@ namespace Applique.LoadTester.Runtime.Engine
 
         private readonly IRestCallerFactory _restCallerFactory;
         private readonly IBlobRepositoryFactory _blobFactory;
-        private readonly ITestSuite _suite;
-        private readonly int _instanceId;
+        private readonly ITestSuite _testSuite;
+
         public Bindings Bindings { get; private set; }
 
         public RunnableScenario(
             IFileSystem fileSystem,
             IRestCallerFactory restCallerFactory,
             IBlobRepositoryFactory blobFactory,
-            ITestSuite suite,
+            ITestSuite testSuite,
             IScenario scenario,
             int instanceId)
         {
-            _instanceId = instanceId;
             _restCallerFactory = restCallerFactory;
             _blobFactory = blobFactory;
-            _suite = suite;
+            _testSuite = testSuite;
             Scenario = scenario;
-            Bindings = new Bindings(fileSystem, suite, GetConstants(), GetModels());
+            var constants = GetConstants(instanceId);
+            Bindings = new Bindings(fileSystem, testSuite, constants, GetModels());
             Steps = scenario.Steps
-                .Select(suite.GetStepToRun)
+                .Select(testSuite.GetStepToRun)
                 .Select(Instanciate)
                 .ToArray();
         }
 
+        private Constant[] GetConstants(int instanceId)
+            => ConstantFactory.Merge(_testSuite.GetInstanceConstants(instanceId), Scenario.Constants);
+
         private IRunnableStep Instanciate(Step step)
             => step.Type switch
             {
-                StepType.Rest => RestStep.Create(_restCallerFactory, _suite, step, Bindings),
-                StepType.Blob => BlobStep.Create(_blobFactory, _suite, step, Bindings),
+                StepType.Rest => RestStep.Create(_restCallerFactory, _testSuite, step, Bindings),
+                StepType.Blob => BlobStep.Create(_blobFactory, _testSuite, step, Bindings),
                 StepType t => throw new NotImplementedException($"{t}")
             };
 
@@ -75,9 +78,6 @@ namespace Applique.LoadTester.Runtime.Engine
                 : ScenarioInstanceResult.Failed(this, assertResults.Where(ar => !ar.Success));
         }
 
-        private Constant[] GetConstants()
-            => ConstantFactory.Merge(_suite.GetInstanceConstants(_instanceId), Scenario.Constants);
-
-        private Model[] GetModels() => _suite.Models;
+        private Model[] GetModels() => _testSuite.Models;
     }
 }

@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace Applique.LoadTester.Runtime.Assembly
+namespace Applique.LoadTester.Assembly
 {
     public class Scenario : IScenario
     {

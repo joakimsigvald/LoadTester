@@ -16,17 +16,20 @@ namespace Applique.LoadTester.Runtime.Engine
         private readonly IRestCallerFactory _restCallerFactory;
         private readonly IBlobRepositoryFactory _blobRepositoryFactory;
         private readonly ITestSuite _testSuite;
+        private readonly IAssembler _assembler;
 
         public ScenarioRunner(
             IFileSystem fileSystem,
             IRestCallerFactory restCallerFactory,
             IBlobRepositoryFactory blobRepositoryFactory,
-            ITestSuite testSuite)
+            ITestSuite testSuite,
+            IAssembler assembler)
         {
             _fileSystem = fileSystem;
             _restCallerFactory = restCallerFactory;
             _blobRepositoryFactory = blobRepositoryFactory;
             _testSuite = testSuite;
+            _assembler = assembler;
         }
 
         public async Task<IScenarioResult> Run(IScenario scenario)
@@ -75,7 +78,7 @@ namespace Applique.LoadTester.Runtime.Engine
         {
             if (!_fileSystem.Exists(BindingsPath) || !loadProperties.Any())
                 return new Bindings(_fileSystem, _testSuite, Array.Empty<Constant>(), Array.Empty<Model>());
-            var constants = _fileSystem.LoadConstants<Constant[]>(BindingsPath);
+            var constants = _assembler.LoadConstants<Constant[]>(BindingsPath);
             var constantsToLoad = constants.Join(loadProperties, b => b.Name, p => p, (b, _) => b).ToArray();
             return new Bindings(_fileSystem, _testSuite, constantsToLoad, Array.Empty<Model>());
         }

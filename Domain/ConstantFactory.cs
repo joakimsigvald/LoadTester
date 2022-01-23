@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Applique.LoadTester.Runtime.Assembly
+namespace Applique.LoadTester.Domain
 {
     public static class ConstantFactory
     {
