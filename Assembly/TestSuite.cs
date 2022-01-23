@@ -19,7 +19,6 @@ namespace Applique.LoadTester.Assembly
 
         public IEnumerable<IScenario> RunnableScenarios => Scenarios.Where(scenario => !scenario.Disabled);
 
-
         public IEnumerable<Constant> GetInstanceConstants(int instanceId)
             => Constants.Prepend(ConstantFactory.Create("InstanceId", $"{instanceId}"));
 

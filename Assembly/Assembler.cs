@@ -1,5 +1,4 @@
-﻿using Applique.LoadTester.Domain;
-using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Engine;
 using Applique.LoadTester.Domain.Environment;
 
