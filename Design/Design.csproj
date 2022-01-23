@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Applique.LoadTester.Design</AssemblyName>
+    <RootNamespace>Applique.LoadTester.Design</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -2,17 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>Applique.LoadTester.External</AssemblyName>
-    <RootNamespace>Applique.LoadTester.External</RootNamespace>
+    <AssemblyName>Applique.LoadTester.Runtime</AssemblyName>
+    <RootNamespace>Applique.LoadTester.Runtime</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.8.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Runtime\Runtime.csproj" />
+    <ProjectReference Include="..\Design\Design.csproj" />
   </ItemGroup>
 
 </Project>

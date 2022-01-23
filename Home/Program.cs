@@ -1,7 +1,7 @@
-﻿using Applique.LoadTester.Business.Design;
-using Applique.LoadTester.Business.External;
-using Applique.LoadTester.Business.Result;
-using Applique.LoadTester.Business.Runtime;
+﻿using Applique.LoadTester.Runtime;
+using Applique.LoadTester.Runtime.Environment;
+using Applique.LoadTester.Runtime.Result;
+using Applique.LoadTester.Design;
 using Applique.LoadTester.External;
 using System;
 using System.Globalization;

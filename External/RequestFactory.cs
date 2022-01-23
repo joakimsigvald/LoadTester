@@ -1,5 +1,5 @@
-﻿using Applique.LoadTester.Business.Design;
-using Applique.LoadTester.Business.Runtime;
+﻿using Applique.LoadTester.Runtime.Environment;
+using Applique.LoadTester.Design;
 using System.Net.Http;
 using System.Text;
 

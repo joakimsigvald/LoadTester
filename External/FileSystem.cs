@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Business.External;
+﻿using Applique.LoadTester.Runtime.Environment;
 using Newtonsoft.Json;
 using System.IO;
 
