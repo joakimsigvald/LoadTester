@@ -60,13 +60,13 @@ namespace Applique.LoadTester.Environment
             var patternProperties = pattern.Properties();
             foreach (var pp in patternProperties)
             {
-                var val = source.GetValue(pp.Name);
+                var actual = source.GetValue(pp.Name);
                 if (pp.Value is JObject ppObject)
-                    VerifyObject(pp, ppObject, val as JObject, prefix);
+                    VerifyObject(pp, ppObject, actual as JObject, prefix);
                 else if (pp.Value is JArray ppArray)
-                    VerifyArray(ppArray, val as JArray, $"{prefix}{pp.Name}");
+                    VerifyArray(ppArray, actual as JArray, $"{prefix}{pp.Name}");
                 else
-                    _bindings.VerifyValue($"{prefix}{pp.Name}", pp, val?.ToString());
+                    _bindings.VerifyValue($"{prefix}{pp.Name}", pp, actual?.ToString());
             }
         }
 

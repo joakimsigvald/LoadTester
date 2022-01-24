@@ -1,5 +1,4 @@
 ﻿using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Domain.Environment;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,12 +8,12 @@ using static Applique.LoadTester.Environment.ConstantExpressions;
 
 namespace Applique.LoadTester.Environment
 {
-    internal class BindingVariables : IEnumerable<Constant>
+    public class BindingVariables : IEnumerable<Constant>
     {
         private readonly IDictionary<string, object> _variables;
 
-        public BindingVariables(IFileSystem fileSystem, ITestSuite suite, Constant[] constants, Model[] models)
-            => _variables = CreateVariables(fileSystem, suite, constants, models);
+        public BindingVariables(IDictionary<string, object> variables)
+            => _variables = variables;
 
         public IEnumerable<KeyValuePair<string, object>> Variables => _variables;
 
@@ -33,19 +32,6 @@ namespace Applique.LoadTester.Environment
         public bool TryGet(string name, out object variable) => _variables.TryGetValue(name, out variable);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        private static IDictionary<string, object> CreateVariables(
-            IFileSystem fileSystem,
-            ITestSuite suite,
-            IEnumerable<Constant> constants,
-            Model[] models)
-        {
-            var valueRetriever = new ValueRetriever(fileSystem, suite);
-            var variables = constants.ToDictionary(c => c.Name, valueRetriever.GetValue);
-            foreach (var model in models)
-                variables[model.Name] = model.Value;
-            return variables;
-        }
 
         private static string Substitute(string target, KeyValuePair<string, object> variable)
             => ValueRetriever.IsBool(variable.Value)

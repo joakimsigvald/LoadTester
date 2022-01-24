@@ -9,7 +9,7 @@ using static Applique.LoadTester.Environment.ConstantExpressions;
 
 namespace Applique.LoadTester.Environment
 {
-    internal class Bindings : IBindings
+    public class Bindings : IBindings
     {
         private readonly BindingVariables _bindingVariables;
 
@@ -32,10 +32,10 @@ namespace Applique.LoadTester.Environment
 
         public void MergeWith(IBindings bindings) => _bindingVariables.MergeWith(bindings.Variables);
 
-        public void VerifyValue(string prefix, JProperty pp, string actualValue)
+        public void VerifyValue(string prefix, JProperty expected, string actualValue)
         {
-            if (!TrySubstituteVariable(pp.Value?.ToString(), out var expectedValue))
-                CheckConstraints(prefix, GetConstraint(pp), actualValue);
+            if (!TrySubstituteVariable(expected.Value?.ToString(), out var expectedValue))
+                CheckConstraints(prefix, GetConstraint(expected), actualValue);
             else if (expectedValue != actualValue)
                 throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");
         }
