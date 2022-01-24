@@ -100,6 +100,20 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             }
         }
 
+        public class GivenValueExistAndIsEmbeddedInString : WhenVerifyValue
+        {
+            [Fact]
+            public void ThenPass()
+            {
+                var embeddedString = "embedded";
+                Variables[_constantName] = embeddedString;
+                ActualValue = $"before {embeddedString} after";
+                ExpectedValue = $"before {Embrace(_constantName)} after";
+                Setup();
+                Act();
+            }
+        }
+
         public class GivenDecimalExistButSlightlyDifferentAndNoTolerance : WhenVerifyValue
         {
             [Fact]
