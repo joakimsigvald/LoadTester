@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using Applique.LoadTester.Domain.Environment;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -21,6 +22,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
 
         protected void Setup()
         {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             Expected = new JProperty(_propertyName, ExpectedValue);
             Target = new Environment.Bindings(new BindingVariables(Variables));
         }
@@ -95,6 +97,45 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 ActualValue = "Not empty";
                 Setup();
                 Act();
+            }
+        }
+
+        public class GivenDecimalExistButSlightlyDifferentAndNoTolerance : WhenVerifyValue
+        {
+            [Fact]
+            public void ThenThrowVerificationFailed()
+            {
+                ExpectedValue = Embrace(_constantName);
+                Variables[_constantName] = 10M;
+                ActualValue = "10.01";
+                Setup();
+                Assert.Throws<VerificationFailed>(Act);
+            }
+        }
+
+        public class GivenDecimalExistAndWithinTolerance : WhenVerifyValue
+        {
+            [Fact]
+            public void ThenPass()
+            {
+                ExpectedValue = Embrace($"{_constantName}+-0.01");
+                Variables[_constantName] = 10M;
+                ActualValue = "10.01";
+                Setup();
+                Act();
+            }
+        }
+
+        public class GivenDecimalExistAndNotWithinTolerance : WhenVerifyValue
+        {
+            [Fact]
+            public void ThenThrowVerificationFailed()
+            {
+                ExpectedValue = Embrace($"{_constantName}+-0.01");
+                Variables[_constantName] = 10M;
+                ActualValue = "10.02";
+                Setup();
+                Assert.Throws<VerificationFailed>(Act);
             }
         }
     }

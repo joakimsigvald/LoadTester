@@ -17,7 +17,7 @@ namespace Applique.LoadTester.Environment
 
         public object Get(string name) => TryGet(name, out var variable) ? variable : null;
 
-        public string SubstituteVariables(string target) 
+        public string SubstituteVariables(string target)
             => _bindingVariables.SubstituteVariables(target);
 
         public IEnumerable<KeyValuePair<string, object>> Variables => _bindingVariables.Variables;
@@ -36,9 +36,14 @@ namespace Applique.LoadTester.Environment
         {
             if (!TrySubstituteVariable(expected.Value?.ToString(), out var expectedValue))
                 CheckConstraints(prefix, GetConstraint(expected), actualValue);
-            else if (expectedValue != actualValue)
+            else if (!IsMatch(expectedValue, actualValue))
                 throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");
         }
+
+        private static bool IsMatch(object expectedValue, string actualValue)
+            => expectedValue is DecimalWithTolerance decObj ? decObj.IsMatch(
+                    ValueRetriever.ValueOf(new Constant { Value = actualValue, Type = "decimal" }) as decimal?)
+            : $"{expectedValue}" == actualValue?.ToString();
 
         public IEnumerator<Constant> GetEnumerator() => _bindingVariables.GetEnumerator();
 
@@ -59,16 +64,19 @@ namespace Applique.LoadTester.Environment
             }
         }
 
-        private bool TrySubstituteVariable(string target, out string value)
+        private bool TrySubstituteVariable(string target, out object value)
         {
             value = target;
-            if (!TryExtractConstant(value, out var constant))
+            if (!TryExtractConstant(target, out var constant))
                 return true; // we successfully substituted all 0 variables in the expression (no constraints to check)
             if (constant.Overshadow)
                 return false; // we didn't substitute because any stored value is disregarded and will be replaced (check constraints instead)
             if (!TryGet(constant.Name, out var val))
                 return false; // we didn't substitute because no value is stored yet (check constraints instead)
-            value = ReplaceConstantExpressionWithValue(value, $"{val}");
+            value = !IsVariable(target)
+                ? ReplaceConstantExpressionWithValue(target, $"{val}")
+                : constant.Tolerance != 0 ? new DecimalWithTolerance { Value = val as decimal?, Tolerance = constant.Tolerance}
+                : val;
             return true; // we substitute existing variable value and will not store new value, so no need to check constraints
         }
 

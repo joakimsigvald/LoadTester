@@ -11,10 +11,11 @@ namespace Applique.LoadTester.Environment
         {
             constantExpression = constantExpression.Split(' ')[0]; // skip constraints
             var parts = constantExpression.Split(':', StringSplitOptions.RemoveEmptyEntries);
+            var subParts = parts[0].Split("+-");
             var res = new Constant()
             {
                 Overshadow = constantExpression.StartsWith(':'),
-                Name = parts[0],
+                Name = subParts[0],
                 Value = value
             };
             if (parts.Length == 2)
@@ -24,6 +25,8 @@ namespace Applique.LoadTester.Environment
                 res.Type = typeParts[0];
                 res.Conversions = typeParts.Skip(1).ToArray();
             }
+            if (subParts.Length == 2)
+                res.Tolerance = decimal.Parse(subParts[1]);
             return res;
         }
 
