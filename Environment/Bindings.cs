@@ -64,6 +64,7 @@ namespace Applique.LoadTester.Environment
             }
         }
 
+        //TODO: Varför sparas decimal som string när värden binds från responce? Testtäck
         private bool TrySubstituteVariable(string target, out object value)
         {
             value = target;
@@ -75,7 +76,12 @@ namespace Applique.LoadTester.Environment
                 return false; // we didn't substitute because no value is stored yet (check constraints instead)
             value = !IsVariable(target)
                 ? ReplaceConstantExpressionWithValue(target, $"{val}")
-                : constant.Tolerance != 0 ? new DecimalWithTolerance { Value = val as decimal?, Tolerance = constant.Tolerance}
+                : constant.Tolerance != 0 
+                ? new DecimalWithTolerance 
+                { 
+                    Value = val as decimal? ?? (decimal.TryParse($"{val}", out var dec) ? dec : null), 
+                    Tolerance = constant.Tolerance
+                }
                 : val;
             return true; // we substitute existing variable value and will not store new value, so no need to check constraints
         }
