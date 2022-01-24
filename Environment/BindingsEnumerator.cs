@@ -3,9 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Applique.LoadTester.Runtime.Environment
+namespace Applique.LoadTester.Environment
 {
-    public class BindingsEnumerator : IEnumerator<Constant>
+    internal class BindingsEnumerator : IEnumerator<Constant>
     {
         private readonly IEnumerator<KeyValuePair<string, object>> _enumerator;
 

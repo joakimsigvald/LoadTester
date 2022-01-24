@@ -1,10 +1,10 @@
 ﻿using Applique.LoadTester.External;
 using System.Globalization;
 using System.Threading.Tasks;
-using Applique.LoadTester.Domain.Environment;
 using Applique.LoadTester.Domain;
 using Applique.LoadTester.Runtime.Engine;
 using Applique.LoadTester.Assembly;
+using Applique.LoadTester.Environment;
 
 namespace Applique.LoadTester.Home
 {
@@ -19,7 +19,15 @@ namespace Applique.LoadTester.Home
             var restCallerFactory = new RestCallerFactory();
             var blobRepositoryFactory = new BlobRepositoryFactory();
             var assembler = new Assembler(fileSystem);
-            var scenarioRunnerFactory = new ScenarioRunnerFactory(fileSystem, restCallerFactory, blobRepositoryFactory, assembler);
+            var bindingsFactory = new BindingsFactory(fileSystem);
+            var stepVerifierFactory = new StepVerifierFactory();
+            var scenarioRunnerFactory = new ScenarioRunnerFactory(
+                fileSystem, 
+                restCallerFactory, 
+                blobRepositoryFactory, 
+                assembler,
+                bindingsFactory,
+                stepVerifierFactory);
             var testRunner = new TestRunner(fileSystem, scenarioRunnerFactory, assembler);
             await testRunner.Run(testSuiteFileName);
         }

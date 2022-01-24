@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Domain.Engine
 {
     public class RunFailed : Exception
     {

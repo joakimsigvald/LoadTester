@@ -1,43 +1,41 @@
-﻿using Applique.LoadTester.Runtime.Environment;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Applique.LoadTester.Domain.Environment;
 using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Engine;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
     public class RestStep : RunnableStep<HttpResponseMessage>
     {
         private readonly Endpoint _endpoint;
-        private readonly IBindings _bindings;
         private readonly IRestCaller _restCaller;
-        private readonly StepVerifier _stepVerifier;
+        private readonly IStepVerifier _stepVerifier;
 
         public static IRunnableStep Create(
-            IRestCallerFactory _restCallerFactory,
+            IRestCallerFactory restCallerFactory,
             ITestSuite suite,
             Step step,
-            IBindings bindings)
+            IBindings bindings,
+            IStepVerifier stepVerifier)
         {
             var pair = step.Endpoint.Split('.');
             var serviceName = pair[0];
             var endpointName = pair[1];
             var service = suite.Services.Single(s => s.Name == serviceName);
             var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
-            var restCaller = _restCallerFactory.Create(service, endpoint, bindings);
-            return new RestStep(restCaller, step, endpoint, bindings);
+            var restCaller = restCallerFactory.Create(service, endpoint, bindings);
+            return new RestStep(restCaller, step, endpoint, stepVerifier);
         }
 
-        private RestStep(IRestCaller restCaller, Step step, Endpoint endpoint, IBindings bindings)
+        private RestStep(IRestCaller restCaller, Step step, Endpoint endpoint, IStepVerifier stepVerifier)
             : base(step)
         {
             _endpoint = endpoint;
-            _bindings = bindings;
             _restCaller = restCaller;
-            _stepVerifier = new StepVerifier(step, bindings);
+            _stepVerifier = stepVerifier;
         }
 
         protected override async Task HandleResponse(HttpResponseMessage response)
@@ -46,28 +44,7 @@ namespace Applique.LoadTester.Runtime.Engine
             if (!_stepVerifier.IsResponseStatusValid(response.StatusCode))
                 throw new RunFailed($"Expected {string.Join(", ", Blueprint.ExpectedStatusCodes)} but got {response.StatusCode}: {body}");
             if (Blueprint.Response != null)
-                HandleResponseBody(body);
-        }
-
-        private void HandleResponseBody(string body)
-        {
-            var pattern = Blueprint.Response;
-            var responseToken = _stepVerifier.VerifyResponse(pattern, body);
-            if (pattern is JObject pObject)
-                BindObject(pObject, (JObject)responseToken);
-            else if (pattern is JArray pArray)
-                BindArray(pArray, (JArray)responseToken);
-        }
-
-        private void BindObject(JObject pObject, JObject val)
-            => _bindings.BindVariables(pObject, val);
-
-        private void BindArray(JArray pArray, JArray valArray)
-        {
-            if (pArray.Count != valArray.Count)
-                throw new BindingFailed("", $"Array have different lengths: {valArray.Count}, expected {pArray.Count}");
-            for (var i = 0; i < valArray.Count; i++)
-                BindObject((JObject)pArray[i], (JObject)valArray[i]);
+                _stepVerifier.VerifyResponse(Blueprint.Response, body);
         }
 
         protected override async Task<HttpResponseMessage> DoRun()

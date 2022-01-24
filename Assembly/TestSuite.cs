@@ -1,5 +1,4 @@
-﻿using Applique.LoadTester.Domain;
-using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Domain.Design;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +17,6 @@ namespace Applique.LoadTester.Assembly
         public Scenario[] Scenarios { private get; set; }
 
         public IEnumerable<IScenario> RunnableScenarios => Scenarios.Where(scenario => !scenario.Disabled);
-
-        public IEnumerable<Constant> GetInstanceConstants(int instanceId)
-            => Constants.Prepend(ConstantFactory.Create("InstanceId", $"{instanceId}"));
 
         public Blob GetBlob(string name)
             => Blobs.SingleOrDefault(t => t.Name == name)

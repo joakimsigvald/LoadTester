@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Applique.LoadTester.Domain
+namespace Applique.LoadTester.Environment
 {
-    public static class ConstantFactory
+    internal static class ConstantFactory
     {
         public static Constant Create(string constantExpression, string value = null)
         {

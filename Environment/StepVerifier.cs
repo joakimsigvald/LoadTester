@@ -1,5 +1,4 @@
-﻿using Applique.LoadTester.Runtime.Environment;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -9,9 +8,9 @@ using System.Threading.Tasks;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Environment;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Environment
 {
-    public class StepVerifier
+    public class StepVerifier : IStepVerifier
     {
         private readonly IBindings _bindings;
         private readonly Step _blueprint;
@@ -22,7 +21,7 @@ namespace Applique.LoadTester.Runtime.Engine
             _blueprint = step;
         }
 
-        public JToken VerifyResponse(JToken pattern, string source, string prefix = "")
+        public void VerifyResponse(JToken pattern, string source, string prefix = "")
         {
             JToken responseToken;
             if (pattern is JObject pObject)
@@ -31,7 +30,7 @@ namespace Applique.LoadTester.Runtime.Engine
                 VerifyArray(pArray, (JArray)(responseToken = JsonConvert.DeserializeObject<JArray>(source)), prefix);
             else throw new NotImplementedException(
                 $"Response is expected to be either object or array, but was {source}");
-            return responseToken;
+            _bindings.BindResponse(pattern, responseToken);
         }
 
         public async Task<bool> IsSuccessful(HttpResponseMessage response)
@@ -67,27 +66,7 @@ namespace Applique.LoadTester.Runtime.Engine
                 else if (pp.Value is JArray ppArray)
                     VerifyArray(ppArray, val as JArray, $"{prefix}{pp.Name}");
                 else
-                    VerifyValue($"{prefix}{pp.Name}", pp, val?.ToString());
-            }
-        }
-
-        private void VerifyValue(string prefix, JProperty pp, string actualValue)
-        {
-            if (!_bindings.TrySubstituteVariable(pp.Value?.ToString(), out var expectedValue))
-                CheckConstraints(prefix, Bindings.GetConstraint(pp), actualValue);
-            else if (expectedValue != actualValue)
-                throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");
-        }
-
-        private static void CheckConstraints(string property, Constraint constraint, string actualValue)
-        {
-            switch (constraint)
-            {
-                case Constraint.Mandatory:
-                    if (string.IsNullOrEmpty(actualValue))
-                        throw new VerificationFailed(property, $"Constrain violated: {constraint}, value: {actualValue}");
-                    break;
-                default: break;
+                    _bindings.VerifyValue($"{prefix}{pp.Name}", pp, val?.ToString());
             }
         }
 

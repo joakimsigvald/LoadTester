@@ -6,11 +6,11 @@ namespace Applique.LoadTester.Domain.Design
     {
         string Name { get; }
         Service[] Services { get; }
+        Constant[] Constants { get; } 
         Model[] Models { get; }
         IEnumerable<IScenario> RunnableScenarios { get; }
         IScenario GetTemplate(string name);
         Step GetStepToRun(Step step);
         Blob GetBlob(string name);
-        IEnumerable<Constant> GetInstanceConstants(int instanceId);
     }
 }

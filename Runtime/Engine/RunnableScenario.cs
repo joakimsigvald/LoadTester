@@ -1,5 +1,4 @@
-﻿using Applique.LoadTester.Runtime.Environment;
-using Applique.LoadTester.Runtime.Result;
+﻿using Applique.LoadTester.Runtime.Result;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using Applique.LoadTester.Domain.Environment;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain;
+using Applique.LoadTester.Domain.Engine;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
@@ -19,39 +19,48 @@ namespace Applique.LoadTester.Runtime.Engine
         private readonly IRestCallerFactory _restCallerFactory;
         private readonly IBlobRepositoryFactory _blobFactory;
         private readonly ITestSuite _testSuite;
+        private readonly IBindingsFactory _bindingsFactory;
+        private readonly IStepVerifierFactory _stepVerifierFactory;
 
-        public Bindings Bindings { get; private set; }
+        public IBindings Bindings { get; private set; }
 
         public RunnableScenario(
-            IFileSystem fileSystem,
             IRestCallerFactory restCallerFactory,
             IBlobRepositoryFactory blobFactory,
             ITestSuite testSuite,
             IScenario scenario,
+            IBindingsFactory bindingsFactory,
+            IStepVerifierFactory stepVerifierFactory,
             int instanceId)
         {
             _restCallerFactory = restCallerFactory;
             _blobFactory = blobFactory;
             _testSuite = testSuite;
             Scenario = scenario;
-            var constants = GetConstants(instanceId);
-            Bindings = new Bindings(fileSystem, testSuite, constants, GetModels());
+            _bindingsFactory = bindingsFactory;
+            _stepVerifierFactory = stepVerifierFactory;
+            Bindings = _bindingsFactory.CreateInstanceBindings(testSuite, Scenario, GetModels(), instanceId);
             Steps = scenario.Steps
                 .Select(testSuite.GetStepToRun)
                 .Select(Instanciate)
                 .ToArray();
         }
 
-        private Constant[] GetConstants(int instanceId)
-            => ConstantFactory.Merge(_testSuite.GetInstanceConstants(instanceId), Scenario.Constants);
-
         private IRunnableStep Instanciate(Step step)
             => step.Type switch
             {
-                StepType.Rest => RestStep.Create(_restCallerFactory, _testSuite, step, Bindings),
+                StepType.Rest => InstanciateRest(step),
                 StepType.Blob => BlobStep.Create(_blobFactory, _testSuite, step, Bindings),
                 StepType t => throw new NotImplementedException($"{t}")
             };
+
+        private IRunnableStep InstanciateRest(Step step)
+            => RestStep.Create(
+                _restCallerFactory, 
+                _testSuite, 
+                step, 
+                Bindings, 
+                _stepVerifierFactory.CreateVerifier(step, Bindings));
 
         public async Task<ScenarioInstanceResult> Run()
         {
@@ -70,12 +79,23 @@ namespace Applique.LoadTester.Runtime.Engine
                 }
             }
             sw.Stop();
-            var assertResults = Scenario.Asserts
-                .Select(assert => assert.Apply(Bindings, Bindings.Get(assert.Name)))
-                .ToArray();
+            var assertResults = Scenario.Asserts.Select(Apply).ToArray();
             return assertResults.All(ar => ar.Success)
                 ? ScenarioInstanceResult.Succeeded(this, sw.Elapsed, stepTimes, assertResults)
                 : ScenarioInstanceResult.Failed(this, assertResults.Where(ar => !ar.Success));
+        }
+
+        private AssertResult Apply(Assert assert)
+        {
+            var value = Bindings.SubstituteVariables(assert.Value);
+            var actualValue = Bindings.Get(assert.Name);
+            var res = $"{actualValue}" == value;
+            return res ? new AssertResult
+            {
+                Success = true,
+                Message = $"{assert.Name} is {actualValue} as expected"
+            }
+            : new AssertResult { Message = $"{assert.Name} is {actualValue} but expected {value}" };
         }
 
         private Model[] GetModels() => _testSuite.Models;

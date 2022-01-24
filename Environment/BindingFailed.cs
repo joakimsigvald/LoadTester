@@ -1,8 +1,8 @@
-﻿using Applique.LoadTester.Runtime.Engine;
+﻿using Applique.LoadTester.Domain.Engine;
 
 namespace Applique.LoadTester.Runtime.Environment
 {
-    public class BindingFailed : RunFailed
+    internal class BindingFailed : RunFailed
     {
         public BindingFailed(string property, string message) : base($"{property}: {message}")
         {

@@ -3,9 +3,9 @@ using Applique.LoadTester.Domain.Environment;
 using System;
 using System.Globalization;
 
-namespace Applique.LoadTester.Runtime.Environment
+namespace Applique.LoadTester.Environment
 {
-    public class ValueRetriever
+    internal class ValueRetriever
     {
         public const string Int = "int";
         public const string Bool = "bool";

@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Assembly\Assembly.csproj" />
+    <ProjectReference Include="..\Environment\Environment.csproj" />
     <ProjectReference Include="..\External\External.csproj" />
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
   </ItemGroup>

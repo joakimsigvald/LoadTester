@@ -1,5 +1,5 @@
-﻿using Applique.LoadTester.Runtime.Engine;
-using Applique.LoadTester.Runtime.Environment;
+﻿using Applique.LoadTester.Domain.Environment;
+using Applique.LoadTester.Runtime.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +32,6 @@ namespace Applique.LoadTester.Runtime.Result
         public TimeSpan[] StepTimes { get; set; }
         public string Error { get; set; }
         public AssertResult[] AssertResults { get; set; }
-        public Bindings Bindings { get; private set; }
+        public IBindings Bindings { get; private set; }
     }
 }
