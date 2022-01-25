@@ -15,7 +15,8 @@ namespace Applique.LoadTester.Environment
 
         public Bindings(BindingVariables bindingVariables) => _bindingVariables = bindingVariables;
 
-        public object Get(string name) => TryGet(name, out var variable) ? variable : null;
+        public object Get(string name) 
+            => _bindingVariables.TryGet(name, out var variable) ? variable : null;
 
         public string SubstituteVariables(string target)
             => _bindingVariables.SubstituteVariables(target);
@@ -25,7 +26,7 @@ namespace Applique.LoadTester.Environment
         public void BindResponse(JToken pattern, JToken responseToken)
         {
             if (pattern is JObject pObject)
-                BindObject(pObject, (JObject)responseToken);
+                BindVariables(pObject, (JObject)responseToken);
             else if (pattern is JArray pArray)
                 BindArray(pArray, (JArray)responseToken);
         }
@@ -40,17 +41,17 @@ namespace Applique.LoadTester.Environment
                 throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");
         }
 
-        private static bool IsMatch(object expectedValue, string actualValue)
-            => expectedValue is DecimalWithTolerance decObj ? decObj.IsMatch(
-                    ValueRetriever.ValueOf(new Constant { Value = actualValue, Type = "decimal" }) as decimal?)
-            : $"{expectedValue}" == actualValue?.ToString();
-
         public IEnumerator<Constant> GetEnumerator() => _bindingVariables.GetEnumerator();
 
         public string CreateContent(object body)
             => body is null ? null
             : body is string s && IsVariable(s) ? CreateContent(Get(Unembrace(s)))
             : SubstituteVariables(JsonConvert.SerializeObject(body));
+
+        private static bool IsMatch(object expectedValue, string actualValue)
+            => expectedValue is DecimalWithTolerance decObj ? decObj.IsMatch(
+                    ValueRetriever.ValueOf(new Constant { Value = actualValue, Type = "decimal" }) as decimal?)
+            : $"{expectedValue}" == actualValue?.ToString();
 
         private static void CheckConstraints(string property, Constraint constraint, string actualValue)
         {
@@ -64,7 +65,6 @@ namespace Applique.LoadTester.Environment
             }
         }
 
-        //TODO: Varför sparas decimal som string när värden binds från responce? Testtäck
         private bool TrySubstituteVariable(string target, out object value)
         {
             value = target;
@@ -72,14 +72,14 @@ namespace Applique.LoadTester.Environment
                 return true; // we successfully substituted all 0 variables in the expression (no constraints to check)
             if (constant.Overshadow)
                 return false; // we didn't substitute because any stored value is disregarded and will be replaced (check constraints instead)
-            if (!TryGet(constant.Name, out var val))
+            if (!_bindingVariables.TryGet(constant.Name, out var val))
                 return false; // we didn't substitute because no value is stored yet (check constraints instead)
             value = !IsVariable(target)
                 ? ReplaceConstantExpressionWithValue(target, $"{val}")
-                : constant.Tolerance != 0 
-                ? new DecimalWithTolerance 
-                { 
-                    Value = val as decimal? ?? (decimal.TryParse($"{val}", out var dec) ? dec : null), 
+                : constant.Tolerance != 0
+                ? new DecimalWithTolerance
+                {
+                    Value = val as decimal?,
                     Tolerance = constant.Tolerance
                 }
                 : val;
@@ -88,48 +88,38 @@ namespace Applique.LoadTester.Environment
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private void BindArray(JArray pArray, JArray valArray)
+        private void SetValue(Constant constant, JToken val)
         {
-            if (pArray.Count != valArray.Count)
-                throw new BindingFailed("", $"Array have different lengths: {valArray.Count}, expected {pArray.Count}");
-            for (var i = 0; i < valArray.Count; i++)
-                BindObject((JObject)pArray[i], (JObject)valArray[i]);
-        }
-
-        private void BindObject(JObject pObject, JObject val)
-            => BindVariables(pObject, val);
-
-        private void SetValue(string varExpression, JToken val)
-        {
-            var constant = ConstantFactory.Create(varExpression, val.Value<string>());
-            if (!constant.Overshadow && TryGet(constant.Name, out var existing))
+            constant.Value = val.Value<string>();
+            if (!constant.Overshadow && _bindingVariables.TryGet(constant.Name, out var existing))
                 constant.Type = ValueRetriever.GetType(existing);
             _bindingVariables.Set(constant.Name, ValueRetriever.ValueOf(constant));
         }
 
-        private bool TryGet(string name, out object variable) => _bindingVariables.TryGet(name, out variable);
-
-        private void BindVariables(JProperty pp, JArray ppArray, JArray valArray)
-        {
-            if (ppArray.Count != valArray.Count)
-                throw new BindingFailed($"{pp.Name}", $"Array have different lengths: {valArray.Count}, expected {ppArray.Count}");
-            for (var i = 0; i < valArray.Count; i++)
-                BindVariables((JObject)ppArray[i], (JObject)valArray[i]);
-        }
-
-        private void BindVariables(JObject pattern, JObject source)
+        private void BindVariables(JObject pattern, JObject source, string prefix = null)
         {
             var patternProperties = pattern.Properties();
             foreach (var pp in patternProperties)
+                BindVariable($"{prefix}.{pp.Name}".TrimStart('.'), pp);
+
+            void BindVariable(string prefix, JProperty pp)
             {
                 var val = source.GetValue(pp.Name);
                 if (pp.Value is JObject ppObject)
-                    BindVariables(ppObject, val as JObject);
+                    BindVariables(ppObject, val as JObject, prefix);
                 else if (pp.Value is JArray ppArray)
-                    BindVariables(pp, ppArray, val as JArray);
-                else if (TryGetVariableName(pp, out var varExpression) && varExpression != null)
-                    SetValue(varExpression, val);
+                    BindArray(ppArray, val as JArray, prefix);
+                else if (TryGetConstant(pp.Value.Value<string>(), out var constant))
+                    SetValue(constant, val);
             }
+        }
+
+        private void BindArray(JArray pArray, JArray valArray, string prefix = null)
+        {
+            if (pArray.Count != valArray.Count)
+                throw new BindingFailed(prefix, $"Array have different lengths: {valArray.Count}, expected {pArray.Count}");
+            for (var i = 0; i < valArray.Count; i++)
+                BindVariables((JObject)pArray[i], (JObject)valArray[i], $"{prefix}[{i}]");
         }
     }
 }

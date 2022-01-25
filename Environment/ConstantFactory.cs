@@ -7,6 +7,13 @@ namespace Applique.LoadTester.Environment
 {
     internal static class ConstantFactory
     {
+        /// <summary>
+        /// Constant -> (:)[Name](:[Type])(+-[Tolerance])( [Constraint])
+        /// Name -> /String/
+        /// Type -> int|decimal|string|dateTime
+        /// Tolerance -> /Decimal/
+        /// Constraint -> Mandatory
+        /// </summary>
         public static Constant Create(string constantExpression, string value = null)
         {
             constantExpression = constantExpression.Split(' ')[0]; // skip constraints

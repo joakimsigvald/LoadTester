@@ -1,31 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using Applique.LoadTester.Domain.Environment;
+﻿using Applique.LoadTester.Domain.Environment;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using static Applique.LoadTester.Environment.ConstantExpressions;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public class WhenVerifyValue
+    public class WhenVerifyValue : BindingsTestBase
     {
-        protected const string _constantName = "SomeConstant";
         protected const string _propertyName = "SomeProperty";
 
         protected string Prefix = string.Empty;
         protected JProperty Expected;
         protected object ExpectedValue;
-        protected string ActualValue = "SomeValue";
-        protected IDictionary<string, object> Variables = new Dictionary<string, object>();
+        protected string ActualValue = SomeString;
 
-        protected Environment.Bindings Target { get; private set; }
-
-        protected void Setup()
-        {
-            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-            Expected = new JProperty(_propertyName, ExpectedValue);
-            Target = new Environment.Bindings(new BindingVariables(Variables));
-        }
+        protected override void Arrange() => Expected = new JProperty(_propertyName, ExpectedValue);
 
         protected void Act() => Target.VerifyValue(Prefix, Expected, ActualValue);
 
@@ -34,8 +23,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace(_constantName);
-                Variables[_constantName] = ActualValue;
+                ExpectedValue = Embrace(ConstantName);
+                Variables[ConstantName] = ActualValue;
                 Setup();
                 Act();
             }
@@ -46,8 +35,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace(_constantName);
-                Variables[_constantName] = $"Not {ActualValue}";
+                ExpectedValue = Embrace(ConstantName);
+                Variables[ConstantName] = $"Not {ActualValue}";
                 Setup();
                 Assert.Throws<VerificationFailed>(Act);
             }
@@ -58,7 +47,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace(_constantName);
+                ExpectedValue = Embrace(ConstantName);
                 Setup();
                 Act();
             }
@@ -69,8 +58,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($":{_constantName}");
-                Variables[_constantName] = $"Not {ActualValue}";
+                ExpectedValue = Embrace($":{ConstantName}");
+                Variables[ConstantName] = $"Not {ActualValue}";
                 Setup();
                 Act();
             }
@@ -81,7 +70,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace($"{_constantName} {Constraint.Mandatory}");
+                ExpectedValue = Embrace($"{ConstantName} {Constraint.Mandatory}");
                 ActualValue = null;
                 Setup();
                 Assert.Throws<VerificationFailed>(Act);
@@ -93,7 +82,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($"{_constantName} {Constraint.Mandatory}");
+                ExpectedValue = Embrace($"{ConstantName} {Constraint.Mandatory}");
                 ActualValue = "Not empty";
                 Setup();
                 Act();
@@ -106,9 +95,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenPass()
             {
                 var embeddedString = "embedded";
-                Variables[_constantName] = embeddedString;
+                Variables[ConstantName] = embeddedString;
                 ActualValue = $"before {embeddedString} after";
-                ExpectedValue = $"before {Embrace(_constantName)} after";
+                ExpectedValue = $"before {Embrace(ConstantName)} after";
                 Setup();
                 Act();
             }
@@ -119,8 +108,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace(_constantName);
-                Variables[_constantName] = 10M;
+                ExpectedValue = Embrace(ConstantName);
+                Variables[ConstantName] = 10M;
                 ActualValue = "10.01";
                 Setup();
                 Assert.Throws<VerificationFailed>(Act);
@@ -132,8 +121,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($"{_constantName}+-0.01");
-                Variables[_constantName] = 10M;
+                ExpectedValue = Embrace($"{ConstantName}+-0.01");
+                Variables[ConstantName] = 10M;
                 ActualValue = "10.01";
                 Setup();
                 Act();
@@ -145,8 +134,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace($"{_constantName}+-0.01");
-                Variables[_constantName] = 10M;
+                ExpectedValue = Embrace($"{ConstantName}+-0.01");
+                Variables[ConstantName] = 10M;
                 ActualValue = "10.02";
                 Setup();
                 Assert.Throws<VerificationFailed>(Act);

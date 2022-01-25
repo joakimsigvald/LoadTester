@@ -7,16 +7,8 @@ namespace Applique.LoadTester.Environment
 {
     public static class ConstantExpressions
     {
-        public static bool TryGetVariableName(JProperty p, out string varName)
-        {
-            varName = null;
-            if (!IsString(p))
-                return false;
-            var val = p.Value.Value<string>();
-            if (IsVariable(val))
-                varName = ConstantFactory.Create(Unembrace(val)).Name;
-            return true;
-        }
+        public static bool TryGetConstant(string val, out Constant constant) 
+            => TryExtractConstant(val, out constant) && IsVariable(val);
 
         public static bool TryExtractConstant(string val, out Constant constant)
         {
