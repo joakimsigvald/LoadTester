@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Applique.LoadTester.Assembly
 {
@@ -27,10 +28,27 @@ namespace Applique.LoadTester.Assembly
             ?? throw new NotImplementedException($"Template: {name}");
 
         public Step GetStepToRun(Step step)
-            => step.Template is null ? step : GetStepTemplate(step.Template).Step;
+            => step.Template is null
+                ? step
+                : MergeSteps(GetStepTemplate(step.Template).Step, step);
 
         private StepTemplate GetStepTemplate(string name)
             => StepTemplates.SingleOrDefault(t => t.Name == name)
             ?? throw new NotImplementedException($"StepTemplate: {name}");
+
+        private static Step MergeSteps(Step template, Step step)
+            => new()
+            {
+                Args = step.Args ?? template.Args ?? string.Empty,
+                Body = step.Body ?? template.Body,
+                BreakOnSuccess = template.BreakOnSuccess,
+                Endpoint = step.Endpoint ?? template.Endpoint,
+                ExpectedStatusCodes = step.ExpectedStatusCodes ?? template.ExpectedStatusCodes ?? new[] { HttpStatusCode.OK },
+                Response = step.Response ?? template.Response,
+                RetryOnFail = template.RetryOnFail,
+                DelayMs = template.DelayMs,
+                Times = template.Times,
+                Type = template.Type
+            };
     }
 }
