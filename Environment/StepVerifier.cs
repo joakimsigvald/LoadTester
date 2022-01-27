@@ -45,7 +45,7 @@ namespace Applique.LoadTester.Environment
             {
                 VerifyResponse(pattern, body);
             }
-            catch (VerificationFailed)
+            catch (VerificationFailed vf)
             {
                 return false;
             }

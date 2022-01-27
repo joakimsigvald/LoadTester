@@ -12,14 +12,20 @@ namespace Applique.LoadTester.Environment
     public class Bindings : IBindings
     {
         private readonly BindingVariables _bindingVariables;
+        private IBindings _overloads;
 
         public Bindings(BindingVariables bindingVariables) => _bindingVariables = bindingVariables;
 
-        public object Get(string name) 
-            => _bindingVariables.TryGet(name, out var variable) ? variable : null;
+        public object Get(string name) => TryGet(name, out var val) ? val : null;
+
+        public bool TryGet(string name, out object val)
+        {
+            val = null;
+            return _overloads?.TryGet(name, out val) ?? (_bindingVariables.TryGet(name, out val));
+        }
 
         public string SubstituteVariables(string target)
-            => _bindingVariables.SubstituteVariables(target);
+            => _overloads?.SubstituteVariables(target) ?? _bindingVariables.SubstituteVariables(target);
 
         public IEnumerable<KeyValuePair<string, object>> Variables => _bindingVariables.Variables;
 
@@ -32,6 +38,8 @@ namespace Applique.LoadTester.Environment
         }
 
         public void MergeWith(IBindings bindings) => _bindingVariables.MergeWith(bindings.Variables);
+
+        public void OverloadWith(IBindings bindings) => _overloads = bindings;
 
         public void VerifyValue(string prefix, JProperty expected, string actualValue)
         {
@@ -72,7 +80,7 @@ namespace Applique.LoadTester.Environment
                 return true; // we successfully substituted all 0 variables in the expression (no constraints to check)
             if (constant.Overshadow)
                 return false; // we didn't substitute because any stored value is disregarded and will be replaced (check constraints instead)
-            if (!_bindingVariables.TryGet(constant.Name, out var val))
+            if (!TryGet(constant.Name, out var val))
                 return false; // we didn't substitute because no value is stored yet (check constraints instead)
             value = !IsVariable(target)
                 ? ReplaceConstantExpressionWithValue(target, $"{val}")
@@ -85,7 +93,6 @@ namespace Applique.LoadTester.Environment
                 : val;
             return true; // we substitute existing variable value and will not store new value, so no need to check constraints
         }
-
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private void SetValue(Constant constant, JToken val)

@@ -18,8 +18,9 @@ namespace Applique.LoadTester.Runtime.Engine
             IRestCallerFactory restCallerFactory,
             ITestSuite suite,
             Step step,
+            IStepVerifier stepVerifier,
             IBindings bindings,
-            IStepVerifier stepVerifier)
+            IBindings overloads)
         {
             var pair = step.Endpoint.Split('.');
             var serviceName = pair[0];
@@ -27,11 +28,17 @@ namespace Applique.LoadTester.Runtime.Engine
             var service = suite.Services.Single(s => s.Name == serviceName);
             var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
             var restCaller = restCallerFactory.Create(service, endpoint, bindings);
-            return new RestStep(restCaller, step, endpoint, stepVerifier);
+            return new RestStep(restCaller, step, endpoint, stepVerifier, bindings, overloads);
         }
 
-        private RestStep(IRestCaller restCaller, Step step, Endpoint endpoint, IStepVerifier stepVerifier)
-            : base(step)
+        private RestStep(
+            IRestCaller restCaller, 
+            Step step, 
+            Endpoint endpoint, 
+            IStepVerifier stepVerifier, 
+            IBindings bindings, 
+            IBindings overloads)
+            : base(step, bindings, overloads)
         {
             _endpoint = endpoint;
             _restCaller = restCaller;

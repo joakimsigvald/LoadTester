@@ -50,7 +50,7 @@ namespace Applique.LoadTester.Runtime.Engine
             => step.Type switch
             {
                 StepType.Rest => InstanciateRest(step),
-                StepType.Blob => BlobStep.Create(_blobFactory, _testSuite, step, Bindings),
+                StepType.Blob => BlobStep.Create(_blobFactory, _testSuite, step, Bindings, GetOverloads(step)),
                 StepType t => throw new NotImplementedException($"{t}")
             };
 
@@ -58,9 +58,13 @@ namespace Applique.LoadTester.Runtime.Engine
             => RestStep.Create(
                 _restCallerFactory, 
                 _testSuite, 
-                step, 
-                Bindings, 
-                _stepVerifierFactory.CreateVerifier(step, Bindings));
+                step,
+                _stepVerifierFactory.CreateVerifier(step, Bindings),
+                Bindings,
+                GetOverloads(step));
+
+        private IBindings GetOverloads(Step step)
+            => step.Constants.Any() ? _bindingsFactory.CreateBindings(_testSuite, step.Constants) : null;
 
         public async Task<ScenarioInstanceResult> Run()
         {

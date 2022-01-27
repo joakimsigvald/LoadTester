@@ -17,7 +17,7 @@ namespace Applique.LoadTester.Environment
             return CreateBindings(testSuite, constants, models);
         }
 
-        public IBindings CreateBindings(ITestSuite testSuite, Constant[] constants, Model[] models) 
+        public IBindings CreateBindings(ITestSuite testSuite, Constant[] constants, Model[] models = null)
             => new Bindings(new BindingVariables(CreateVariables(_fileSystem, testSuite, constants, models)));
 
         private static Constant[] GetConstants(ITestSuite testSuite, Constant[] scenarioConstants, int instanceId)
@@ -30,12 +30,13 @@ namespace Applique.LoadTester.Environment
             IFileSystem fileSystem,
             ITestSuite suite,
             IEnumerable<Constant> constants,
-            Model[] models)
+            Model[] models = null)
         {
             var valueRetriever = new ValueRetriever(fileSystem, suite);
             var variables = constants.ToDictionary(c => c.Name, valueRetriever.GetValue);
-            foreach (var model in models)
-                variables[model.Name] = model.Value;
+            if (models?.Any() == true)
+                foreach (var model in models)
+                    variables[model.Name] = model.Value;
             return variables;
         }
     }

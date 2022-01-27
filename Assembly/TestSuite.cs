@@ -39,11 +39,11 @@ namespace Applique.LoadTester.Assembly
         private static Step MergeSteps(Step template, Step step)
             => new()
             {
-                Args = step.Args ?? template.Args ?? string.Empty,
+                Args = template.Args,
                 Body = step.Body ?? template.Body,
                 BreakOnSuccess = template.BreakOnSuccess,
                 Endpoint = step.Endpoint ?? template.Endpoint,
-                ExpectedStatusCodes = step.ExpectedStatusCodes ?? template.ExpectedStatusCodes ?? new[] { HttpStatusCode.OK },
+                ExpectedStatusCodes = template.ExpectedStatusCodes,
                 Response = step.Response ?? template.Response,
                 RetryOnFail = template.RetryOnFail,
                 DelayMs = template.DelayMs,

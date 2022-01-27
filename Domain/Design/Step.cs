@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace Applique.LoadTester.Domain.Design
 {
@@ -8,9 +9,10 @@ namespace Applique.LoadTester.Domain.Design
     {
         public StepType Type { get; set; } = StepType.Rest;
         public string Template { get; set; }
+        public Constant[] Constants { get; } = Array.Empty<Constant>();
         public string Endpoint { get; set; }
-        public string Args { get; set; }
-        public HttpStatusCode[] ExpectedStatusCodes { get; set; }
+        public string Args { get; set; } = string.Empty;
+        public HttpStatusCode[] ExpectedStatusCodes { get; set; } = new[] { HttpStatusCode.OK };
         public dynamic Body { get; set; }
         public dynamic Response { get; set; }
         public int DelayMs { get; set; } = 0;

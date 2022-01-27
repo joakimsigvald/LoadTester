@@ -61,7 +61,7 @@ namespace Applique.LoadTester.Environment
         {
             var from = Embrace(variable.Key);
             var to = GetValue(variable.Value);
-            var res = target.Replace(from, to);
+             var res = target.Replace(from, to);
             return res;
         }
 
