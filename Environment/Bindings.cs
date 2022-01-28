@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using static Applique.LoadTester.Environment.ConstantExpressions;
 
 namespace Applique.LoadTester.Environment
@@ -73,9 +74,23 @@ namespace Applique.LoadTester.Environment
             }
         }
 
+        private bool TryExtractFormula(string target, out object[] terms)
+        {
+            terms = null;
+            if (target?.StartsWith('=') != true)
+                return false;
+            terms = target[1..].Split('+').Select(Unembrace).Select(Get).ToArray();
+            return terms.Length > 1 && terms.All(t => t is decimal);
+        }
+
         private bool TrySubstituteVariable(string target, out object value)
         {
             value = target;
+            if (TryExtractFormula(target, out var expr))
+            {
+                value = expr.Cast<decimal>().Aggregate(0M, (a, b) => a + b);
+                return true;
+            }
             if (!TryExtractConstant(target, out var constant))
                 return true; // we successfully substituted all 0 variables in the expression (no constraints to check)
             if (constant.Overshadow)
