@@ -49,5 +49,31 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Assert.Equal(SomeDecimal, ReturnValue);
             }
         }
+
+        public class GivenStringOverloadedWithInt : WhenGet
+        {
+            [Fact]
+            public void ThenReturnInt()
+            {
+                Variables[SomeConstant] = SomeString;
+                OverloadVariables[SomeConstant] = SomeInt;
+                ArrangeAndAct();
+                Assert.Equal(SomeInt, ReturnValue);
+            }
+        }
+
+        public class GivenStringWasOverloadedWithIntButOverloadRemoved : WhenGet
+        {
+            [Fact]
+            public void ThenReturnString()
+            {
+                Variables[SomeConstant] = SomeString;
+                OverloadVariables[SomeConstant] = SomeInt;
+                Arrange();
+                SUT.OverloadWith(null);
+                Act();
+                Assert.Equal(SomeString, ReturnValue);
+            }
+        }
     }
 }

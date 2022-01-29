@@ -145,6 +145,54 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             }
         }
 
+        public class GivenTargetIsOvershadowExistingConstant : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenDoNotSubstituteValue()
+            {
+                Variables[SomeConstant] = SomeString;
+                Target = Embrace($":{SomeConstant}");
+                ArrangeAndAct();
+                Assert.Equal(Target, ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsTypedExistingConstant : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenDoNotSubstituteValue()
+            {
+                Variables[SomeConstant] = SomeString;
+                Target = Embrace($"{SomeConstant}:int");
+                ArrangeAndAct();
+                Assert.Equal(Target, ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsExistingConstantWithTolerance : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenDoNotSubstituteValue()
+            {
+                Variables[SomeConstant] = SomeString;
+                Target = Embrace($"{SomeConstant}+-0.1");
+                ArrangeAndAct();
+                Assert.Equal(Target, ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsExistingConstantWithConstraint : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenDoNotSubstituteValue()
+            {
+                Variables[SomeConstant] = SomeString;
+                Target = Embrace($"{SomeConstant} Mandatory");
+                ArrangeAndAct();
+                Assert.Equal(Target, ReturnValue);
+            }
+        }
+
         public class GivenTwoConstantsInTargetExist : WhenSubstituteVariables
         {
             [Fact]

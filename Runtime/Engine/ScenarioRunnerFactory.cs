@@ -1,7 +1,7 @@
-﻿using Applique.LoadTester.Domain;
-using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Domain.Engine;
-using Applique.LoadTester.Domain.Environment;
+﻿using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Domain;
+using Applique.LoadTester.Runtime.External;
 
 namespace Applique.LoadTester.Runtime.Engine
 {

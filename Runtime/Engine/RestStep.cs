@@ -2,17 +2,19 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Applique.LoadTester.Domain.Environment;
-using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Domain.Engine;
+using Applique.LoadTester.Domain;
+using Applique.LoadTester.Runtime.External;
+using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Core.Service;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
     public class RestStep : RunnableStep<HttpResponseMessage>
     {
-        private readonly Endpoint _endpoint;
         private readonly IRestCaller _restCaller;
         private readonly IStepVerifier _stepVerifier;
+        private readonly RequestFactory _requestFactory;
+        private readonly Service _service;
 
         public static IRunnableStep Create(
             IRestCallerFactory restCallerFactory,
@@ -27,22 +29,25 @@ namespace Applique.LoadTester.Runtime.Engine
             var endpointName = pair[1];
             var service = suite.Services.Single(s => s.Name == serviceName);
             var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
-            var restCaller = restCallerFactory.Create(service, endpoint, bindings);
-            return new RestStep(restCaller, step, endpoint, stepVerifier, bindings, overloads);
+            var restCaller = restCallerFactory.Create(service.BaseUrl);
+            var requestFactory = new RequestFactory(service, endpoint, bindings, step);
+            return new RestStep(restCaller, service, step, stepVerifier, bindings, overloads, requestFactory);
         }
 
         private RestStep(
-            IRestCaller restCaller, 
-            Step step, 
-            Endpoint endpoint, 
-            IStepVerifier stepVerifier, 
-            IBindings bindings, 
-            IBindings overloads)
+            IRestCaller restCaller,
+            Service service,
+            Step step,
+            IStepVerifier stepVerifier,
+            IBindings bindings,
+            IBindings overloads,
+            RequestFactory requestFactory)
             : base(step, bindings, overloads)
         {
-            _endpoint = endpoint;
             _restCaller = restCaller;
+            _service = service;
             _stepVerifier = stepVerifier;
+            _requestFactory = requestFactory;
         }
 
         protected override async Task HandleResponse(HttpResponseMessage response)
@@ -57,16 +62,25 @@ namespace Applique.LoadTester.Runtime.Engine
         protected override async Task<HttpResponseMessage> DoRun()
         {
             HttpResponseMessage lastResponse = null;
+            var serviceHeaders = CreateServiceHeaders();
             for (int i = 0; i < Blueprint.Times; i++)
             {
                 await Task.Delay(Delay);
                 Console.WriteLine($"Calling {Blueprint.Endpoint}, attempt {i + 1}");
-                lastResponse = await _restCaller.Call(Blueprint.Body, Blueprint.Args);
+                lastResponse = await _restCaller.Call(_requestFactory.GetRequest(serviceHeaders));
                 var isSuccessful = await _stepVerifier.IsSuccessful(lastResponse);
                 if (isSuccessful ? Blueprint.BreakOnSuccess : !Blueprint.RetryOnFail)
                     break;
             }
             return lastResponse;
         }
+
+        private Header[] CreateServiceHeaders()
+            => _service.Headers.Select(h => new Header
+            {
+                Name = h.Name,
+                Value = _bindings.SubstituteVariables(h.Value)
+            }).Prepend(new Header { Name = _service.ApiKey.Name, Value = _service.ApiKey.Value })
+            .ToArray();
     }
 }

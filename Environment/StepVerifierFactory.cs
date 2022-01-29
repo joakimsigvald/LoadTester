@@ -1,5 +1,6 @@
-﻿using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Domain.Environment;
+﻿using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Domain;
 
 namespace Applique.LoadTester.Environment
 {

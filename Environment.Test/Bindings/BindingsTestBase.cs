@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Domain.Environment;
+﻿using Applique.LoadTester.Core.Service;
 using System.Collections.Generic;
 using System.Globalization;
 

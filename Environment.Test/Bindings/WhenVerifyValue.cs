@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Domain.Environment;
+﻿using Applique.LoadTester.Core.Service;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using static Applique.LoadTester.Environment.ConstantExpressions;

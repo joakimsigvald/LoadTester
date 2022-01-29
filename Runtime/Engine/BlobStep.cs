@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Applique.LoadTester.Domain.Environment;
-using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Runtime.External;
+using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Core.Service;
 
 namespace Applique.LoadTester.Runtime.Engine
 {

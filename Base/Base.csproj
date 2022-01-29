@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Applique.LoadTester.Base</AssemblyName>
+    <RootNamespace>Applique.LoadTester.Base</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="TestSuites\getCompany.json" />
+    <None Remove="TestSuites\pdf.json" />
+    <None Remove="TestSuites\purchase.json" />
+    <None Remove="TestSuites\tickettypes.json" />
+    <None Remove="TestSuites\various.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestSuites\ArlandaExpress\pdf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestSuites\Adlibris\getCompany.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestSuites\ArlandaExpress\purchase.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestSuites\ArlandaExpress\tickettypes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestSuites\ArlandaExpress\various.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assembly\Assembly.csproj" />
+    <ProjectReference Include="..\Environment\Environment.csproj" />
+    <ProjectReference Include="..\External\External.csproj" />
+    <ProjectReference Include="..\Front\Front.csproj" />
+    <ProjectReference Include="..\Runtime\Runtime.csproj" />
+  </ItemGroup>
+
+</Project>

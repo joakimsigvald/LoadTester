@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using Applique.LoadTester.Domain.Environment;
+using Applique.LoadTester.Runtime.External;
 using Azure.Storage.Blobs;
 
 namespace Applique.LoadTester.External

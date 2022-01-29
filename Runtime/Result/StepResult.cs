@@ -1,5 +1,5 @@
-﻿using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Domain.Result;
+﻿using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Core.Result;
 using System;
 using System.Linq;
 

@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Core.Design;
 
 namespace Applique.LoadTester.Assembly
 {

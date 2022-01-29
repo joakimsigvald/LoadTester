@@ -1,41 +1,32 @@
-﻿using System.Net.Http;
+﻿using Applique.LoadTester.Runtime.External;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
-using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Domain.Environment;
 
 namespace Applique.LoadTester.External
 {
     internal class RestCaller : IRestCaller
     {
         private readonly HttpClient _client;
-        private readonly Service _service;
-        private readonly Endpoint _endpoint;
-        private readonly IBindings _bindings;
 
-        public RestCaller(Service service, Endpoint endpoint, IBindings bindings)
-        {
-            _service = service;
-            _endpoint = endpoint;
-            _bindings = bindings;
-            _client = CreateClient(service, _bindings);
-        }
+        public RestCaller(string baseUrl) => _client = CreateClient(baseUrl);
 
-        public Task<HttpResponseMessage> Call(object body, string args)
-        {
-            var request = RequestFactory.GetRequest(_service.BasePath, _endpoint, _bindings, body, args);
-            return _client.SendAsync(request);
-        }
+        public Task<HttpResponseMessage> Call(Request request)
+            => _client.SendAsync(MapToHttpRequestMessage(request));
 
-        private static HttpClient CreateClient(Service service, IBindings bindings)
+        private static HttpRequestMessage MapToHttpRequestMessage(Request request)
         {
-            var client = new HttpClient
+            var requestMessage = new HttpRequestMessage(new(request.Method), request.Url)
             {
-                BaseAddress = new(service.BaseUrl),
+                Content = request.Content == null
+                ? null
+                : new StringContent(request.Content, Encoding.UTF8, "application/json")
             };
-            client.DefaultRequestHeaders.Add(service.ApiKey.Name, service.ApiKey.Value);
-            foreach (var header in service.DefaultHeaders)
-                client.DefaultRequestHeaders.Add(header.Name, bindings.SubstituteVariables(header.Value));
-            return client;
+            foreach (var header in request.Headers)
+                requestMessage.Headers.Add(header.Name, header.Value);
+            return requestMessage;
         }
+
+        private static HttpClient CreateClient(string baseUrl) => new() { BaseAddress = new(baseUrl) };
     }
 }

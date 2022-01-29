@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Domain.Engine;
+﻿using Applique.LoadTester.Domain;
 
 namespace Applique.LoadTester.Runtime.Environment
 {

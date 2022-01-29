@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Applique.LoadTester.Domain.Environment;
-using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain;
-using Applique.LoadTester.Domain.Engine;
+using Applique.LoadTester.Runtime.External;
+using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Core.Service;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
