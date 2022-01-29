@@ -30,6 +30,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             Given();
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             SUT = CreateBindings(Variables);
+            SUT.OverloadWith(CreateBindings(OverloadVariables));
         }
 
         protected static IBindings CreateBindings(IDictionary<string, object> variables)

@@ -22,11 +22,11 @@ namespace Applique.LoadTester.Environment
         public bool TryGet(string name, out object val)
         {
             val = null;
-            return _overloads?.TryGet(name, out val) ?? (_bindingVariables.TryGet(name, out val));
+            return _overloads?.TryGet(name, out val) == true || _bindingVariables.TryGet(name, out val);
         }
 
         public string SubstituteVariables(string target)
-            => _overloads?.SubstituteVariables(target) ?? _bindingVariables.SubstituteVariables(target);
+            => _bindingVariables.SubstituteVariables(_overloads?.SubstituteVariables(target) ?? target);
 
         public IEnumerable<KeyValuePair<string, object>> Variables => _bindingVariables.Variables;
 

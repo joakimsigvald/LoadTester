@@ -1,9 +1,10 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 using static Applique.LoadTester.Environment.ConstantExpressions;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public class WhenSubstituteVariables : BindingsTestBase<object>
+    public class WhenSubstituteVariables : BindingsTestBase<string>
     {
         protected string Target;
 
@@ -25,7 +26,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenReturnTarget()
             {
-                Target = $"{SomeInt}{START_CONSTANT}{SomeConstant}{END_CONSTANT}{AnotherInt}";
+                Target = $"A{Embrace(SomeConstant)}B";
                 ArrangeAndAct();
                 Assert.Equal(Target, ReturnValue);
             }
@@ -37,9 +38,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenSubstituteConstantWithValue()
             {
                 Variables[SomeConstant] = SomeString;
-                Target = $"{SomeInt}{START_CONSTANT}{SomeConstant}{END_CONSTANT}{AnotherInt}";
+                Target = $"A{Embrace(SomeConstant)}B";
                 ArrangeAndAct();
-                Assert.Equal($"{SomeInt}{SomeString}{AnotherInt}", ReturnValue);
+                Assert.Equal($"A{SomeString}B", ReturnValue);
             }
         }
 
@@ -50,11 +51,122 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             {
                 Variables[SomeConstant] = SomeString;
                 OverloadVariables[SomeConstant] = AnotherString;
-                Target = $"{SomeInt}{START_CONSTANT}{SomeConstant}{END_CONSTANT}{AnotherInt}";
-                Arrange();
-                SUT.OverloadWith(CreateBindings(OverloadVariables));
-                Act();
-                Assert.Equal($"{SomeInt}{AnotherString}{AnotherInt}", ReturnValue);
+                Target = $"A{Embrace(SomeConstant)}B";
+                ArrangeAndAct();
+                Assert.Equal($"A{AnotherString}B", ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsConstantBoundToInt : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteConstantWithInt()
+            {
+                Variables[SomeConstant] = SomeInt;
+                Target = Embrace(SomeConstant);
+                ArrangeAndAct();
+                Assert.Equal($"{SomeInt}", ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsQuotedConstantBoundToInt : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteQuotedConstantWithInt()
+            {
+                Variables[SomeConstant] = SomeInt;
+                Target = $"'{Embrace(SomeConstant)}'";
+                ArrangeAndAct();
+                Assert.Equal($"{SomeInt}", ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsDoubleQuotedConstantBoundToInt : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteDoubleQuotedConstantWithInt()
+            {
+                Variables[SomeConstant] = SomeInt;
+                Target = $"\"{Embrace(SomeConstant)}\"";
+                ArrangeAndAct();
+                Assert.Equal($"{SomeInt}", ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsQuotedConstantBoundToDecimal : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteQuotedConstantWithDecimal()
+            {
+                Variables[SomeConstant] = SomeDecimal;
+                Target = $"'{Embrace(SomeConstant)}'";
+                ArrangeAndAct();
+                Assert.Equal($"{SomeDecimal}", ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsConstantBoundToDecimal : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteConstantWithDecimal()
+            {
+                Variables[SomeConstant] = SomeDecimal;
+                Target = Embrace(SomeConstant);
+                ArrangeAndAct();
+                Assert.Equal($"{SomeDecimal}", ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsConstantBoundToBool : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteConstantWithBool()
+            {
+                Variables[SomeConstant] = true;
+                Target = Embrace(SomeConstant);
+                ArrangeAndAct();
+                Assert.Equal("true", ReturnValue);
+            }
+        }
+
+        public class GivenTargetIsConstantBoundCurrentTime : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteConstantWithCurrentTime()
+            {
+                var before = DateTime.Now.AddSeconds(-1);
+                Variables[SomeConstant] = SpecialVariables.CurrentTime;
+                Target = Embrace(SomeConstant);
+                ArrangeAndAct();
+                var currentTime = DateTime.Parse(ReturnValue);
+                var after = DateTime.Now;
+                Assert.True(currentTime >= before, $"Expected {currentTime.Ticks} >= {before.Ticks}");
+                Assert.True(currentTime <= DateTime.Now, $"Expected {currentTime.Ticks} <= {after.Ticks}");
+            }
+        }
+
+        public class GivenTwoConstantsInTargetExist : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteBoth()
+            {
+                Variables[SomeConstant] = SomeString;
+                Variables[AnotherConstant] = SomeInt;
+                Target = $"A{Embrace(SomeConstant)}B{Embrace(AnotherConstant)}C";
+                ArrangeAndAct();
+                Assert.Equal($"A{SomeString}B{SomeInt}C", ReturnValue);
+            }
+        }
+
+        public class GivenTargetHasExistingConstantTwice : WhenSubstituteVariables
+        {
+            [Fact]
+            public void ThenSubstituteBothPlaces()
+            {
+                Variables[SomeConstant] = SomeString;
+                Target = $"A{Embrace(SomeConstant)}B{Embrace(SomeConstant)}C";
+                ArrangeAndAct();
+                Assert.Equal($"A{SomeString}B{SomeString}C", ReturnValue);
             }
         }
     }

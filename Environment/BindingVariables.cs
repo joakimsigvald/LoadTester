@@ -57,13 +57,8 @@ namespace Applique.LoadTester.Environment
             return res;
         }
 
-        private static string SubstituteValue(string target, KeyValuePair<string, object> variable)
-        {
-            var from = Embrace(variable.Key);
-            var to = GetValue(variable.Value);
-             var res = target.Replace(from, to);
-            return res;
-        }
+        private static string SubstituteValue(string target, KeyValuePair<string, object> variable) 
+            => target.Replace(Embrace(variable.Key), GetValue(variable.Value));
 
         private static string GetValue(object variableValue) =>
             (variableValue as string) switch
