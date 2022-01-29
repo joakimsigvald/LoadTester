@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Applique.LoadTester.Core.Design;
 using Applique.LoadTester.Core.Result;
 using Applique.LoadTester.Core.Service;
 
@@ -11,26 +8,24 @@ namespace Applique.LoadTester.Front
     public class TestRunner
     {
         private readonly IFileSystem _fileSystem;
-        private readonly IScenarioRunnerFactory _scenarioRunnerFactory;
         private readonly IAssembler _assembler;
 
-        public TestRunner(IFileSystem fileSystem, IScenarioRunnerFactory scenarioRunnerFactory, IAssembler assembler)
+        public TestRunner(IFileSystem fileSystem, IAssembler assembler)
         {
             _fileSystem = fileSystem;
-            _scenarioRunnerFactory = scenarioRunnerFactory;
             _assembler = assembler;
         }
 
         public async Task Run(string testSuiteFileName)
         {
-            var testSuite = LoadTestSuite(testSuiteFileName);
+            var runner = LoadTestSuite(testSuiteFileName);
             do
             {
-                Console.WriteLine("Running test suite: " + testSuite.Name);
-                var result = await RunTestSuite(testSuite);
-                var resultLines = OutputResult(testSuite.Name, result);
+                Console.WriteLine("Running test suite: " + runner.TestSuiteName);
+                var result = await runner.Run();
+                var resultLines = OutputResult(runner.TestSuiteName, result);
                 if (ShouldSaveResult())
-                    SaveResultToFile(testSuite.Name, resultLines);
+                    SaveResultToFile(runner.TestSuiteName, resultLines);
             }
             while (ShouldRunAgain());
         }
@@ -57,11 +52,11 @@ namespace Applique.LoadTester.Front
             return resultLines;
         }
 
-        private ITestSuite LoadTestSuite(string filename)
+        private ITestSuiteRunner LoadTestSuite(string filename)
         {
             try
             {
-                return _assembler.ReadTestSuite(filename);
+                return _assembler.AssembleTestSuite(filename);
             }
             catch (Exception ex)
             {
@@ -70,23 +65,6 @@ namespace Applique.LoadTester.Front
                 Console.ReadKey();
                 throw;
             }
-        }
-
-        private async Task<TestSuiteResult> RunTestSuite(ITestSuite testSuite)
-        {
-            var scenarioRunner = _scenarioRunnerFactory.Create(testSuite);
-            var results = new List<IScenarioResult>();
-            foreach (var scenario in testSuite.RunnableScenarios)
-            {
-                Console.WriteLine("--------------------------");
-                Console.WriteLine($"Running scenario: {scenario.Name} with {scenario.Instances} instances");
-                var result = await scenarioRunner.Run(scenario);
-                results.Add(result);
-                Console.WriteLine("Scenario " + (result.Success ? "succeeded" : "failed"));
-                if (!result.Success)
-                    break;
-            }
-            return new TestSuiteResult(results.OrderByDescending(res => res.Success).ToArray());
         }
     }
 }

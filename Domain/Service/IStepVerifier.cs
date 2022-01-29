@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Applique.LoadTester.Domain
+namespace Applique.LoadTester.Domain.Service
 {
     public interface IStepVerifier
     {

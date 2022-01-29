@@ -3,10 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Applique.LoadTester.Runtime.Result;
 using Applique.LoadTester.Runtime.External;
-using Applique.LoadTester.Domain;
 using Applique.LoadTester.Core.Design;
 using Applique.LoadTester.Core.Result;
 using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Service;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
@@ -16,7 +17,7 @@ namespace Applique.LoadTester.Runtime.Engine
         private readonly IRestCallerFactory _restCallerFactory;
         private readonly IBlobRepositoryFactory _blobRepositoryFactory;
         private readonly ITestSuite _testSuite;
-        private readonly IAssembler _assembler;
+        private readonly ILoader _loader;
         private readonly IBindingsFactory _bindingsFactory;
         private readonly IStepVerifierFactory _stepVerifierFactory;
 
@@ -25,7 +26,7 @@ namespace Applique.LoadTester.Runtime.Engine
             IRestCallerFactory restCallerFactory,
             IBlobRepositoryFactory blobRepositoryFactory,
             ITestSuite testSuite,
-            IAssembler assembler,
+            ILoader loader,
             IBindingsFactory bindingsFactory,
             IStepVerifierFactory stepVerifierFactory)
         {
@@ -33,7 +34,7 @@ namespace Applique.LoadTester.Runtime.Engine
             _restCallerFactory = restCallerFactory;
             _blobRepositoryFactory = blobRepositoryFactory;
             _testSuite = testSuite;
-            _assembler = assembler;
+            _loader = loader;
             _bindingsFactory = bindingsFactory;
             _stepVerifierFactory = stepVerifierFactory;
         }
@@ -91,7 +92,7 @@ namespace Applique.LoadTester.Runtime.Engine
         {
             if (!_fileSystem.Exists(BindingsPath) || !loadProperties.Any())
                 return _bindingsFactory.CreateBindings(_testSuite, Array.Empty<Constant>(), Array.Empty<Model>());
-            var constants = _assembler.LoadConstants<Constant[]>(BindingsPath);
+            var constants = _loader.LoadConstants<Constant[]>(BindingsPath);
             var constantsToLoad = constants.Join(loadProperties, b => b.Name, p => p, (b, _) => b).ToArray();
             return _bindingsFactory.CreateBindings(_testSuite, constantsToLoad, Array.Empty<Model>());
         }

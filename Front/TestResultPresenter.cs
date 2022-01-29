@@ -96,7 +96,7 @@ namespace Applique.LoadTester.Front
         private static string PrintScenarioName(IScenarioResult res) => res.Scenario.Name.PadRight(2 * _columnWidth - 2) + "  ";
 
         private static string Print(IStepResult res)
-            => $"  ->{res.Step.Endpoint}".PadRight(2 * _columnWidth - 2) + "  "
+            => $"  ->{res.Endpoint}".PadRight(2 * _columnWidth - 2) + "  "
                 + "".PadRight(_columnWidth)
                 + Print(res.Min)
                 + Print(res.Max)

@@ -1,10 +1,10 @@
-﻿namespace Applique.LoadTester.Core.Design
+﻿using Applique.LoadTester.Core.Design;
+
+namespace Applique.LoadTester.Domain.Design
 {
-    public interface IScenario
+    public interface IScenario : IScenarioMetadata
     {
-        string Name { get; }
         string Template { get; }
-        int Instances { get; }
         string[] Load { get; }
         string[] Persist { get; }
         Constant[] Constants { get; }

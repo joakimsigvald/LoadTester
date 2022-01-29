@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Applique.LoadTester.Core.Design;
+using System;
 using System.Net;
 
-namespace Applique.LoadTester.Core.Design
+namespace Applique.LoadTester.Domain.Design
 {
     public enum StepType { Rest, Blob }
 

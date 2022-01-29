@@ -1,9 +1,7 @@
-﻿using Applique.LoadTester.Core.Design;
-
-namespace Applique.LoadTester.Core.Result
+﻿namespace Applique.LoadTester.Core.Result
 {
     public interface IStepResult : ITimedResult
     {
-        Step Step { get; }
+        string Endpoint { get; }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using Applique.LoadTester.Core.Design;
 using Applique.LoadTester.Core.Result;
 using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Domain.Design;
 
 namespace Applique.LoadTester.Runtime.Result
 {
@@ -47,7 +48,7 @@ namespace Applique.LoadTester.Runtime.Result
 
         private ScenarioResult() { }
 
-        public IScenario Scenario { get; private set; }
+        public IScenarioMetadata Scenario { get; private set; }
         public IStepResult[] StepResults { get; internal set; }
         public IBindings Bindings { get; private set; }
         public string Error { get; private set; }

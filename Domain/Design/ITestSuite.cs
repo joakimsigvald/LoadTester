@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Applique.LoadTester.Core.Design;
+using System.Collections.Generic;
 
-namespace Applique.LoadTester.Core.Design
+namespace Applique.LoadTester.Domain.Design
 {
     public interface ITestSuite
     {

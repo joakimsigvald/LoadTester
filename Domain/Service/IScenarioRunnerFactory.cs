@@ -1,6 +1,6 @@
-﻿using Applique.LoadTester.Core.Design;
+﻿using Applique.LoadTester.Domain.Design;
 
-namespace Applique.LoadTester.Core.Service
+namespace Applique.LoadTester.Domain.Service
 {
     public interface IScenarioRunnerFactory
     {

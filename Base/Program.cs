@@ -18,17 +18,18 @@ namespace Applique.LoadTester.Base
             var fileSystem = new FileSystem(basePath);
             var restCallerFactory = new RestCallerFactory();
             var blobRepositoryFactory = new BlobRepositoryFactory();
-            var assembler = new Assembler(fileSystem);
+            var loader = new Loader(fileSystem);
             var bindingsFactory = new BindingsFactory(fileSystem);
             var stepVerifierFactory = new StepVerifierFactory();
             var scenarioRunnerFactory = new ScenarioRunnerFactory(
                 fileSystem,
                 restCallerFactory,
                 blobRepositoryFactory,
-                assembler,
+                loader,
                 bindingsFactory,
                 stepVerifierFactory);
-            var testRunner = new TestRunner(fileSystem, scenarioRunnerFactory, assembler);
+            var assembler = new Assembler(fileSystem, scenarioRunnerFactory);
+            var testRunner = new TestRunner(fileSystem, assembler);
             await testRunner.Run(testSuiteFileName);
         }
     }

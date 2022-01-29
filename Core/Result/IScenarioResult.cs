@@ -8,7 +8,7 @@ namespace Applique.LoadTester.Core.Result
         bool Success { get; }
         IStepResult[] StepResults { get; }
         IBindings Bindings { get; }
-        IScenario Scenario { get; }
+        IScenarioMetadata Scenario { get; }
         string Error { get; }
     }
 }

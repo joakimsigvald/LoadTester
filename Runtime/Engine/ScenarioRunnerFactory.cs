@@ -1,6 +1,6 @@
-﻿using Applique.LoadTester.Core.Design;
-using Applique.LoadTester.Core.Service;
-using Applique.LoadTester.Domain;
+﻿using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Service;
 using Applique.LoadTester.Runtime.External;
 
 namespace Applique.LoadTester.Runtime.Engine
@@ -10,7 +10,7 @@ namespace Applique.LoadTester.Runtime.Engine
         private readonly IFileSystem _fileSystem;
         private readonly IRestCallerFactory _restCallerFactory;
         private readonly IBlobRepositoryFactory _blobRepositoryFactory;
-        private readonly IAssembler _assembler;
+        private readonly ILoader _loader;
         private readonly IBindingsFactory _bindingsFactory;
         private readonly IStepVerifierFactory _stepVerifierFactory;
 
@@ -18,14 +18,14 @@ namespace Applique.LoadTester.Runtime.Engine
             IFileSystem fileSystem, 
             IRestCallerFactory restCallerFactory, 
             IBlobRepositoryFactory blobRepositoryFactory,
-            IAssembler assembler,
+            ILoader loader,
             IBindingsFactory bindingsFactory,
             IStepVerifierFactory stepVerifierFactory)
         {
             _fileSystem = fileSystem;
             _restCallerFactory = restCallerFactory;
             _blobRepositoryFactory = blobRepositoryFactory;
-            _assembler = assembler;
+            _loader = loader;
             _bindingsFactory = bindingsFactory;
             _stepVerifierFactory = stepVerifierFactory;
         }
@@ -35,8 +35,8 @@ namespace Applique.LoadTester.Runtime.Engine
                 _fileSystem, 
                 _restCallerFactory, 
                 _blobRepositoryFactory, 
-                testSuite, 
-                _assembler, 
+                testSuite,
+                _loader, 
                 _bindingsFactory,
                 _stepVerifierFactory);
     }

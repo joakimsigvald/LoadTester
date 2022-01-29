@@ -1,5 +1,5 @@
-﻿using Applique.LoadTester.Core.Design;
-using Applique.LoadTester.Core.Result;
+﻿using Applique.LoadTester.Core.Result;
+using Applique.LoadTester.Domain.Design;
 using System;
 using System.Linq;
 
@@ -9,7 +9,7 @@ namespace Applique.LoadTester.Runtime.Result
     {
         public StepResult(Step step, TimeSpan[] orderedDurations)
         {
-            Step = step;
+            Endpoint = step.Endpoint;
             Max = orderedDurations.Last();
             Min = orderedDurations.First();
             Mean = GetQuantile(orderedDurations, 0.5f);
@@ -20,7 +20,7 @@ namespace Applique.LoadTester.Runtime.Result
         private static TimeSpan GetQuantile(TimeSpan[] orderedDurations, float quantile)
             => orderedDurations.Skip((int)(orderedDurations.Length * quantile)).First();
 
-        public Step Step { get; private set; }
+        public string Endpoint { get; private set; }
         public TimeSpan Min { get; private set; }
         public TimeSpan Max { get; private set; }
         public TimeSpan Mean { get; private set; }
