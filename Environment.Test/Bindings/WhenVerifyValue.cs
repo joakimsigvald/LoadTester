@@ -14,19 +14,17 @@ namespace Applique.LoadTester.Environment.Test.Bindings
         protected object ExpectedValue;
         protected string ActualValue = SomeString;
 
-        protected override void Arrange() => Expected = new JProperty(_propertyName, ExpectedValue);
-
-        protected void Act() => Target.VerifyValue(Prefix, Expected, ActualValue);
+        protected override void Given() => Expected = new JProperty(_propertyName, ExpectedValue);
+        protected override void Act() => SUT.VerifyValue(Prefix, Expected, ActualValue);
 
         public class GivenValueExistAndEqual : WhenVerifyValue
         {
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace(ConstantName);
-                Variables[ConstantName] = ActualValue;
-                Setup();
-                Act();
+                ExpectedValue = Embrace(SomeConstant);
+                Variables[SomeConstant] = ActualValue;
+                ArrangeAndAct();
             }
         }
 
@@ -35,9 +33,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace(ConstantName);
-                Variables[ConstantName] = $"Not {ActualValue}";
-                Setup();
+                ExpectedValue = Embrace(SomeConstant);
+                Variables[SomeConstant] = $"Not {ActualValue}";
+                Arrange();
                 Assert.Throws<VerificationFailed>(Act);
             }
         }
@@ -47,9 +45,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace(ConstantName);
-                Setup();
-                Act();
+                ExpectedValue = Embrace(SomeConstant);
+                ArrangeAndAct();
             }
         }
 
@@ -58,10 +55,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($":{ConstantName}");
-                Variables[ConstantName] = $"Not {ActualValue}";
-                Setup();
-                Act();
+                ExpectedValue = Embrace($":{SomeConstant}");
+                Variables[SomeConstant] = $"Not {ActualValue}";
+                ArrangeAndAct();
             }
         }
 
@@ -70,9 +66,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace($"{ConstantName} {Constraint.Mandatory}");
+                ExpectedValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
                 ActualValue = null;
-                Setup();
+                Arrange();
                 Assert.Throws<VerificationFailed>(Act);
             }
         }
@@ -82,10 +78,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($"{ConstantName} {Constraint.Mandatory}");
+                ExpectedValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
                 ActualValue = "Not empty";
-                Setup();
-                Act();
+                ArrangeAndAct();
             }
         }
 
@@ -95,11 +90,10 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenPass()
             {
                 var embeddedString = "embedded";
-                Variables[ConstantName] = embeddedString;
+                Variables[SomeConstant] = embeddedString;
                 ActualValue = $"before {embeddedString} after";
-                ExpectedValue = $"before {Embrace(ConstantName)} after";
-                Setup();
-                Act();
+                ExpectedValue = $"before {Embrace(SomeConstant)} after";
+                ArrangeAndAct();
             }
         }
 
@@ -108,10 +102,10 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace(ConstantName);
-                Variables[ConstantName] = 10M;
+                ExpectedValue = Embrace(SomeConstant);
+                Variables[SomeConstant] = 10M;
                 ActualValue = "10.01";
-                Setup();
+                Arrange();
                 Assert.Throws<VerificationFailed>(Act);
             }
         }
@@ -121,11 +115,10 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($"{ConstantName}+-0.01");
-                Variables[ConstantName] = 10M;
+                ExpectedValue = Embrace($"{SomeConstant}+-0.01");
+                Variables[SomeConstant] = 10M;
                 ActualValue = "10.01";
-                Setup();
-                Act();
+                ArrangeAndAct();
             }
         }
 
@@ -134,10 +127,10 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace($"{ConstantName}+-0.01");
-                Variables[ConstantName] = 10M;
+                ExpectedValue = Embrace($"{SomeConstant}+-0.01");
+                Variables[SomeConstant] = 10M;
                 ActualValue = "10.02";
-                Setup();
+                Arrange();
                 Assert.Throws<VerificationFailed>(Act);
             }
         }

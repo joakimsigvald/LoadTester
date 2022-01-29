@@ -9,18 +9,17 @@ namespace Applique.LoadTester.Environment.Test.Bindings
         protected readonly dynamic Pattern = new JObject();
         protected readonly dynamic ResponseToken = new JObject();
 
-        protected void Act() => Target.BindResponse((JToken)Pattern, (JToken)ResponseToken);
+        protected override void Act() => SUT.BindResponse((JToken)Pattern, (JToken)ResponseToken);
 
         public class GivenStringNotExist : WhenBindResponse
         {
             [Fact]
             public void ThenSetString()
             {
-                Pattern.SomeProperty = Embrace(ConstantName);
+                Pattern.SomeProperty = Embrace(SomeConstant);
                 ResponseToken.SomeProperty = SomeString;
-                Setup();
-                Act();
-                var res = Target.Get(ConstantName);
+                ArrangeAndAct();
+                var res = SUT.Get(SomeConstant);
                 Assert.Same(SomeString, res);
             }
         }
@@ -30,15 +29,12 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenReplaceValueButKeepType()
             {
-                Variables[ConstantName] = SomeInt;
-                Pattern.SomeProperty = Embrace(ConstantName);
-                ResponseToken.SomeProperty = SomeOtherInt;
-                Setup();
-
-                Act();
-
-                var res = Target.Get(ConstantName);
-                Assert.Equal(SomeOtherInt, res);
+                Variables[SomeConstant] = SomeInt;
+                Pattern.SomeProperty = Embrace(SomeConstant);
+                ResponseToken.SomeProperty = AnotherInt;
+                ArrangeAndAct();
+                var res = SUT.Get(SomeConstant);
+                Assert.Equal(AnotherInt, res);
             }
         }
 
@@ -47,13 +43,12 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenReplaceValueAndType()
             {
-                Variables[ConstantName] = SomeInt;
-                Pattern.SomeProperty = Embrace($":{ConstantName}");
-                ResponseToken.SomeProperty = SomeOtherInt;
-                Setup();
-                Act();
-                var res = Target.Get(ConstantName);
-                Assert.Equal($"{SomeOtherInt}", res);
+                Variables[SomeConstant] = SomeInt;
+                Pattern.SomeProperty = Embrace($":{SomeConstant}");
+                ResponseToken.SomeProperty = AnotherInt;
+                ArrangeAndAct();
+                var res = SUT.Get(SomeConstant);
+                Assert.Equal($"{AnotherInt}", res);
             }
         }
 
@@ -62,11 +57,10 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenSetInt()
             {
-                Pattern.SomeProperty = Embrace($"{ConstantName}:int");
+                Pattern.SomeProperty = Embrace($"{SomeConstant}:int");
                 ResponseToken.SomeProperty = SomeInt;
-                Setup();
-                Act();
-                var res = Target.Get(ConstantName);
+                ArrangeAndAct();
+                var res = SUT.Get(SomeConstant);
                 Assert.Equal(SomeInt, (int)res);
             }
         }
@@ -76,11 +70,10 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenSetDecimal()
             {
-                Pattern.SomeProperty = Embrace($"{ConstantName}:decimal");
+                Pattern.SomeProperty = Embrace($"{SomeConstant}:decimal");
                 ResponseToken.SomeProperty = SomeDecimal;
-                Setup();
-                Act();
-                var res = Target.Get(ConstantName);
+                ArrangeAndAct();
+                var res = SUT.Get(SomeConstant);
                 Assert.Equal(SomeDecimal, (decimal)res);
             }
         }
