@@ -5,10 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Applique.LoadTester.Domain;
-using Applique.LoadTester.Runtime.External;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Domain.Service;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
@@ -17,55 +15,24 @@ namespace Applique.LoadTester.Runtime.Engine
         public IScenario Scenario { get; set; }
         public IRunnableStep[] Steps { get; private set; }
 
-        private readonly IRestCallerFactory _restCallerFactory;
-        private readonly IBlobRepositoryFactory _blobFactory;
-        private readonly ITestSuite _testSuite;
-        private readonly IBindingsFactory _bindingsFactory;
-        private readonly IStepVerifierFactory _stepVerifierFactory;
+        private readonly StepInstantiator _stepInstantiator;
 
         public IBindings Bindings { get; private set; }
 
         public RunnableScenario(
-            IRestCallerFactory restCallerFactory,
-            IBlobRepositoryFactory blobFactory,
-            ITestSuite testSuite,
-            IScenario scenario,
-            IBindingsFactory bindingsFactory,
-            IStepVerifierFactory stepVerifierFactory,
-            int instanceId)
+            ITestSuite testSuite, 
+            IScenario scenario, 
+            IBindings bindings, 
+            StepInstantiator stepInstantiator)
         {
-            _restCallerFactory = restCallerFactory;
-            _blobFactory = blobFactory;
-            _testSuite = testSuite;
             Scenario = scenario;
-            _bindingsFactory = bindingsFactory;
-            _stepVerifierFactory = stepVerifierFactory;
-            Bindings = _bindingsFactory.CreateInstanceBindings(testSuite, Scenario, GetModels(), instanceId);
+            _stepInstantiator = stepInstantiator;
+            Bindings = bindings;
             Steps = scenario.Steps
                 .Select(testSuite.GetStepToRun)
-                .Select(Instanciate)
+                .Select(_stepInstantiator.Instanciate)
                 .ToArray();
         }
-
-        private IRunnableStep Instanciate(Step step)
-            => step.Type switch
-            {
-                StepType.Rest => InstanciateRest(step),
-                StepType.Blob => BlobStep.Create(_blobFactory, _testSuite, step, Bindings, GetOverloads(step)),
-                StepType t => throw new NotImplementedException($"{t}")
-            };
-
-        private IRunnableStep InstanciateRest(Step step)
-            => RestStep.Create(
-                _restCallerFactory, 
-                _testSuite, 
-                step,
-                _stepVerifierFactory.CreateVerifier(step, Bindings),
-                Bindings,
-                GetOverloads(step));
-
-        private IBindings GetOverloads(Step step)
-            => step.Constants.Any() ? _bindingsFactory.CreateBindings(_testSuite, step.Constants) : null;
 
         public async Task<ScenarioInstanceResult> Run()
         {
@@ -102,7 +69,5 @@ namespace Applique.LoadTester.Runtime.Engine
             }
             : new AssertResult { Message = $"{assert.Name} is {actualValue} but expected {value}" };
         }
-
-        private Model[] GetModels() => _testSuite.Models;
     }
 }

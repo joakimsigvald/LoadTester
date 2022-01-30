@@ -13,10 +13,10 @@ namespace Applique.LoadTester.Environment
 
         public BindingsFactory(IFileSystem fileSystem) => _fileSystem = fileSystem;
 
-        public IBindings CreateInstanceBindings(ITestSuite testSuite, IScenario scenario, Model[] models, int instanceId)
+        public IBindings CreateInstanceBindings(ITestSuite testSuite, IScenario scenario, int instanceId)
         {
             var constants = GetConstants(testSuite, scenario.Constants, instanceId);
-            return CreateBindings(testSuite, constants, models);
+            return CreateBindings(testSuite, constants, testSuite.Models);
         }
 
         public IBindings CreateBindings(ITestSuite testSuite, Constant[] constants, Model[] models = null)

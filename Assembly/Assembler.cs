@@ -6,18 +6,18 @@ namespace Applique.LoadTester.Assembly
     public class Assembler : IAssembler
     {
         private readonly IFileSystem _fileSystem;
-        private readonly IScenarioRunnerFactory _scenarioRunnerFactory;
+        private readonly ITestSuiteRunnerFactory _testSuiteRunnerFactory;
 
-        public Assembler(IFileSystem fileSystem, IScenarioRunnerFactory scenarioRunnerFactory)
+        public Assembler(IFileSystem fileSystem, ITestSuiteRunnerFactory testSuiteRunnerFactory)
         {
             _fileSystem = fileSystem;
-            _scenarioRunnerFactory = scenarioRunnerFactory;
+           _testSuiteRunnerFactory = testSuiteRunnerFactory;
         }
 
         public ITestSuiteRunner AssembleTestSuite(string filename)
         {
             var testSuite = _fileSystem.Read<TestSuite>(filename);
-            return new TestSuiteRunner(_scenarioRunnerFactory, testSuite);
+            return _testSuiteRunnerFactory.Create(testSuite);
         }
     }
 }

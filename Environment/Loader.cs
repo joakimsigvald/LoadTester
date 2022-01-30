@@ -2,7 +2,7 @@
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Service;
 
-namespace Applique.LoadTester.Assembly
+namespace Applique.LoadTester.Environment
 {
     public class Loader : ILoader
     {

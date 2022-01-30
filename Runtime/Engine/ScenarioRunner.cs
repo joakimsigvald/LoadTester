@@ -1,9 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Applique.LoadTester.Runtime.Result;
-using Applique.LoadTester.Runtime.External;
-using Applique.LoadTester.Core.Design;
 using Applique.LoadTester.Core.Result;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
@@ -13,30 +10,21 @@ namespace Applique.LoadTester.Runtime.Engine
 {
     public class ScenarioRunner : IScenarioRunner
     {
-        private readonly IFileSystem _fileSystem;
-        private readonly IRestCallerFactory _restCallerFactory;
-        private readonly IBlobRepositoryFactory _blobRepositoryFactory;
-        private readonly ITestSuite _testSuite;
-        private readonly ILoader _loader;
         private readonly IBindingsFactory _bindingsFactory;
-        private readonly IStepVerifierFactory _stepVerifierFactory;
+        private readonly ITestSuite _testSuite;
+        private readonly IBindingsRepository _bindingsRepository;
+        private readonly StepInstantiatorFactory _stepInstantiatorFactory;
 
         public ScenarioRunner(
-            IFileSystem fileSystem,
-            IRestCallerFactory restCallerFactory,
-            IBlobRepositoryFactory blobRepositoryFactory,
-            ITestSuite testSuite,
-            ILoader loader,
             IBindingsFactory bindingsFactory,
-            IStepVerifierFactory stepVerifierFactory)
+            ITestSuite testSuite,
+            IBindingsRepository bindingsRepository,
+            StepInstantiatorFactory stepInstantiatorFactory)
         {
-            _fileSystem = fileSystem;
-            _restCallerFactory = restCallerFactory;
-            _blobRepositoryFactory = blobRepositoryFactory;
-            _testSuite = testSuite;
-            _loader = loader;
             _bindingsFactory = bindingsFactory;
-            _stepVerifierFactory = stepVerifierFactory;
+            _testSuite = testSuite;
+            _bindingsRepository = bindingsRepository;
+            _stepInstantiatorFactory = stepInstantiatorFactory;
         }
 
         public async Task<IScenarioResult> Run(IScenario scenario)
@@ -47,7 +35,7 @@ namespace Applique.LoadTester.Runtime.Engine
             if (!runs.All(r => r.Success))
                 return ScenarioResult.Failed(scenarioToRun, runs.First(r => !r.Success));
             if (scenarioToRun.Persist.Any())
-                PersistBindings(instances.Last().Bindings, scenarioToRun.Persist);
+                _bindingsRepository.PersistBindings(instances.Last().Bindings, scenarioToRun.Persist);
             return ScenarioResult.Succeeded(scenarioToRun,
                 runs.OrderBy(d => d.Duration)
                 .ToArray());
@@ -60,7 +48,7 @@ namespace Applique.LoadTester.Runtime.Engine
 
         private RunnableScenario[] CreateRunnableScenarios(IScenario scenarioToRun)
         {
-            var loadedBindings = LoadBindings(scenarioToRun.Load);
+            var loadedBindings = _bindingsRepository.LoadBindings(scenarioToRun.Load);
             return Enumerable.Range(1, scenarioToRun.Instances)
                 .Select(i => CreateRunnableScenario(scenarioToRun, i, loadedBindings))
                 .ToArray();
@@ -74,29 +62,10 @@ namespace Applique.LoadTester.Runtime.Engine
         }
 
         private RunnableScenario CreateInstance(IScenario scenarioToRun, int instanceId)
-            => new(
-                _restCallerFactory, 
-                _blobRepositoryFactory, 
-                _testSuite, 
-                scenarioToRun, 
-                _bindingsFactory, 
-                _stepVerifierFactory, 
-                instanceId);
-
-        private void PersistBindings(IBindings bindings, string[] propertiesToPersist)
-            => _fileSystem.Write(BindingsPath, bindings
-                .Join(propertiesToPersist, b => b.Name, p => p, (b, _) => b)
-                .ToArray());
-
-        private IBindings LoadBindings(string[] loadProperties)
         {
-            if (!_fileSystem.Exists(BindingsPath) || !loadProperties.Any())
-                return _bindingsFactory.CreateBindings(_testSuite, Array.Empty<Constant>(), Array.Empty<Model>());
-            var constants = _loader.LoadConstants<Constant[]>(BindingsPath);
-            var constantsToLoad = constants.Join(loadProperties, b => b.Name, p => p, (b, _) => b).ToArray();
-            return _bindingsFactory.CreateBindings(_testSuite, constantsToLoad, Array.Empty<Model>());
+            var bindings = _bindingsFactory.CreateInstanceBindings(_testSuite, scenarioToRun, instanceId);
+            StepInstantiator stepInstantiator = _stepInstantiatorFactory.Create(_testSuite, bindings);
+            return new(_testSuite, scenarioToRun, bindings, stepInstantiator);
         }
-
-        private string BindingsPath => $"{_testSuite.Name}_Bindings";
     }
 }

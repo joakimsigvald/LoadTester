@@ -7,7 +7,7 @@ using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
 
-namespace Applique.LoadTester.Assembly
+namespace Applique.LoadTester.Runtime.Engine
 {
     public class TestSuiteRunner : ITestSuiteRunner
     {
