@@ -58,7 +58,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenSetInt()
             {
-                Pattern.SomeProperty = Embrace($"{SomeConstant}:int");
+                Pattern.SomeProperty = Embrace($"{SomeConstant}:Int");
                 ResponseToken.SomeProperty = SomeInt;
                 ArrangeAndAct();
                 var res = SUT.Get(SomeConstant);
@@ -71,7 +71,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenSetDecimal()
             {
-                Pattern.SomeProperty = Embrace($"{SomeConstant}:decimal");
+                Pattern.SomeProperty = Embrace($"{SomeConstant}:Decimal");
                 ResponseToken.SomeProperty = SomeDecimal;
                 ArrangeAndAct();
                 var res = SUT.Get(SomeConstant);

@@ -2,6 +2,7 @@
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Service;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Linq;
 using static Applique.LoadTester.Environment.ConstantExpressions;
 
@@ -23,7 +24,7 @@ namespace Applique.LoadTester.Environment
 
         private static bool IsMatch(object expectedValue, string actualValue)
             => expectedValue is DecimalWithTolerance decObj ? decObj.IsMatch(
-                    ValueRetriever.ValueOf(new Constant { Value = actualValue, Type = "decimal" }) as decimal?)
+                    ValueRetriever.ValueOf(new Constant { Value = actualValue, Type = ConstantType.Decimal }) as decimal?)
             : $"{expectedValue}" == actualValue?.ToString();
 
         private static void CheckConstraints(string property, Constraint constraint, string actualValue)
@@ -41,9 +42,9 @@ namespace Applique.LoadTester.Environment
         private bool TrySubstituteVariable(string target, out object value)
         {
             value = target;
-            if (TryExtractFormula(target, out var expr))
+            if (TryExtractEquation(target, out var equation))
             {
-                value = expr.Cast<decimal>().Aggregate(0M, (a, b) => a + b);
+                value = ComputeEquation(equation);
                 return true;
             }
             if (!TryExtractConstant(target, out var constant))
@@ -64,13 +65,22 @@ namespace Applique.LoadTester.Environment
             return true; // we substitute existing variable value and will not store new value, so no need to check constraints
         }
 
-        private bool TryExtractFormula(string target, out object[] terms)
+        private bool TryExtractEquation(string target, out Equation equation)
         {
-            terms = null;
+            equation = null;
             if (target?.StartsWith('=') != true)
                 return false;
-            terms = target[1..].Split('+').Select(Unembrace).Select(_bindings.Get).ToArray();
-            return terms.Length > 1 && terms.All(t => t is decimal);
+            var terms = target[1..].Split('+').Select(Unembrace).Select(_bindings.Get).ToArray();
+            equation = new Equation { Type = ValueRetriever.GetType(terms[0]), Terms = terms };
+            return true;
         }
+
+        private static object ComputeEquation(Equation equation)
+            => equation.Type switch
+            {
+                ConstantType.Int => equation.Terms.Cast<int>().Aggregate(0M, (a, b) => a + b),
+                ConstantType.Decimal => equation.Terms.Cast<decimal>().Aggregate(0M, (a, b) => a + b),
+                _ => throw new NotImplementedException($"Equation of type: {equation.Type}")
+            };
     }
 }

@@ -4,9 +4,9 @@ using static Applique.LoadTester.Environment.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.ValueVerifier
 {
-    public class WhenVerifyExpression : ValueVerifierTestBase
+    public class WhenVerifyEquation : ValueVerifierTestBase
     {
-        public class GivenTemplateIsSumExpressionEqualToValue : WhenVerifyValue
+        public class GivenTemplateIsSumOfDecimalsEqualToValue : WhenVerifyValue
         {
             [Fact]
             public void ThenPass()
@@ -19,7 +19,20 @@ namespace Applique.LoadTester.Environment.Test.ValueVerifier
             }
         }
 
-        public class GivenTemplateIsSumExpressionDifferentFromValue : WhenVerifyValue
+        public class GivenTemplateIsSumOfIntsEqualToValue : WhenVerifyValue
+        {
+            [Fact]
+            public void ThenPass()
+            {
+                TemplateValue = $"={Embrace(SomeConstant)}+{Embrace(AnotherConstant)}";
+                Variables[SomeConstant] = SomeInt;
+                Variables[AnotherConstant] = AnotherInt;
+                Value = $"{SomeInt + AnotherInt}";
+                ArrangeAndAct();
+            }
+        }
+
+        public class GivenTemplateIsSumDifferentFromValue : WhenVerifyValue
         {
             [Fact]
             public void ThenThrowVerificationFailed()

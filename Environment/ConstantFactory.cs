@@ -29,8 +29,8 @@ namespace Applique.LoadTester.Environment
             {
                 var types = parts[1];
                 var typeParts = types.Split("->");
-                res.Type = typeParts[0];
-                res.Conversions = typeParts.Skip(1).ToArray();
+                res.Type = Enum.Parse<ConstantType>(typeParts[0]);
+                res.Conversions = typeParts.Skip(1).Select(Enum.Parse<ConstantType>).ToArray();
             }
             if (subParts.Length == 2)
                 res.Tolerance = decimal.Parse(subParts[1]);

@@ -2,13 +2,15 @@
 
 namespace Applique.LoadTester.Core.Design
 {
+    public enum ConstantType { Int, Decimal, String, Bool, DateTime, Seed}
+
     public class Constant
     {
         public string Name { get; set; }
         public string Value { get; set; }
-        public string Type { get; set; } = "string";
+        public ConstantType Type { get; set; } = ConstantType.String;
         public bool Overshadow { get; set; }
         public decimal Tolerance { get; set; }
-        public string[] Conversions { get; set; } = Array.Empty<string>();
+        public ConstantType[] Conversions { get; set; } = Array.Empty<ConstantType>();
     }
 }

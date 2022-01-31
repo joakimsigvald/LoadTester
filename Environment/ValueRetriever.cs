@@ -8,12 +8,6 @@ namespace Applique.LoadTester.Environment
 {
     internal class ValueRetriever
     {
-        public const string Int = "int";
-        public const string Bool = "bool";
-        public const string Decimal = "decimal";
-        public const string DateTime = "date";
-        public const string String = "string";
-        public const string Seed = "seed";
         private readonly IFileSystem _fileSystem;
         private readonly ITestSuite _testSuite;
 
@@ -24,7 +18,7 @@ namespace Applique.LoadTester.Environment
         }
 
         public object GetValue(Constant constant)
-            => constant.Type == Seed ? GetSeed(constant) : ValueOf(constant);
+            => constant.Type == ConstantType.Seed ? GetSeed(constant) : ValueOf(constant);
 
         public static object ValueOf(Constant constant)
         {
@@ -44,12 +38,12 @@ namespace Applique.LoadTester.Environment
         public static bool IsScalar(object obj)
             => obj is int? || obj is decimal? || obj is bool?;
 
-        public static string GetType(object obj)
-            => obj is int? ? Int
-            : obj is bool? ? Bool
-            : obj is decimal? ? Decimal
-            : obj is DateTime? ? DateTime
-            : String;
+        public static ConstantType GetType(object obj)
+            => obj is int? ? ConstantType.Int
+            : obj is bool? ? ConstantType.Bool
+            : obj is decimal? ? ConstantType.Decimal
+            : obj is DateTime? ? ConstantType.DateTime
+            : ConstantType.String;
 
         private object GetSeed(Constant constant)
         {
@@ -58,10 +52,10 @@ namespace Applique.LoadTester.Environment
             return seed;
         }
 
-        private static object Cast(object value, string from, string to)
+        private static object Cast(object value, ConstantType from, ConstantType to)
             => to switch
             {
-                Int when from == Decimal => decimal.ToInt32((decimal)value),
+                ConstantType.Int when from == ConstantType.Decimal => decimal.ToInt32((decimal)value),
                 _ => throw new InvalidOperationException($"Cannot cast {value} from {from} to {to}")
             };
 
@@ -70,10 +64,10 @@ namespace Applique.LoadTester.Environment
             ? null
             : constant.Type switch
             {
-                DateTime => System.DateTime.Parse(constant.Value),
-                Int => int.Parse(constant.Value),
-                Bool => bool.Parse(constant.Value),
-                Decimal => decimal.Parse(constant.Value, CultureInfo.InvariantCulture),
+                ConstantType.DateTime => System.DateTime.Parse(constant.Value),
+                ConstantType.Int => int.Parse(constant.Value),
+                ConstantType.Bool => bool.Parse(constant.Value),
+                ConstantType.Decimal => decimal.Parse(constant.Value, CultureInfo.InvariantCulture),
                 _ => constant.Value,
             };
 
