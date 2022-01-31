@@ -11,7 +11,6 @@ namespace Applique.LoadTester.Core.Service
         object Get(string name);
         bool TryGet(string name, out object val);
         string SubstituteVariables(string target);
-        void VerifyValue(string prefix, JProperty pp, string actualValue);
         void BindResponse(JToken pattern, JToken responseToken);
         string CreateContent(object body);
         void MergeWith(IBindings bindings);

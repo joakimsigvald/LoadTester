@@ -1,98 +1,88 @@
 ﻿using Applique.LoadTester.Core.Service;
-using Newtonsoft.Json.Linq;
 using Xunit;
 using static Applique.LoadTester.Environment.ConstantExpressions;
+using static Applique.LoadTester.Environment.Test.TestData;
 
-namespace Applique.LoadTester.Environment.Test.Bindings
+namespace Applique.LoadTester.Environment.Test.ValueVerifier
 {
-    public class WhenVerifyValue : BindingsTestBase
+    public class WhenVerifyValue : ValueVerifierTestBase
     {
-        protected const string _propertyName = "SomeProperty";
-
-        protected string Prefix = string.Empty;
-        protected JProperty Expected;
-        protected object ExpectedValue;
-        protected string ActualValue = SomeString;
-
-        protected override void Given() => Expected = new JProperty(_propertyName, ExpectedValue);
-        protected override void Act() => SUT.VerifyValue(Prefix, Expected, ActualValue);
-
-        public class GivenValueExistAndEqual : WhenVerifyValue
+        public class GivenConstantExistAndEqualToValue : WhenVerifyValue
         {
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace(SomeConstant);
-                Variables[SomeConstant] = ActualValue;
+                TemplateValue = Embrace(SomeConstant);
+                Variables[SomeConstant] = Value;
                 ArrangeAndAct();
             }
         }
 
-        public class GivenValueExistAndNotEqual : WhenVerifyValue
+        public class GivenConstantExistAndNotEqualtoValue : WhenVerifyValue
         {
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace(SomeConstant);
-                Variables[SomeConstant] = $"Not {ActualValue}";
+                TemplateValue = Embrace(SomeConstant);
+                Variables[SomeConstant] = $"Not {Value}";
                 Arrange();
                 Assert.Throws<VerificationFailed>(Act);
             }
         }
 
-        public class GivenValueNotExistAndNotConstrained : WhenVerifyValue
+        public class GivenConstantNotExistAndNotConstrained : WhenVerifyValue
         {
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace(SomeConstant);
+                TemplateValue = Embrace(SomeConstant);
                 ArrangeAndAct();
             }
         }
 
-        public class GivenValueExistButOvershadowedAndNotConstrained : WhenVerifyValue
+        public class GivenConstantExistButOvershadowedAndNotConstrained : WhenVerifyValue
         {
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($":{SomeConstant}");
-                Variables[SomeConstant] = $"Not {ActualValue}";
+                TemplateValue = Embrace($":{SomeConstant}");
+                Variables[SomeConstant] = $"Not {Value}";
                 ArrangeAndAct();
             }
         }
 
-        public class GivenValueNotExistButConstraintViolated : WhenVerifyValue
+        public class GivenConstantNotExistButConstraintViolated : WhenVerifyValue
         {
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
-                ActualValue = null;
+                TemplateValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
+                Value = null;
                 Arrange();
                 Assert.Throws<VerificationFailed>(Act);
             }
         }
 
-        public class GivenValueNotExistAndConstraintFollowed : WhenVerifyValue
+        public class GivenConstantNotExistAndConstraintFollowed : WhenVerifyValue
         {
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
-                ActualValue = "Not empty";
+                TemplateValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
+                Value = "Not empty";
                 ArrangeAndAct();
             }
         }
 
-        public class GivenValueExistAndIsEmbeddedInString : WhenVerifyValue
+        public class GivenConstantExistAndIsEmbeddedInString : WhenVerifyValue
         {
             [Fact]
             public void ThenPass()
             {
                 var embeddedString = "embedded";
                 Variables[SomeConstant] = embeddedString;
-                ActualValue = $"before {embeddedString} after";
-                ExpectedValue = $"before {Embrace(SomeConstant)} after";
+                TemplateValue = $"before {Embrace(SomeConstant)} after";
+                Value = $"before {embeddedString} after";
                 ArrangeAndAct();
             }
         }
@@ -102,9 +92,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace(SomeConstant);
+                TemplateValue = Embrace(SomeConstant);
                 Variables[SomeConstant] = 10M;
-                ActualValue = "10.01";
+                Value = "10.01";
                 Arrange();
                 Assert.Throws<VerificationFailed>(Act);
             }
@@ -115,9 +105,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenPass()
             {
-                ExpectedValue = Embrace($"{SomeConstant}+-0.01");
+                TemplateValue = Embrace($"{SomeConstant}+-0.01");
                 Variables[SomeConstant] = 10M;
-                ActualValue = "10.01";
+                Value = "10.01";
                 ArrangeAndAct();
             }
         }
@@ -127,9 +117,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             [Fact]
             public void ThenThrowVerificationFailed()
             {
-                ExpectedValue = Embrace($"{SomeConstant}+-0.01");
+                TemplateValue = Embrace($"{SomeConstant}+-0.01");
                 Variables[SomeConstant] = 10M;
-                ActualValue = "10.02";
+                Value = "10.02";
                 Arrange();
                 Assert.Throws<VerificationFailed>(Act);
             }

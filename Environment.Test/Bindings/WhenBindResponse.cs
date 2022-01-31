@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using Xunit;
 using static Applique.LoadTester.Environment.ConstantExpressions;
+using static Applique.LoadTester.Environment.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {

@@ -5,21 +5,23 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Core.Service;
 
 namespace Applique.LoadTester.Environment
 {
     public class StepVerifier : IStepVerifier
     {
-        private readonly IBindings _bindings;
+        private readonly IValueVerifier _valueVerifier;
         private readonly Step _blueprint;
+        private readonly IBindings _bindings;
 
         public StepVerifier(Step step, IBindings bindings)
         {
-            _bindings = bindings;
             _blueprint = step;
+            _bindings = bindings;
+            _valueVerifier = new ValueVerifier(bindings);
         }
 
         public void VerifyResponse(JToken pattern, string source, string prefix = "")
@@ -67,7 +69,7 @@ namespace Applique.LoadTester.Environment
                 else if (pp.Value is JArray ppArray)
                     VerifyArray(ppArray, actual as JArray, $"{prefix}{pp.Name}");
                 else
-                    _bindings.VerifyValue($"{prefix}{pp.Name}", pp, actual?.ToString());
+                    _valueVerifier.VerifyValue($"{prefix}{pp.Name}", pp, actual?.ToString());
             }
         }
 
