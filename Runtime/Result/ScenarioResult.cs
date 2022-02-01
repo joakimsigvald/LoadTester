@@ -23,7 +23,6 @@ namespace Applique.LoadTester.Runtime.Result
                 Q75 = GetQuantile(durations, 0.75f),
                 Q90 = GetQuantile(durations, 0.9f),
                 StepResults = GetStepResults(scenario, orderedResults),
-                AssertResults = lastResult.AssertResults.ToArray(),
                 Bindings = lastResult.Bindings
             };
         }
@@ -52,7 +51,6 @@ namespace Applique.LoadTester.Runtime.Result
         public IStepResult[] StepResults { get; internal set; }
         public IBindings Bindings { get; private set; }
         public string Error { get; private set; }
-        public AssertResult[] AssertResults { get; private set; }
         public bool Success { get; private set; }
         public TimeSpan Min { get; private set; }
         public TimeSpan Max { get; private set; }

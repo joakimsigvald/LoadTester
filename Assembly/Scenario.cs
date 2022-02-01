@@ -15,12 +15,10 @@ namespace Applique.LoadTester.Assembly
         public string[] Persist { get; set; } = Array.Empty<string>();
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
         public Step[] Steps { get; set; } = Array.Empty<Step>();
-        public Assert[] Asserts { get; set; } = Array.Empty<Assert>();
 
         public IScenario MergeWith(IScenario scenario)
             => new Scenario()
             {
-                Asserts = Asserts.Concat(scenario.Asserts).ToArray(),
                 Constants = Constants.Concat(scenario.Constants).ToArray(),
                 Instances = scenario.Instances,
                 Load = scenario.Load,

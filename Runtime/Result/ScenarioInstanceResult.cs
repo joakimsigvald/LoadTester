@@ -8,18 +8,14 @@ namespace Applique.LoadTester.Runtime.Result
 {
     public class ScenarioInstanceResult
     {
-        public static ScenarioInstanceResult Succeeded(RunnableScenario scenario, TimeSpan duration, IList<TimeSpan> stepTimes, AssertResult[] assertResults)
+        public static ScenarioInstanceResult Succeeded(RunnableScenario scenario, TimeSpan duration, IList<TimeSpan> stepTimes)
             => new()
             {
                 Success = true,
                 Duration = duration,
                 StepTimes = stepTimes.ToArray(),
-                AssertResults = assertResults,
                 Bindings = scenario.Bindings
             };
-
-        public static ScenarioInstanceResult Failed(RunnableScenario scenario, IEnumerable<AssertResult> failedResults)
-            => Failed(scenario, $"Asserts failed: {string.Join(", ", failedResults.Select(fr => fr.Message))}");
 
         public static ScenarioInstanceResult Failed(RunnableScenario scenario, string error) => new()
         {
@@ -31,7 +27,6 @@ namespace Applique.LoadTester.Runtime.Result
         public TimeSpan Duration { get; set; }
         public TimeSpan[] StepTimes { get; set; }
         public string Error { get; set; }
-        public AssertResult[] AssertResults { get; set; }
         public IBindings Bindings { get; private set; }
     }
 }

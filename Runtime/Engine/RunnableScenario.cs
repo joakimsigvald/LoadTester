@@ -51,23 +51,7 @@ namespace Applique.LoadTester.Runtime.Engine
                 }
             }
             sw.Stop();
-            var assertResults = Scenario.Asserts.Select(Apply).ToArray();
-            return assertResults.All(ar => ar.Success)
-                ? ScenarioInstanceResult.Succeeded(this, sw.Elapsed, stepTimes, assertResults)
-                : ScenarioInstanceResult.Failed(this, assertResults.Where(ar => !ar.Success));
-        }
-
-        private AssertResult Apply(Assert assert)
-        {
-            var value = Bindings.SubstituteVariables(assert.Value);
-            var actualValue = Bindings.Get(assert.Name);
-            var res = $"{actualValue}" == value;
-            return res ? new AssertResult
-            {
-                Success = true,
-                Message = $"{assert.Name} is {actualValue} as expected"
-            }
-            : new AssertResult { Message = $"{assert.Name} is {actualValue} but expected {value}" };
+            return ScenarioInstanceResult.Succeeded(this, sw.Elapsed, stepTimes);
         }
     }
 }
