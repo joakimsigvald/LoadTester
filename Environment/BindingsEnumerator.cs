@@ -26,6 +26,6 @@ namespace Applique.LoadTester.Environment
         public void Reset() => _enumerator.Reset();
 
         private static Constant Map(KeyValuePair<string, object> kvp)
-            => new() { Name = kvp.Key, Value = $"{kvp.Value}", Type = ValueRetriever.GetType(kvp.Value) };
+            => new() { Name = kvp.Key, Value = $"{kvp.Value}", Type = ConstantExpressions.TypeOf(kvp.Value) };
     }
 }

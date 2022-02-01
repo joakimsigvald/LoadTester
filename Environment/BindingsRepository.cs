@@ -34,10 +34,10 @@ namespace Applique.LoadTester.Environment
         public IBindings LoadBindings(string[] loadProperties)
         {
             if (!_fileSystem.Exists(BindingsPath) || !loadProperties.Any())
-                return _bindingsFactory.CreateBindings(_testSuite, Array.Empty<Constant>(), Array.Empty<Model>());
+                return _bindingsFactory.CreateBindings(_testSuite, Array.Empty<Constant>());
             var constants = _loader.LoadConstants<Constant[]>(BindingsPath);
             var constantsToLoad = constants.Join(loadProperties, b => b.Name, p => p, (b, _) => b).ToArray();
-            return _bindingsFactory.CreateBindings(_testSuite, constantsToLoad, Array.Empty<Model>());
+            return _bindingsFactory.CreateBindings(_testSuite, constantsToLoad);
         }
 
         private string BindingsPath => $"{_testSuite.Name}_Bindings";

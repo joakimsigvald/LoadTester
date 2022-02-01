@@ -10,7 +10,6 @@ namespace Applique.LoadTester.Assembly
     {
         public string Name { get; set; }
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
-        public Model[] Models { get; set; } = Array.Empty<Model>();
         public Service[] Services { get; set; }
         public Blob[] Blobs { get; set; }
         public StepTemplate[] StepTemplates { private get; set; }

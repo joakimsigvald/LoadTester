@@ -34,9 +34,9 @@ namespace Applique.LoadTester.Environment
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private static string Substitute(string target, KeyValuePair<string, object> variable)
-            => ValueRetriever.IsBool(variable.Value)
+            => IsBool(variable.Value)
             ? SubstituteBool(target, variable)
-            : ValueRetriever.IsScalar(variable.Value)
+            : IsScalar(variable.Value)
             ? SubstituteScalar(target, variable)
             : SubstituteValue(target, variable);
 

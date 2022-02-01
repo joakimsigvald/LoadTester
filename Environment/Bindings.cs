@@ -53,8 +53,8 @@ namespace Applique.LoadTester.Environment
         {
             constant.Value = val.Value<string>();
             if (!constant.Overshadow && _bindingVariables.TryGet(constant.Name, out var existing))
-                constant.Type = ValueRetriever.GetType(existing);
-            _bindingVariables.Set(constant.Name, ValueRetriever.ValueOf(constant));
+                constant.Type = TypeOf(existing);
+            _bindingVariables.Set(constant.Name, ValueOf(constant));
         }
 
         private void BindVariables(JObject pattern, JObject source, string prefix = null)

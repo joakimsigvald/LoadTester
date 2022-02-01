@@ -23,8 +23,9 @@ namespace Applique.LoadTester.Environment
         }
 
         private static bool IsMatch(object expectedValue, string actualValue)
-            => expectedValue is DecimalWithTolerance decObj ? decObj.IsMatch(
-                    ValueRetriever.ValueOf(new Constant { Value = actualValue, Type = ConstantType.Decimal }) as decimal?)
+            => expectedValue is DecimalWithTolerance decObj 
+            ? decObj.IsMatch(ValueOf(
+                new Constant { Value = actualValue, Type = ConstantType.Decimal }) as decimal?)
             : $"{expectedValue}" == actualValue?.ToString();
 
         private static void CheckConstraints(string property, Constraint constraint, string actualValue)
@@ -71,7 +72,7 @@ namespace Applique.LoadTester.Environment
             if (target?.StartsWith('=') != true)
                 return false;
             var terms = target[1..].Split('+').Select(Unembrace).Select(_bindings.Get).ToArray();
-            equation = new Equation { Type = ValueRetriever.GetType(terms[0]), Terms = terms };
+            equation = new Equation { Type = TypeOf(terms[0]), Terms = terms };
             return true;
         }
 
