@@ -40,14 +40,13 @@ namespace Applique.LoadTester.Runtime.Engine
                 StepType t => throw new NotImplementedException($"{t}")
             };
 
-        private IRunnableStep InstanciateRest(Step step)
-            => RestStep.Create(
-                _restCallerFactory,
-                _testSuite,
+        private IRunnableStep InstanciateRest(Step step) 
+            => new RestStep(
                 step,
-                _stepVerifierFactory.CreateVerifier(step, _bindings),
                 _bindings,
-                GetOverloads(step));
+                GetOverloads(step),
+                RestStepExecutor.Create(_restCallerFactory, _testSuite, step, _bindings),
+                _stepVerifierFactory.CreateVerifier(step, _bindings));
 
         public IRunnableStep InstanciateBlob(Step step)
             => BlobStep.Create(_blobFactory, _testSuite, step, _bindings, GetOverloads(step));
