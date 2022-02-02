@@ -2,11 +2,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Applique.LoadTester.Environment.ConstantExpressions;
 
 namespace Applique.LoadTester.Environment
 {
     public static class ConstantFactory
     {
+        public static bool TryGetConstant(string val, out Constant constant)
+            => TryExtractConstant(val, out constant) && IsConstant(val);
+
+        public static bool TryExtractConstant(string val, out Constant constant)
+        {
+            constant = default;
+            var startIndex = val?.IndexOf(START_CONSTANT) ?? -1;
+            var endIndex = val?.IndexOf(END_CONSTANT) ?? -1;
+            if (startIndex < 0 || startIndex >= endIndex)
+                return false;
+            var str = val[(startIndex + 2)..endIndex];
+            constant = Create(str);
+            return true;
+        }
+
         /// <summary>
         /// Constant -> (:)[Name](+-[Tolerance])(:[Type](->[Type]))( [Constraint])
         /// Name -> /String/
@@ -42,11 +58,11 @@ namespace Applique.LoadTester.Environment
             return res;
         }
 
-        private static Constraint ParseConstraint(string str) 
-            => string.IsNullOrEmpty(str) ? default : Enum.Parse<Constraint>(str);
-
         public static Constant[] Merge(IEnumerable<Constant> defaults, IEnumerable<Constant> overrides)
             => defaults.Concat(overrides).GroupBy(c => c.Name).Select(Merge).ToArray();
+
+        private static Constraint ParseConstraint(string str)
+            => string.IsNullOrEmpty(str) ? default : Enum.Parse<Constraint>(str);
 
         private static Constant Merge(IEnumerable<Constant> constants)
         {

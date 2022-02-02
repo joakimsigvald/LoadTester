@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using static Applique.LoadTester.Environment.ConstantExpressions;
+using static Applique.LoadTester.Environment.ConstantFactory;
 
 namespace Applique.LoadTester.Environment
 {
@@ -21,6 +22,12 @@ namespace Applique.LoadTester.Environment
             else if (!IsMatch(expectedValue, actualValue))
                 throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");
         }
+
+        private static Constraint GetConstraint(JProperty pp) 
+            => IsString(pp) ? GetConstraint(pp.Value.Value<string>()) : default;
+
+        private static Constraint GetConstraint(string expr) 
+            => IsConstant(expr) ? Create(Unembrace(expr)).Constraint : default;
 
         private static bool IsMatch(object expectedValue, string actualValue)
             => expectedValue is DecimalWithTolerance decObj 
@@ -54,7 +61,7 @@ namespace Applique.LoadTester.Environment
                 return false; // we didn't substitute because any stored value is disregarded and will be replaced (check constraints instead)
             if (!_bindings.TryGet(constant.Name, out var val))
                 return false; // we didn't substitute because no value is stored yet (check constraints instead)
-            value = !IsVariable(target)
+            value = !IsConstant(target)
                 ? ReplaceConstantExpressionWithValue(target, $"{val}")
                 : constant.Tolerance != 0
                 ? new DecimalWithTolerance

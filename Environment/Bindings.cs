@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using static Applique.LoadTester.Environment.ConstantExpressions;
+using static Applique.LoadTester.Environment.ConstantFactory;
 
 namespace Applique.LoadTester.Environment
 {
@@ -43,7 +44,7 @@ namespace Applique.LoadTester.Environment
 
         public string CreateContent(object body)
             => body is null ? null
-            : body is string s && IsVariable(s) ? CreateContent(Get(Unembrace(s)))
+            : body is string s && IsConstant(s) ? CreateContent(Get(Unembrace(s)))
             : SubstituteVariables(JsonConvert.SerializeObject(body));
 
         public IEnumerator<Constant> GetEnumerator() => _bindingVariables.GetEnumerator();
