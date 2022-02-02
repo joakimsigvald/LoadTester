@@ -34,29 +34,51 @@ namespace Applique.LoadTester.Environment
         {
             if (string.IsNullOrEmpty(constantExpression))
                 return null;
-            var superParts = constantExpression.Split(' ');
-            var constraint = ParseConstraint(superParts.Skip(1).FirstOrDefault());
-            var constantDefinition = superParts[0];
-            var parts = constantDefinition.Split(':', StringSplitOptions.RemoveEmptyEntries);
-            var subParts = parts[0].Split("+-");
-            var res = new Constant()
+            var expr = ExtractConstraint(constantExpression, out var constraint);
+            var overshadow = expr.StartsWith(':');
+            expr = ExtractTypes(expr, out var type, out var conversions);
+            var name = ExtractTolerance(expr, out var tolerance);
+            return new Constant()
             {
-                Overshadow = constantDefinition.StartsWith(':'),
-                Name = subParts[0],
-                Value = value,
-                Constraint = constraint
+                Overshadow = overshadow,
+                Name = name,
+                Tolerance = tolerance,
+                Type = type,
+                Conversions = conversions,
+                Constraint = constraint,
+                Value = value
             };
-            if (parts.Length == 2)
-            {
-                var types = parts[1];
-                var typeParts = types.Split("->");
-                res.Type = Enum.Parse<ConstantType>(typeParts[0]);
-                res.Conversions = typeParts.Skip(1).Select(Enum.Parse<ConstantType>).ToArray();
-            }
-            if (subParts.Length == 2)
-                res.Tolerance = decimal.Parse(subParts[1]);
-            return res;
         }
+
+        private static string ExtractConstraint(string expr, out Constraint constraint)
+        {
+            var parts = expr.Split(' ');
+            constraint = ParseConstraint(parts[1..].FirstOrDefault());
+            return parts[0];
+        }
+
+        private static string ExtractTypes(string expr, out ConstantType type, out ConstantType[] conversions)
+        {
+            var parts = expr.Split(':', StringSplitOptions.RemoveEmptyEntries);
+            var types = GetTypes(parts[1..].FirstOrDefault());
+            type = types[0];
+            conversions = types[1..];
+            return parts[0];
+        }
+
+        private static string ExtractTolerance(string expr, out decimal tolerance)
+        {
+            var parts = expr.Split("+-");
+            tolerance = GetTolerance(parts[1..].FirstOrDefault());
+            return parts[0];
+        }
+
+        private static decimal GetTolerance(string expr) => expr is null ? 0 : decimal.Parse(expr);
+
+        private static ConstantType[] GetTypes(string expr)
+            => expr is null 
+            ? new[] { ConstantType.String} 
+            : expr.Split("->").Select(Enum.Parse<ConstantType>).ToArray();
 
         public static Constant[] Merge(IEnumerable<Constant> defaults, IEnumerable<Constant> overrides)
             => defaults.Concat(overrides).GroupBy(c => c.Name).Select(Merge).ToArray();

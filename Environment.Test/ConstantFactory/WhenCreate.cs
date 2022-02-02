@@ -1,5 +1,4 @@
 ﻿using Applique.LoadTester.Core.Design;
-using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Environment.Test.ConstantFactory;
 using System;
 using Xunit;
