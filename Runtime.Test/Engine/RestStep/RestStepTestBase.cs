@@ -15,6 +15,7 @@ namespace Applique.LoadTester.Runtime.Test.Engine.RestStep
     public abstract class RestStepTestBase : TestBase<Runtime.Engine.RestStep>
     {
         protected dynamic Body;
+        protected string Template;
         protected Mock<IRestCaller> RestCallerMock = new();
         protected IDictionary<string, object> Variables = new Dictionary<string, object>();
         protected IDictionary<string, object> OverloadVariables = new Dictionary<string, object>();
@@ -36,6 +37,11 @@ namespace Applique.LoadTester.Runtime.Test.Engine.RestStep
                     Endpoints = new[] { new Endpoint { Name = "AMethod"} }
                 }
             });
+            var stepTemplate = new Step
+            {
+                Endpoint = "AService.AMethod",
+                Body = Body
+            };
             var step = new Step
             {
                 Endpoint = "AService.AMethod",

@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Applique.LoadTester.Environment.ConstantExpressions;
+using static Applique.LoadTester.Domain.Service.ConstantExpressions;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Domain.Service
 {
     public static class ConstantFactory
     {
@@ -76,11 +76,11 @@ namespace Applique.LoadTester.Environment
         private static decimal GetTolerance(string expr) => expr is null ? 0 : decimal.Parse(expr);
 
         private static ConstantType[] GetTypes(string expr)
-            => expr is null 
-            ? new[] { ConstantType.String} 
+            => expr is null
+            ? new[] { ConstantType.String }
             : expr.Split("->").Select(Enum.Parse<ConstantType>).ToArray();
 
-        public static Constant[] Merge(IEnumerable<Constant> defaults, IEnumerable<Constant> overrides)
+        public static Constant[] Merge(this IEnumerable<Constant> defaults, IEnumerable<Constant> overrides)
             => defaults.Concat(overrides).GroupBy(c => c.Name).Select(Merge).ToArray();
 
         private static Constraint ParseConstraint(string str)

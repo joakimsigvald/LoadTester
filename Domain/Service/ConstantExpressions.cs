@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Globalization;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Domain.Service
 {
     public static class ConstantExpressions
     {

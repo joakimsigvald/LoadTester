@@ -10,7 +10,7 @@ namespace Applique.LoadTester.Domain.Design
     {
         public StepType Type { get; set; } = StepType.Rest;
         public string Template { get; set; }
-        public Constant[] Constants { get; } = Array.Empty<Constant>();
+        public Constant[] Constants { get; set; } = Array.Empty<Constant>();
         public string Endpoint { get; set; }
         public string Args { get; set; } = string.Empty;
         public HttpStatusCode[] ExpectedStatusCodes { get; set; } = new[] { HttpStatusCode.OK };

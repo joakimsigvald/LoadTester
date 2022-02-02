@@ -3,6 +3,7 @@ using Applique.LoadTester.Domain.Design;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Applique.LoadTester.Domain.Service.ConstantFactory;
 
 namespace Applique.LoadTester.Assembly
 {
@@ -40,6 +41,7 @@ namespace Applique.LoadTester.Assembly
             {
                 Args = template.Args,
                 Body = step.Body ?? template.Body,
+                Constants = template.Constants.Merge(step.Constants),
                 BreakOnSuccess = template.BreakOnSuccess,
                 Endpoint = step.Endpoint ?? template.Endpoint,
                 ExpectedStatusCodes = template.ExpectedStatusCodes,

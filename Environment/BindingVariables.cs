@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using static Applique.LoadTester.Environment.SpecialVariables;
-using static Applique.LoadTester.Environment.ConstantExpressions;
+using static Applique.LoadTester.Domain.Service.ConstantExpressions;
 using Applique.LoadTester.Core.Design;
 
 namespace Applique.LoadTester.Environment

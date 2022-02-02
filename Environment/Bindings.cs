@@ -5,8 +5,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using static Applique.LoadTester.Environment.ConstantExpressions;
-using static Applique.LoadTester.Environment.ConstantFactory;
+using static Applique.LoadTester.Domain.Service.ConstantExpressions;
+using static Applique.LoadTester.Domain.Service.ConstantFactory;
 
 namespace Applique.LoadTester.Environment
 {

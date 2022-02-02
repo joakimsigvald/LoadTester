@@ -1,7 +1,7 @@
 ﻿using Applique.LoadTester.Runtime.External;
 using Moq;
 using Xunit;
-using static Applique.LoadTester.Environment.ConstantExpressions;
+using static Applique.LoadTester.Domain.Service.ConstantExpressions;
 using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Runtime.Test.Engine.RestStep
@@ -13,7 +13,7 @@ namespace Applique.LoadTester.Runtime.Test.Engine.RestStep
             SUT.Run();
         }
 
-        public class GivenTemplateAndOverloads : WhenRun
+        public class GivenOverloads : WhenRun
         {
             [Fact]
             public void ThenApplyOverloadsToBody()
