@@ -1,4 +1,6 @@
-﻿namespace Applique.LoadTester.Environment.Test.ConstantFactory
+﻿using Applique.LoadTester.Test;
+
+namespace Applique.LoadTester.Environment.Test.ConstantFactory
 {
     public abstract class ConstantFactoryTestBase<TReturn> : TestBase
     {

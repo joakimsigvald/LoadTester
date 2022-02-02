@@ -1,8 +1,9 @@
 ﻿using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Test;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using static Applique.LoadTester.Environment.Test.TestData;
+using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.ValueVerifier
 {

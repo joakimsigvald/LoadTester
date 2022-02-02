@@ -8,7 +8,7 @@ using Applique.LoadTester.Domain.Design;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
-    internal class RestStepExecutor
+    public class RestStepExecutor
     {
         private readonly IRestCaller _restCaller;
         private readonly RequestFactory _requestFactory;
@@ -47,7 +47,9 @@ namespace Applique.LoadTester.Runtime.Engine
         {
             try
             {
-                return await _restCaller.Call(_requestFactory.GetRequest(serviceHeaders));
+                var req = _requestFactory.GetRequest(serviceHeaders);
+                var res = await _restCaller.Call(req);
+                return res;
             }
             catch (TaskCanceledException tex)
             {
@@ -57,11 +59,16 @@ namespace Applique.LoadTester.Runtime.Engine
         }
 
         public Header[] CreateServiceHeaders()
-            => _service.Headers.Select(h => new Header
+        {
+            var serviceHeaders = _service.Headers.Select(h => new Header
             {
                 Name = h.Name,
                 Value = _bindings.SubstituteVariables(h.Value)
-            }).Prepend(new Header { Name = _service.ApiKey.Name, Value = _service.ApiKey.Value })
-            .ToArray();
+            });
+            return (_service.ApiKey is null
+                ? serviceHeaders
+                : serviceHeaders.Prepend(new Header { Name = _service.ApiKey.Name, Value = _service.ApiKey.Value }))
+                .ToArray();
+        }
     }
 }

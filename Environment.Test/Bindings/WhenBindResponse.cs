@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using Xunit;
 using static Applique.LoadTester.Environment.ConstantExpressions;
-using static Applique.LoadTester.Environment.Test.TestData;
+using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public class WhenBindResponse : BindingsTestBase
+    public abstract class WhenBindResponse : BindingsTestBase
     {
         protected readonly dynamic Pattern = new JObject();
         protected readonly dynamic ResponseToken = new JObject();

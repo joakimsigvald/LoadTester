@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 using static Applique.LoadTester.Environment.ConstantExpressions;
-using static Applique.LoadTester.Environment.Test.TestData;
+using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {

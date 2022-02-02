@@ -1,4 +1,5 @@
 ﻿using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Test;
 using System.Collections.Generic;
 
 namespace Applique.LoadTester.Environment.Test.Bindings

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Applique.LoadTester.Environment.Test
+namespace Applique.LoadTester.Test
 {
     public abstract class TestBase
     {

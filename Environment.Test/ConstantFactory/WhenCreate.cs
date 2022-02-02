@@ -3,11 +3,11 @@ using Applique.LoadTester.Environment.Test.ConstantFactory;
 using System;
 using Xunit;
 using static Applique.LoadTester.Environment.ConstantFactory;
-using static Applique.LoadTester.Environment.Test.TestData;
+using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public class WhenCreate : ConstantFactoryTestBase<Constant>
+    public abstract class WhenCreate : ConstantFactoryTestBase<Constant>
     {
         protected string ConstantExpression;
         protected string ConstantValue;

@@ -1,9 +1,8 @@
 ﻿using Xunit;
-using static Applique.LoadTester.Environment.Test.TestData;
+using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-
     public class WhenGet : BindingsTestBase<object>
     {
         protected override void Act() => ReturnValue = SUT.Get(SomeConstant);
