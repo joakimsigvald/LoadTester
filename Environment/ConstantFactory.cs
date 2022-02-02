@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace Applique.LoadTester.Environment
 {
-    internal static class ConstantFactory
+    public static class ConstantFactory
     {
         /// <summary>
-        /// Constant -> (:)[Name](:[Type])(+-[Tolerance])( [Constraint])
+        /// Constant -> (:)[Name](+-[Tolerance])(:[Type](->[Type]))( [Constraint])
         /// Name -> /String/
         /// Type -> int|decimal|string|dateTime
         /// Tolerance -> /Decimal/
@@ -16,14 +16,19 @@ namespace Applique.LoadTester.Environment
         /// </summary>
         public static Constant Create(string constantExpression, string value = null)
         {
-            constantExpression = constantExpression.Split(' ')[0]; // skip constraints
-            var parts = constantExpression.Split(':', StringSplitOptions.RemoveEmptyEntries);
+            if (string.IsNullOrEmpty(constantExpression))
+                return null;
+            var superParts = constantExpression.Split(' ');
+            var constraint = ParseConstraint(superParts.Skip(1).FirstOrDefault());
+            var constantDefinition = superParts[0];
+            var parts = constantDefinition.Split(':', StringSplitOptions.RemoveEmptyEntries);
             var subParts = parts[0].Split("+-");
             var res = new Constant()
             {
-                Overshadow = constantExpression.StartsWith(':'),
+                Overshadow = constantDefinition.StartsWith(':'),
                 Name = subParts[0],
-                Value = value
+                Value = value,
+                Constraint = constraint
             };
             if (parts.Length == 2)
             {
@@ -36,6 +41,9 @@ namespace Applique.LoadTester.Environment
                 res.Tolerance = decimal.Parse(subParts[1]);
             return res;
         }
+
+        private static Constraint ParseConstraint(string str) 
+            => string.IsNullOrEmpty(str) ? default : Enum.Parse<Constraint>(str);
 
         public static Constant[] Merge(IEnumerable<Constant> defaults, IEnumerable<Constant> overrides)
             => defaults.Concat(overrides).GroupBy(c => c.Name).Select(Merge).ToArray();

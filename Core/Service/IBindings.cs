@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 namespace Applique.LoadTester.Core.Service
 {
-    public enum Constraint { None, Mandatory }
-
     public interface IBindings : IEnumerable<Constant>
     {
         object Get(string name);

@@ -2,19 +2,14 @@
 
 namespace Applique.LoadTester.Environment.Test
 {
-    public abstract class TestBase<ISUT>
+    public abstract class TestBase
     {
         protected TestBase() => CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
-        protected ISUT SUT { get; private set; }
-
-        protected void Arrange()
+        protected virtual void Arrange()
         {
             Given();
-            SUT = CreateSUT();
         }
-
-        protected abstract ISUT CreateSUT();
 
         protected void ArrangeAndAct()
         {
@@ -25,5 +20,20 @@ namespace Applique.LoadTester.Environment.Test
         protected abstract void Act();
 
         protected virtual void Given() { }
+    }
+
+    public abstract class TestBase<ISUT> : TestBase
+    {
+        protected TestBase() => CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
+        protected ISUT SUT { get; private set; }
+
+        protected override sealed void Arrange()
+        {
+            Given();
+            SUT = CreateSUT();
+        }
+
+        protected abstract ISUT CreateSUT();
     }
 }

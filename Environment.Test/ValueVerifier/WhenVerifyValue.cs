@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Core.Service;
+﻿using Applique.LoadTester.Core.Design;
 using Xunit;
 using static Applique.LoadTester.Environment.ConstantExpressions;
 using static Applique.LoadTester.Environment.Test.TestData;
