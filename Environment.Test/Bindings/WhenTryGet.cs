@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Applique.LoadTester.Logic.Environment.Test.Bindings;
+using Xunit;
 using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings

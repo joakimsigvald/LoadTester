@@ -29,9 +29,6 @@ namespace Applique.LoadTester.Runtime.Engine
             _blob = blob;
         }
 
-        protected override Task HandleResponse(object _)
-            => Task.CompletedTask;
-
         protected override async Task<object> DoRun()
         {
             var repo = _factory.Create(_blob.ConnectionString, _blob.ContainerName, _blob.Folder);

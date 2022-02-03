@@ -1,6 +1,6 @@
 ﻿using Applique.LoadTester.Domain;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     public class VerificationFailed : RunFailed
     {

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>Applique.LoadTester.Assembly.Test</AssemblyName>
-    <RootNamespace>Applique.LoadTester.Assembly.Test</RootNamespace>
+    <AssemblyName>Applique.LoadTester.Logic.Assembly.Test</AssemblyName>
+    <RootNamespace>Applique.LoadTester.Logic.Assembly.Test</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />

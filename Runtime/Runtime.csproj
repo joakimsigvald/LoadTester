@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>Applique.LoadTester.Runtime</AssemblyName>
-    <RootNamespace>Applique.LoadTester.Runtime</RootNamespace>
+    <AssemblyName>Applique.LoadTester.Logic.Runtime</AssemblyName>
+    <RootNamespace>Applique.LoadTester.Logic.Runtime</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

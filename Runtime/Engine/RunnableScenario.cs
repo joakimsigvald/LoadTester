@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Applique.LoadTester.Domain;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Logic.Runtime.Engine;
 
 namespace Applique.LoadTester.Runtime.Engine
 {

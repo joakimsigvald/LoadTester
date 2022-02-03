@@ -1,8 +1,9 @@
 ﻿using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Environment;
 using Applique.LoadTester.Test;
 using System.Collections.Generic;
 
-namespace Applique.LoadTester.Environment.Test.Bindings
+namespace Applique.LoadTester.Logic.Environment.Test.Bindings
 {
     public abstract class BindingsTestBase : TestBase<IBindings>
     {

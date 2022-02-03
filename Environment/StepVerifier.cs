@@ -9,7 +9,7 @@ using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
 using Applique.LoadTester.Core.Service;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     public class StepVerifier : IStepVerifier
     {
@@ -36,17 +36,16 @@ namespace Applique.LoadTester.Environment
             _bindings.BindResponse(pattern, responseToken);
         }
 
-        public async Task<bool> IsSuccessful(HttpResponseMessage response)
+        public async Task<bool> IsSuccessful(RestCallResponse response)
         {
             if (!IsResponseStatusValid(response.StatusCode))
                 return false;
-            var body = await response.Content.ReadAsStringAsync();
             var pattern = _blueprint.Response;
             if (pattern == null)
                 return true;
             try
             {
-                VerifyResponse(pattern, body);
+                VerifyResponse(pattern, response.Body);
             }
             catch (VerificationFailed vf)
             {

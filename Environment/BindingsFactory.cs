@@ -2,10 +2,11 @@
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Environment;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     public class BindingsFactory : IBindingsFactory
     {
@@ -23,19 +24,19 @@ namespace Applique.LoadTester.Environment
             => new Bindings(new BindingVariables(CreateVariables(testSuite, constants)));
 
         private static Constant[] GetConstants(ITestSuite testSuite, Constant[] scenarioConstants, int instanceId)
-            => ConstantFactory.Merge(GetInstanceConstants(testSuite, instanceId), scenarioConstants);
+            => GetInstanceConstants(testSuite, instanceId).Merge(scenarioConstants);
 
         private static IEnumerable<Constant> GetInstanceConstants(ITestSuite testSuite, int instanceId)
             => testSuite.Constants.Prepend(ConstantFactory.Create("InstanceId", $"{instanceId}"));
 
         private IDictionary<string, object> CreateVariables(
             ITestSuite suite,
-            IEnumerable<Constant> constants) 
+            IEnumerable<Constant> constants)
             => constants.ToDictionary(c => c.Name, c => GetValue(suite, c));
 
         private object GetValue(ITestSuite testSuite, Constant constant)
-            => constant.Type == ConstantType.Seed 
-            ? GetSeed(testSuite, constant) 
+            => constant.Type == ConstantType.Seed
+            ? GetSeed(testSuite, constant)
             : ConstantExpressions.ValueOf(constant);
 
         private object GetSeed(ITestSuite testSuite, Constant constant)
@@ -50,10 +51,10 @@ namespace Applique.LoadTester.Environment
 
         private int? LoadSeed(ITestSuite testSuite, Constant constant)
             => _fileSystem.Exists(GetSeedPath(testSuite, constant))
-            ? _fileSystem.Read<int>(global::Applique.LoadTester.Environment.BindingsFactory.GetSeedPath(testSuite, constant))
+            ? _fileSystem.Read<int>(global::Applique.LoadTester.Logic.Environment.BindingsFactory.GetSeedPath(testSuite, constant))
             : null;
 
-        private static string GetSeedPath(ITestSuite testSuite, Constant constant) 
+        private static string GetSeedPath(ITestSuite testSuite, Constant constant)
             => $"{testSuite.Name}_{constant.Name}_Seed";
     }
 }

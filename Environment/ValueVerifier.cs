@@ -1,13 +1,14 @@
 ﻿using Applique.LoadTester.Core.Design;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Environment;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using static Applique.LoadTester.Domain.Service.ConstantExpressions;
 using static Applique.LoadTester.Domain.Service.ConstantFactory;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     public class ValueVerifier : IValueVerifier
     {
@@ -23,14 +24,14 @@ namespace Applique.LoadTester.Environment
                 throw new VerificationFailed(prefix, $"Unexpected response: {actualValue}, expected {expectedValue}");
         }
 
-        private static Constraint GetConstraint(JProperty pp) 
+        private static Constraint GetConstraint(JProperty pp)
             => IsString(pp) ? GetConstraint(pp.Value.Value<string>()) : default;
 
-        private static Constraint GetConstraint(string expr) 
+        private static Constraint GetConstraint(string expr)
             => IsConstant(expr) ? Create(Unembrace(expr)).Constraint : default;
 
         private static bool IsMatch(object expectedValue, string actualValue)
-            => expectedValue is DecimalWithTolerance decObj 
+            => expectedValue is DecimalWithTolerance decObj
             ? decObj.IsMatch(ValueOf(
                 new Constant { Value = actualValue, Type = ConstantType.Decimal }) as decimal?)
             : $"{expectedValue}" == actualValue?.ToString();

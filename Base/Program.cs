@@ -5,6 +5,7 @@ using Applique.LoadTester.Runtime.Engine;
 using Applique.LoadTester.Assembly;
 using Applique.LoadTester.Environment;
 using Applique.LoadTester.Front;
+using Applique.LoadTester.Logic.Environment;
 
 namespace Applique.LoadTester.Base
 {

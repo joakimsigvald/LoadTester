@@ -1,4 +1,5 @@
-﻿using Applique.LoadTester.Runtime.External;
+﻿using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Runtime.External;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +12,16 @@ namespace Applique.LoadTester.External
 
         public RestCaller(string baseUrl) => _client = CreateClient(baseUrl);
 
-        public Task<HttpResponseMessage> Call(Request request)
-            => _client.SendAsync(MapToHttpRequestMessage(request));
+        public async Task<RestCallResponse> Call(Request request)
+        {
+            var res = await _client.SendAsync(MapToHttpRequestMessage(request));
+            var body = res.Content is null ? null : await res.Content.ReadAsStringAsync();
+            return new RestCallResponse
+            {
+                StatusCode = res.StatusCode,
+                Body = body
+            };
+        }
 
         private static HttpRequestMessage MapToHttpRequestMessage(Request request)
         {

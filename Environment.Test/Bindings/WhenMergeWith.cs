@@ -1,4 +1,5 @@
 ﻿using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Logic.Environment.Test.Bindings;
 using Moq;
 using System.Collections.Generic;
 using Xunit;

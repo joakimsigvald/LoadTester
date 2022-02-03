@@ -9,7 +9,7 @@ namespace Applique.LoadTester.Domain.Service
     {
         void VerifyResponse(JToken pattern, string source, string prefix = "");
 
-        Task<bool> IsSuccessful(HttpResponseMessage response);
+        Task<bool> IsSuccessful(RestCallResponse response);
 
         bool IsResponseStatusValid(HttpStatusCode actualStatus);
     }

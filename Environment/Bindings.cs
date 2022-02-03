@@ -1,5 +1,6 @@
 ﻿using Applique.LoadTester.Core.Design;
 using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Environment;
 using Applique.LoadTester.Runtime.Environment;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 using static Applique.LoadTester.Domain.Service.ConstantExpressions;
 using static Applique.LoadTester.Domain.Service.ConstantFactory;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     public class Bindings : IBindings
     {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Applique.LoadTester.Runtime.External;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Service;
 
 namespace Applique.LoadTester.Runtime.Engine
 {
@@ -21,14 +22,23 @@ namespace Applique.LoadTester.Runtime.Engine
             Step step,
             IBindings bindings)
         {
-            var pair = step.Endpoint.Split('.');
-            var serviceName = pair[0];
-            var endpointName = pair[1];
+            var (serviceName, endpointName) = ExtractPath(step);
             var service = suite.Services.Single(s => s.Name == serviceName);
-            var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
             var restCaller = restCallerFactory.Create(service.BaseUrl);
-            var requestFactory = new RequestFactory(service, endpoint, bindings, step);
+            var requestFactory = CreateRequestFactory(service, bindings, endpointName, step);
             return new RestStepExecutor(restCaller, service, requestFactory, bindings);
+        }
+
+        private static (string serviceName, string endpointName) ExtractPath(Step step)
+        {
+            var pair = step.Endpoint.Split('.');
+            return (pair[0], pair[1]);
+        }
+
+        private static RequestFactory CreateRequestFactory(Service service, IBindings bindings, string endpointName, Step step)
+        {
+            var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
+            return new RequestFactory(service, endpoint, bindings, step);
         }
 
         private RestStepExecutor(
@@ -43,7 +53,7 @@ namespace Applique.LoadTester.Runtime.Engine
             _bindings = bindings;
         }
 
-        public async Task<HttpResponseMessage> Execute(Header[] serviceHeaders)
+        public async Task<RestCallResponse> Execute(Header[] serviceHeaders)
         {
             try
             {

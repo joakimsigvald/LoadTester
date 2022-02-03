@@ -32,7 +32,7 @@ namespace Applique.LoadTester.Runtime.Engine
                 TResponse response = await run();
                 sw.Stop();
                 var elapsed = sw.Elapsed;
-                await HandleResponse(response);
+                HandleResponse(response);
                 return elapsed;
             }
             finally
@@ -43,7 +43,7 @@ namespace Applique.LoadTester.Runtime.Engine
 
         protected abstract Task<TResponse> DoRun();
 
-        protected abstract Task HandleResponse(TResponse response);
+        protected virtual void HandleResponse(TResponse response) { }
         protected TimeSpan Delay => _delay ?? (_delay = TimeSpan.FromMilliseconds(Blueprint.DelayMs)).Value;
     }
 }

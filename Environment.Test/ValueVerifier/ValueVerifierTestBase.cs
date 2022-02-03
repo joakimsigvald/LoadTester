@@ -1,11 +1,12 @@
 ﻿using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Environment;
 using Applique.LoadTester.Test;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using static Applique.LoadTester.Test.TestData;
 
-namespace Applique.LoadTester.Environment.Test.ValueVerifier
+namespace Applique.LoadTester.Logic.Environment.Test.ValueVerifier
 {
     public abstract class ValueVerifierTestBase : TestBase<IValueVerifier>
     {
@@ -28,6 +29,6 @@ namespace Applique.LoadTester.Environment.Test.ValueVerifier
         }
 
         protected static IBindings CreateBindings(IDictionary<string, object> variables)
-            => new Environment.Bindings(new BindingVariables(variables));
+            => new Logic.Environment.Bindings(new BindingVariables(variables));
     }
 }

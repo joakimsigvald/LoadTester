@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <AssemblyName>Applique.LoadTester.Test</AssemblyName>
-    <RootNamespace>Applique.LoadTester.Test</RootNamespace>
+    <AssemblyName>Applique.LoadTester.Logic.Test</AssemblyName>
+    <RootNamespace>Applique.LoadTester.Logic.Test</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.16.1" />

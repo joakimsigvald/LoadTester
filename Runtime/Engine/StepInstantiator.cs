@@ -4,8 +4,9 @@ using Applique.LoadTester.Runtime.External;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Runtime.Engine;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Logic.Runtime.Engine
 {
     public class StepInstantiator
     {
@@ -40,7 +41,7 @@ namespace Applique.LoadTester.Runtime.Engine
                 StepType t => throw new NotImplementedException($"{t}")
             };
 
-        private IRunnableStep InstanciateRest(Step step) 
+        private IRunnableStep InstanciateRest(Step step)
             => new RestStep(
                 step,
                 _bindings,
