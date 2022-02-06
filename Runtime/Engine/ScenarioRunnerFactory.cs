@@ -1,7 +1,7 @@
 ﻿using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Logic.Runtime.Engine
 {
     public class ScenarioRunnerFactory : IScenarioRunnerFactory
     {
@@ -21,9 +21,9 @@ namespace Applique.LoadTester.Runtime.Engine
 
         public IScenarioRunner Create(ITestSuite testSuite)
             => new ScenarioRunner(
-                _bindingsFactory, 
-                testSuite, 
-                _bindingsRepositoryFactory.Create(testSuite), 
+                _bindingsFactory,
+                testSuite,
+                _bindingsRepositoryFactory.Create(testSuite),
                 _stepInstantiatorFactory);
     }
 }

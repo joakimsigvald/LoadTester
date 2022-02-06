@@ -1,6 +1,6 @@
 ﻿using Applique.LoadTester.Domain.Design;
 
-namespace Applique.LoadTester.Runtime.External
+namespace Applique.LoadTester.Logic.Runtime.External
 {
     public class Request
     {

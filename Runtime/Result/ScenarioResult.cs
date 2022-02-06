@@ -5,7 +5,7 @@ using Applique.LoadTester.Core.Result;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 
-namespace Applique.LoadTester.Runtime.Result
+namespace Applique.LoadTester.Logic.Runtime.Result
 {
     public class ScenarioResult : IScenarioResult
     {

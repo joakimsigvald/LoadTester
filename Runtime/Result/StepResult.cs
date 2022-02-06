@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace Applique.LoadTester.Runtime.Result
+namespace Applique.LoadTester.Logic.Runtime.Result
 {
     public class StepResult : IStepResult
     {

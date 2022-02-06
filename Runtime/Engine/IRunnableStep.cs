@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Logic.Runtime.Engine
 {
     public interface IRunnableStep
     {

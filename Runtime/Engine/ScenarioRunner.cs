@@ -1,13 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Applique.LoadTester.Runtime.Result;
 using Applique.LoadTester.Core.Result;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
-using Applique.LoadTester.Logic.Runtime.Engine;
+using Applique.LoadTester.Logic.Runtime.Result;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Logic.Runtime.Engine
 {
     public class ScenarioRunner : IScenarioRunner
     {

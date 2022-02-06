@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Runtime.External;
+using Applique.LoadTester.Logic.Runtime.External;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Logic.Runtime.Engine
 {
     internal class RequestFactory
     {

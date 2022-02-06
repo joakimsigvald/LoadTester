@@ -1,12 +1,11 @@
-﻿using Applique.LoadTester.Runtime.Result;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Applique.LoadTester.Domain;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Logic.Runtime.Result;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Logic.Runtime.Engine
 {
     public class RunnableScenario
     {
@@ -28,7 +27,7 @@ namespace Applique.LoadTester.Runtime.Engine
                 try
                 {
                     var elapsed = await step.Run();
-                    stepDurations.Add(new StepDuration { Step = step.Blueprint, Duration = elapsed});
+                    stepDurations.Add(new StepDuration { Step = step.Blueprint, Duration = elapsed });
                 }
                 catch (RunFailed sf)
                 {

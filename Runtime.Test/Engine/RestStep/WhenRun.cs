@@ -1,6 +1,6 @@
 ﻿using Applique.LoadTester.Domain;
+using Applique.LoadTester.Logic.Runtime.External;
 using Applique.LoadTester.Logic.Runtime.Test.Engine.RestStep;
-using Applique.LoadTester.Runtime.External;
 using Moq;
 using Newtonsoft.Json.Linq;
 using System;

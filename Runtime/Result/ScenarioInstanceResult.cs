@@ -1,15 +1,15 @@
 ﻿using Applique.LoadTester.Core.Service;
-using Applique.LoadTester.Logic.Runtime.Result;
-using Applique.LoadTester.Runtime.Engine;
+using Applique.LoadTester.Logic.Runtime.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Applique.LoadTester.Runtime.Result
+namespace Applique.LoadTester.Logic.Runtime.Result
 {
     public class ScenarioInstanceResult
     {
-        public static ScenarioInstanceResult Succeeded(RunnableScenario scenario, TimeSpan duration, IList<StepDuration> stepDurations)
+        public static ScenarioInstanceResult Succeeded(
+            RunnableScenario scenario, TimeSpan duration, IList<StepDuration> stepDurations)
             => new()
             {
                 Success = true,

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Applique.LoadTester.Runtime.External;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Logic.Runtime.External;
 
-namespace Applique.LoadTester.Runtime.Engine
+namespace Applique.LoadTester.Logic.Runtime.Engine
 {
     public class BlobStep : RunnableStep<object>
     {

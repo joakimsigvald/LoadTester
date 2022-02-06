@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Applique.LoadTester.Domain;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
-using Applique.LoadTester.Runtime.Engine;
 
 namespace Applique.LoadTester.Logic.Runtime.Engine
 {

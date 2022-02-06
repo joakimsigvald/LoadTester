@@ -1,5 +1,5 @@
 ﻿using Applique.LoadTester.Domain.Service;
-using Applique.LoadTester.Runtime.External;
+using Applique.LoadTester.Logic.Runtime.External;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;

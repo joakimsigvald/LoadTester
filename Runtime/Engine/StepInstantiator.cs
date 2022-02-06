@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Applique.LoadTester.Runtime.External;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
-using Applique.LoadTester.Runtime.Engine;
+using Applique.LoadTester.Logic.Runtime.External;
 
 namespace Applique.LoadTester.Logic.Runtime.Engine
 {
