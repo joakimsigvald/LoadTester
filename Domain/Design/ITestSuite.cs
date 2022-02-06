@@ -9,7 +9,7 @@ namespace Applique.LoadTester.Domain.Design
         Service[] Services { get; }
         Constant[] Constants { get; }
         IEnumerable<IScenario> RunnableScenarios { get; }
-        IScenario GetTemplate(string name);
+        IScenario GetScenarioToRun(IScenario scenario);
         Step GetStepToRun(Step step);
         Blob GetBlob(string name);
     }

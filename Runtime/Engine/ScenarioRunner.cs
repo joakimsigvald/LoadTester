@@ -30,7 +30,7 @@ namespace Applique.LoadTester.Runtime.Engine
 
         public async Task<IScenarioResult> Run(IScenario scenario)
         {
-            var scenarioToRun = GetScenarioToRun(scenario);
+            var scenarioToRun = _testSuite.GetScenarioToRun(scenario);
             var instances = CreateRunnableScenarios(scenarioToRun);
             var runs = await Task.WhenAll(instances.Select(i => i.Run()));
             if (!runs.All(r => r.Success))
@@ -41,11 +41,6 @@ namespace Applique.LoadTester.Runtime.Engine
                 runs.OrderBy(d => d.Duration)
                 .ToArray());
         }
-
-        private IScenario GetScenarioToRun(IScenario scenario)
-            => scenario.Template == null
-            ? scenario
-            : GetScenarioToRun(_testSuite.GetTemplate(scenario.Template)).MergeWith(scenario);
 
         private RunnableScenario[] CreateRunnableScenarios(IScenario scenarioToRun)
         {

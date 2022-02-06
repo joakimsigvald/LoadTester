@@ -23,14 +23,19 @@ namespace Applique.LoadTester.Assembly
             => Blobs.SingleOrDefault(t => t.Name == name)
             ?? throw new NotImplementedException($"Blob: {name}");
 
-        public IScenario GetTemplate(string name)
-            => Templates.SingleOrDefault(t => t.Name == name)
-            ?? throw new NotImplementedException($"Template: {name}");
+        public IScenario GetScenarioToRun(IScenario scenario)
+            => scenario.Template == null
+            ? scenario
+            : GetScenarioToRun(GetTemplate(scenario.Template)).MergeWith(scenario);
 
         public Step GetStepToRun(Step step)
             => step.Template is null
                 ? step
                 : MergeSteps(GetStepTemplate(step.Template).Step, step);
+
+        private IScenario GetTemplate(string name)
+            => Templates.SingleOrDefault(t => t.Name == name)
+            ?? throw new NotImplementedException($"Template: {name}");
 
         private StepTemplate GetStepTemplate(string name)
             => StepTemplates.SingleOrDefault(t => t.Name == name)

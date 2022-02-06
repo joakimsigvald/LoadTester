@@ -50,7 +50,7 @@ namespace Applique.LoadTester.Logic.Runtime.Engine
                 _stepVerifierFactory.CreateVerifier(step, _bindings));
 
         public IRunnableStep InstanciateBlob(Step step)
-            => BlobStep.Create(_blobFactory, _testSuite, step, _bindings, GetOverloads(step));
+            => new BlobStep(_blobFactory, step, _testSuite.GetBlob(step.Endpoint), _bindings, GetOverloads(step));
 
         private IBindings GetOverloads(Step step)
             => step.Constants.Any() ? _bindingsFactory.CreateBindings(_testSuite, step.Constants) : null;
