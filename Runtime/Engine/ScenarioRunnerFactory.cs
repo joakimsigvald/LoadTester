@@ -1,29 +1,24 @@
-﻿using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Domain.Assembly;
 using Applique.LoadTester.Domain.Service;
 
 namespace Applique.LoadTester.Logic.Runtime.Engine
 {
     public class ScenarioRunnerFactory : IScenarioRunnerFactory
     {
-        private readonly IBindingsFactory _bindingsFactory;
         private readonly IBindingsRepositoryFactory _bindingsRepositoryFactory;
-        private readonly StepInstantiatorFactory _stepInstantiatorFactory;
+        private readonly ScenarioInstantiatorFactory _scenarioInstantiatorFactory;
 
         public ScenarioRunnerFactory(
-            IBindingsFactory bindingsFactory,
             IBindingsRepositoryFactory bindingsRepositoryFactory,
-            StepInstantiatorFactory stepInstantiatorFactory)
+            ScenarioInstantiatorFactory scenarioInstantiatorFactory)
         {
-            _bindingsFactory = bindingsFactory;
             _bindingsRepositoryFactory = bindingsRepositoryFactory;
-            _stepInstantiatorFactory = stepInstantiatorFactory;
+            _scenarioInstantiatorFactory = scenarioInstantiatorFactory;
         }
 
         public IScenarioRunner Create(ITestSuite testSuite)
             => new ScenarioRunner(
-                _bindingsFactory,
-                testSuite,
                 _bindingsRepositoryFactory.Create(testSuite),
-                _stepInstantiatorFactory);
+                _scenarioInstantiatorFactory.Create(testSuite));
     }
 }

@@ -1,21 +1,14 @@
-﻿using Applique.LoadTester.Domain.Design;
-using Applique.LoadTester.Logic.Assembly.Test.Scenario;
+﻿using Applique.LoadTester.Domain.Assembly;
 using System.Linq;
 using System.Net;
 using Xunit;
 using static Applique.LoadTester.Test.TestData;
 
-namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
+namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
 {
-    public abstract class WhenGetStepsToRun : ScenarioTestBase<IStep>
+    public abstract class WhenGetStepsToRun : TestSuiteScenarioTestBase<IStep>
     {
-        protected override void Act() => ReturnValue = SUT.GetStepsToRun(
-            new Assembly.TestSuite
-            {
-                StepTemplates = StepTemplates,
-                Templates = Templates
-            }
-            )[0];
+        protected override void Act() => ReturnValue = SUT.GetStepsToRun().Single();
 
         public class GivenNoTemplate : WhenGetStepsToRun
         {

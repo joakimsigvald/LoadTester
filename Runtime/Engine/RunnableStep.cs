@@ -1,5 +1,5 @@
 ﻿using Applique.LoadTester.Core.Service;
-using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Assembly;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;

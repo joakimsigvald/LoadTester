@@ -1,5 +1,5 @@
 ﻿using Applique.LoadTester.Core.Service;
-using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Assembly;
 using Applique.LoadTester.Domain.Service;
 using Applique.LoadTester.Logic.Runtime.External;
 

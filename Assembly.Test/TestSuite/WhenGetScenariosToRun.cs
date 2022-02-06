@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Domain.Assembly;
 using System.Linq;
 using Xunit;
 using static Applique.LoadTester.Test.TestData;
@@ -7,7 +7,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
 {
     public abstract class WhenGetScenariosToRun : TestSuiteTestBase<IScenario>
     {
-        protected override void Act() => ReturnValue = SUT.ScenariosToRun.Single();
+        protected override void Act() => ReturnValue = SUT.ScenarioWrappers.Single().Scenario;
 
         public class GivenNoTemplate : WhenGetScenariosToRun
         {
@@ -21,7 +21,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
 
         public abstract class GivenTemplate : WhenGetScenariosToRun
         {
-            protected Assembly.Scenario TemplateScenario = new();
+            protected Scenario TemplateScenario = new();
 
             protected override void Given()
             {

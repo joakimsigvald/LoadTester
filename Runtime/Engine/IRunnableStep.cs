@@ -1,4 +1,4 @@
-﻿using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Domain.Assembly;
 using System;
 using System.Threading.Tasks;
 

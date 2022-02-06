@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Applique.LoadTester.Core.Result;
 using Applique.LoadTester.Core.Service;
-using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Domain.Assembly;
 using Applique.LoadTester.Domain.Service;
 
 namespace Applique.LoadTester.Runtime.Engine
@@ -26,13 +26,11 @@ namespace Applique.LoadTester.Runtime.Engine
         {
             var scenarioRunner = _scenarioRunnerFactory.Create(_testSuite);
             var results = new List<IScenarioResult>();
-            foreach (var scenario in _testSuite.ScenariosToRun)
+            foreach (var wrapper in _testSuite.ScenarioWrappers)
             {
-                Console.WriteLine("--------------------------");
-                Console.WriteLine($"Running scenario: {scenario.Name} with {scenario.Instances} instances");
-                var result = await scenarioRunner.Run(scenario);
-                results.Add(result);
+                var result = await scenarioRunner.Run(wrapper);
                 Console.WriteLine("Scenario " + (result.Success ? "succeeded" : "failed"));
+                results.Add(result);
                 if (!result.Success)
                     break;
             }

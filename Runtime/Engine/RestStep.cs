@@ -4,6 +4,7 @@ using Applique.LoadTester.Domain;
 using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Domain.Assembly;
 
 namespace Applique.LoadTester.Logic.Runtime.Engine
 {

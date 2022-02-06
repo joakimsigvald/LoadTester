@@ -31,9 +31,8 @@ namespace Applique.LoadTester.Base
         {
             BindingsFactory bindingsFactory = new(fileSystem);
             return new ScenarioRunnerFactory(
-                bindingsFactory,
                 CreateBindingsRepositoryFactory(fileSystem, bindingsFactory),
-                CreateStepInstantiatorFactory(bindingsFactory));
+                CreateScenarioInstantiatorFactory(bindingsFactory));
         }
 
         private static BindingsRepositoryFactory CreateBindingsRepositoryFactory(
@@ -42,6 +41,9 @@ namespace Applique.LoadTester.Base
             Loader loader = new(fileSystem);
             return new(fileSystem, loader, bindingsFactory);
         }
+
+        private static ScenarioInstantiatorFactory CreateScenarioInstantiatorFactory(BindingsFactory bindingsFactory)
+            => new(bindingsFactory, CreateStepInstantiatorFactory(bindingsFactory));
 
         private static StepInstantiatorFactory CreateStepInstantiatorFactory(BindingsFactory bindingsFactory)
         {

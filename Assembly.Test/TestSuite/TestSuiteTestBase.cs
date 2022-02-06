@@ -7,8 +7,8 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
     public abstract class TestSuiteTestBase : TestBase<Assembly.TestSuite>
     {
         protected StepTemplate[] StepTemplates;
-        protected Assembly.Scenario[] Templates;
-        protected Assembly.Scenario Scenario = new();
+        protected Scenario[] Templates;
+        protected Scenario Scenario = new();
 
         protected override Assembly.TestSuite CreateSUT()
             => new()

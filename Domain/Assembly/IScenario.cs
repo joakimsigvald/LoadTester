@@ -1,6 +1,6 @@
 ﻿using Applique.LoadTester.Core.Design;
 
-namespace Applique.LoadTester.Domain.Design
+namespace Applique.LoadTester.Domain.Assembly
 {
     public interface IScenario : IScenarioMetadata
     {
@@ -8,6 +8,5 @@ namespace Applique.LoadTester.Domain.Design
         string[] Load { get; }
         string[] Persist { get; }
         Constant[] Constants { get; }
-        IStep[] GetStepsToRun(ITestSuite testSuite);
     }
 }

@@ -1,15 +1,15 @@
 ﻿using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Domain.Design;
 using System.Collections.Generic;
 
-namespace Applique.LoadTester.Domain.Design
+namespace Applique.LoadTester.Domain.Assembly
 {
     public interface ITestSuite
     {
         string Name { get; }
-        Service[] Services { get; }
+        Design.Service[] Services { get; }
         Constant[] Constants { get; }
-        IEnumerable<IScenario> ScenariosToRun { get; }
-        IStep GetStepTemplate(string name);
+        IEnumerable<ITestSuiteScenario> ScenarioWrappers { get; }
         Blob GetBlob(string name);
     }
 }
