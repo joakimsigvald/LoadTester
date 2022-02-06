@@ -1,7 +1,5 @@
 ﻿using Applique.LoadTester.Core.Design;
 using Applique.LoadTester.Core.Service;
-using Applique.LoadTester.Environment;
-using Applique.LoadTester.Runtime.Environment;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;

@@ -1,4 +1,5 @@
-﻿using Applique.LoadTester.Logic.Environment.Test.Bindings;
+﻿using Applique.LoadTester.Logic.Environment;
+using Applique.LoadTester.Logic.Environment.Test.Bindings;
 using System;
 using Xunit;
 using static Applique.LoadTester.Domain.Service.ConstantExpressions;

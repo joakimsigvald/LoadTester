@@ -1,4 +1,4 @@
-﻿namespace Applique.LoadTester.Environment
+﻿namespace Applique.LoadTester.Logic.Environment
 {
     public struct DecimalWithTolerance
     {
@@ -6,9 +6,9 @@
         public decimal Tolerance { get; set; }
 
         public bool IsMatch(decimal? actual)
-            => Value.HasValue 
-            && actual.HasValue 
-            && Value.Value - Tolerance <= actual.Value 
+            => Value.HasValue
+            && actual.HasValue
+            && Value.Value - Tolerance <= actual.Value
             && Value.Value + Tolerance >= actual.Value;
     }
 }

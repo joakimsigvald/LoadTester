@@ -1,6 +1,6 @@
 ﻿using Applique.LoadTester.Core.Design;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     public class Equation
     {

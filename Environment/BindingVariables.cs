@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using static Applique.LoadTester.Environment.SpecialVariables;
+using static Applique.LoadTester.Logic.Environment.SpecialVariables;
 using static Applique.LoadTester.Domain.Service.ConstantExpressions;
 using Applique.LoadTester.Core.Design;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     public class BindingVariables : IEnumerable<Constant>
     {
@@ -57,7 +57,7 @@ namespace Applique.LoadTester.Environment
             return res;
         }
 
-        private static string SubstituteValue(string target, KeyValuePair<string, object> variable) 
+        private static string SubstituteValue(string target, KeyValuePair<string, object> variable)
             => target.Replace(Embrace(variable.Key), GetValue(variable.Value));
 
         private static string GetValue(object variableValue) =>

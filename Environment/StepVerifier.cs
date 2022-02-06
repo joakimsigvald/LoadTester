@@ -3,8 +3,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Domain.Service;
 using Applique.LoadTester.Core.Service;
@@ -36,9 +34,9 @@ namespace Applique.LoadTester.Logic.Environment
             _bindings.BindResponse(pattern, responseToken);
         }
 
-        public async Task<bool> IsSuccessful(RestCallResponse response)
+        public bool IsSuccessful(RestCallResponse response)
         {
-            if (!IsResponseStatusValid(response.StatusCode))
+            if (response is null || !IsResponseStatusValid(response.StatusCode))
                 return false;
             var pattern = _blueprint.Response;
             if (pattern == null)

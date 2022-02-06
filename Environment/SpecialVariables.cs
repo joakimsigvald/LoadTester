@@ -1,4 +1,4 @@
-﻿namespace Applique.LoadTester.Environment
+﻿namespace Applique.LoadTester.Logic.Environment
 {
     public static class SpecialVariables
     {

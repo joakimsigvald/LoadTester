@@ -43,15 +43,15 @@ namespace Applique.LoadTester.Logic.Runtime.Engine
             var serviceHeaders = _executor.CreateServiceHeaders();
             int attempt = 0;
             do lastResponse = await Execute(++attempt, serviceHeaders);
-            while (attempt < Blueprint.Times && await ShouldContinue(lastResponse));
+            while (ShouldContinue(lastResponse, attempt));
             return lastResponse;
         }
 
-        private async Task<bool> ShouldContinue(RestCallResponse response)
-            => await IsSuccessful(response) ? !Blueprint.BreakOnSuccess : Blueprint.RetryOnFail;
+        private bool ShouldContinue(RestCallResponse response, int attempt)
+            => attempt < Blueprint.Times && !ShouldAbort(response);
 
-        private async Task<bool> IsSuccessful(RestCallResponse response)
-            => response != null && await _stepVerifier.IsSuccessful(response);
+        private bool ShouldAbort(RestCallResponse response)
+            => _stepVerifier.IsSuccessful(response) ? Blueprint.BreakOnSuccess : !Blueprint.RetryOnFail;
 
         private async Task<RestCallResponse> Execute(int attempt, Header[] serviceHeaders)
         {

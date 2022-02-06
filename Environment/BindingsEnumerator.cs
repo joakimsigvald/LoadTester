@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Applique.LoadTester.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     internal class BindingsEnumerator : IEnumerator<Constant>
     {

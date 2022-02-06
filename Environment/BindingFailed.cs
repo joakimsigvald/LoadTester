@@ -1,6 +1,6 @@
 ﻿using Applique.LoadTester.Domain;
 
-namespace Applique.LoadTester.Runtime.Environment
+namespace Applique.LoadTester.Logic.Environment
 {
     internal class BindingFailed : RunFailed
     {
