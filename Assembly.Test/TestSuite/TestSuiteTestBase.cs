@@ -1,7 +1,5 @@
 ﻿using Applique.LoadTester.Core.Design;
 using Applique.LoadTester.Test;
-using System;
-using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Assembly.Test.TestSuite
 {
