@@ -9,6 +9,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Assembly\Assembly.csproj" />
     <ProjectReference Include="..\Environment\Environment.csproj" />
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
     <ProjectReference Include="..\Test\Test.csproj" />

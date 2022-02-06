@@ -12,10 +12,10 @@ namespace Applique.LoadTester.Logic.Environment
     public class StepVerifier : IStepVerifier
     {
         private readonly IValueVerifier _valueVerifier;
-        private readonly Step _blueprint;
+        private readonly IStep _blueprint;
         private readonly IBindings _bindings;
 
-        public StepVerifier(Step step, IBindings bindings)
+        public StepVerifier(IStep step, IBindings bindings)
         {
             _blueprint = step;
             _bindings = bindings;

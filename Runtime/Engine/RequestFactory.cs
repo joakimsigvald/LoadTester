@@ -10,9 +10,9 @@ namespace Applique.LoadTester.Runtime.Engine
         private readonly Service _service;
         private readonly Endpoint _endpoint;
         private readonly IBindings _bindings;
-        private readonly Step _step;
+        private readonly IStep _step;
 
-        public RequestFactory(Service service, Endpoint endpoint, IBindings bindings, Step step)
+        public RequestFactory(Service service, Endpoint endpoint, IBindings bindings, IStep step)
         {
             _service = service;
             _endpoint = endpoint;

@@ -26,7 +26,7 @@ namespace Applique.LoadTester.Runtime.Engine
         {
             var scenarioRunner = _scenarioRunnerFactory.Create(_testSuite);
             var results = new List<IScenarioResult>();
-            foreach (var scenario in _testSuite.RunnableScenarios)
+            foreach (var scenario in _testSuite.ScenariosToRun)
             {
                 Console.WriteLine("--------------------------");
                 Console.WriteLine($"Running scenario: {scenario.Name} with {scenario.Instances} instances");

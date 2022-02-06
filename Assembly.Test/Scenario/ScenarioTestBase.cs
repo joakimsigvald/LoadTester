@@ -2,27 +2,25 @@
 using Applique.LoadTester.Test;
 using System.Linq;
 
-namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
+namespace Applique.LoadTester.Logic.Assembly.Test.Scenario
 {
-    public abstract class TestSuiteTestBase : TestBase<Assembly.TestSuite>
+    public abstract class ScenarioTestBase : TestBase<Assembly.Scenario>
     {
+        protected Step Step = new();
         protected StepTemplate[] StepTemplates;
         protected Assembly.Scenario[] Templates;
-        protected Assembly.Scenario Scenario = new();
 
-        protected override Assembly.TestSuite CreateSUT()
+        protected override Assembly.Scenario CreateSUT()
             => new()
             {
-                StepTemplates = StepTemplates,
-                Templates = Templates,
-                Scenarios = new[] { Scenario }
+                Steps = new[] { Step }
             };
 
         protected static Constant[] CreateConstants(params (string name, string value)[] namedValues)
             => namedValues.Select(nv => new Constant { Name = nv.name, Value = nv.value }).ToArray();
     }
 
-    public abstract class TestSuiteTestBase<TReturn> : TestSuiteTestBase
+    public abstract class ScenarioTestBase<TReturn> : ScenarioTestBase
     {
         protected TReturn ReturnValue;
     }

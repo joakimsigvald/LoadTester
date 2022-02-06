@@ -11,7 +11,7 @@ namespace Applique.LoadTester.Runtime.Engine
         private readonly IBlobRepositoryFactory _factory;
         private readonly Blob _blob;
 
-        public BlobStep(IBlobRepositoryFactory factory, Step step, Blob blob, IBindings bindings, IBindings overloads)
+        public BlobStep(IBlobRepositoryFactory factory, IStep step, Blob blob, IBindings bindings, IBindings overloads)
             : base(step, bindings, overloads)
         {
             _factory = factory;

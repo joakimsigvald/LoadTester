@@ -19,7 +19,7 @@ namespace Applique.LoadTester.Runtime.Engine
         public static RestStepExecutor Create(
             IRestCallerFactory restCallerFactory,
             ITestSuite suite,
-            Step step,
+            IStep step,
             IBindings bindings)
         {
             var (serviceName, endpointName) = ExtractPath(step);
@@ -29,13 +29,13 @@ namespace Applique.LoadTester.Runtime.Engine
             return new RestStepExecutor(restCaller, service, requestFactory, bindings);
         }
 
-        private static (string serviceName, string endpointName) ExtractPath(Step step)
+        private static (string serviceName, string endpointName) ExtractPath(IStep step)
         {
             var pair = step.Endpoint.Split('.');
             return (pair[0], pair[1]);
         }
 
-        private static RequestFactory CreateRequestFactory(Service service, IBindings bindings, string endpointName, Step step)
+        private static RequestFactory CreateRequestFactory(Service service, IBindings bindings, string endpointName, IStep step)
         {
             var endpoint = service.Endpoints.Single(ep => ep.Name == endpointName);
             return new RequestFactory(service, endpoint, bindings, step);

@@ -1,5 +1,5 @@
-﻿using Applique.LoadTester.Core.Design;
-using Applique.LoadTester.Domain.Design;
+﻿using Applique.LoadTester.Domain.Design;
+using Applique.LoadTester.Logic.Assembly.Test.Scenario;
 using System.Linq;
 using System.Net;
 using Xunit;
@@ -7,13 +7,17 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
 {
-    public abstract class WhenGetStepToRun : TestSuiteTestBase<Step>
+    public abstract class WhenGetStepsToRun : ScenarioTestBase<IStep>
     {
-        protected Step Step = new();
+        protected override void Act() => ReturnValue = SUT.GetStepsToRun(
+            new Assembly.TestSuite
+            {
+                StepTemplates = StepTemplates,
+                Templates = Templates
+            }
+            )[0];
 
-        protected override void Act() => ReturnValue = SUT.GetStepToRun(Step);
-
-        public class GivenNoTemplate : WhenGetStepToRun
+        public class GivenNoTemplate : WhenGetStepsToRun
         {
             [Fact]
             public void ThenReturnStepFromScript()
@@ -23,7 +27,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
             }
         }
 
-        public abstract class GivenTemplate : WhenGetStepToRun
+        public abstract class GivenTemplate : WhenGetStepsToRun
         {
             protected Step TemplateStep = new();
 

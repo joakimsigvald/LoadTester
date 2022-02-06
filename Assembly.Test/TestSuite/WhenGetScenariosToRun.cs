@@ -5,13 +5,11 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
 {
-    public abstract class WhenGetScenarioToRun : TestSuiteTestBase<IScenario>
+    public abstract class WhenGetScenariosToRun : TestSuiteTestBase<IScenario>
     {
-        protected Scenario Scenario = new();
+        protected override void Act() => ReturnValue = SUT.ScenariosToRun.Single();
 
-        protected override void Act() => ReturnValue = SUT.GetScenarioToRun(Scenario);
-
-        public class GivenNoTemplate : WhenGetScenarioToRun
+        public class GivenNoTemplate : WhenGetScenariosToRun
         {
             [Fact]
             public void ThenReturnScenarioFromScript()
@@ -21,19 +19,17 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
             }
         }
 
-        public abstract class GivenTemplate : WhenGetScenarioToRun
+        public abstract class GivenTemplate : WhenGetScenariosToRun
         {
-            protected Scenario TemplateScenario = new();
+            protected Assembly.Scenario TemplateScenario = new();
 
             protected override void Given()
             {
                 Scenario.Template = "TheTemplate";
+                TemplateScenario.Name = Scenario.Template;
                 Templates = new[]
                 {
-                    new Scenario
-                    {
-                        Name = Scenario.Template,
-                    }
+                    TemplateScenario
                 };
                 base.Given();
             }
@@ -76,6 +72,43 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
                 Scenario.Name = "MyName";
                 ArrangeAndAct();
                 Assert.Equal(Scenario.Name, ReturnValue.Name);
+            }
+        }
+
+        public class GivenLoad : GivenTemplate
+        {
+            [Fact]
+            public void ThenGetLoadFromScenario()
+            {
+                Scenario.Load = new[] { "A" };
+                TemplateScenario.Load = new[] { "B" };
+                ArrangeAndAct();
+                Assert.Equal(Scenario.Load, ReturnValue.Load);
+            }
+        }
+
+        public class GivenPersist : GivenTemplate
+        {
+            [Fact]
+            public void ThenGetPersistFromScenario()
+            {
+                Scenario.Persist = new[] { "A" };
+                TemplateScenario.Persist = new[] { "B" };
+                ArrangeAndAct();
+                Assert.Equal(Scenario.Persist, ReturnValue.Persist);
+            }
+        }
+
+        public class GivenSteps : GivenTemplate
+        {
+            [Fact]
+            public void ThenGetTemplateStepsFollowedByScenarioStepsPersistFromScenario()
+            {
+                var steps = new[] { "A", "B", "C", "D" }.Select(v => new Step { Endpoint = v }).ToArray();
+                TemplateScenario.Steps = steps[..2];
+                Scenario.Steps = steps[2..];
+                ArrangeAndAct();
+                Assert.Equal(steps, ((Assembly.Scenario)ReturnValue).Steps);
             }
         }
     }

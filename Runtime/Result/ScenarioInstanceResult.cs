@@ -1,4 +1,5 @@
 ﻿using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Logic.Runtime.Result;
 using Applique.LoadTester.Runtime.Engine;
 using System;
 using System.Collections.Generic;
@@ -8,12 +9,12 @@ namespace Applique.LoadTester.Runtime.Result
 {
     public class ScenarioInstanceResult
     {
-        public static ScenarioInstanceResult Succeeded(RunnableScenario scenario, TimeSpan duration, IList<TimeSpan> stepTimes)
+        public static ScenarioInstanceResult Succeeded(RunnableScenario scenario, TimeSpan duration, IList<StepDuration> stepDurations)
             => new()
             {
                 Success = true,
                 Duration = duration,
-                StepTimes = stepTimes.ToArray(),
+                StepDurations = stepDurations.ToArray(),
                 Bindings = scenario.Bindings
             };
 
@@ -25,7 +26,7 @@ namespace Applique.LoadTester.Runtime.Result
 
         public bool Success { get; set; }
         public TimeSpan Duration { get; set; }
-        public TimeSpan[] StepTimes { get; set; }
+        public StepDuration[] StepDurations { get; set; }
         public string Error { get; set; }
         public IBindings Bindings { get; private set; }
     }

@@ -1,12 +1,11 @@
 ﻿using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Domain.Design;
 using System;
 using System.Net;
 
-namespace Applique.LoadTester.Domain.Design
+namespace Applique.LoadTester.Logic.Assembly
 {
-    public enum StepType { Rest, Blob }
-
-    public class Step
+    public class Step : IStep
     {
         public StepType Type { get; set; } = StepType.Rest;
         public string Template { get; set; }
@@ -16,13 +15,13 @@ namespace Applique.LoadTester.Domain.Design
         public HttpStatusCode[] ExpectedStatusCodes { get; set; } = new[] { HttpStatusCode.OK };
         public dynamic Body { get; set; }
         public dynamic Response { get; set; }
-        public int DelayMs { get; set; } = 0;
+        public int DelayMs { get; set; }
         public int Times { get; set; } = 1;
         public bool BreakOnSuccess { get; set; }
         public bool RetryOnFail { get; set; }
 
-        public Step MergeWith(Step other)
-            => new()
+        public IStep MergeWith(IStep other)
+            => new Step()
             {
                 Args = Args,
                 Body = other.Body ?? Body,

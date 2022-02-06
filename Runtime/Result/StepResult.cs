@@ -1,5 +1,4 @@
 ﻿using Applique.LoadTester.Core.Result;
-using Applique.LoadTester.Domain.Design;
 using System;
 using System.Linq;
 
@@ -7,9 +6,9 @@ namespace Applique.LoadTester.Runtime.Result
 {
     public class StepResult : IStepResult
     {
-        public StepResult(Step step, TimeSpan[] orderedDurations)
+        public StepResult(string endpoint, TimeSpan[] orderedDurations)
         {
-            Endpoint = step.Endpoint;
+            Endpoint = endpoint;
             Max = orderedDurations.Last();
             Min = orderedDurations.First();
             Mean = GetQuantile(orderedDurations, 0.5f);

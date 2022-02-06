@@ -33,7 +33,7 @@ namespace Applique.LoadTester.Logic.Runtime.Engine
             _bindings = bindings;
         }
 
-        public IRunnableStep Instanciate(Step step)
+        public IRunnableStep Instanciate(IStep step)
             => step.Type switch
             {
                 StepType.Rest => InstanciateRest(step),
@@ -41,7 +41,7 @@ namespace Applique.LoadTester.Logic.Runtime.Engine
                 StepType t => throw new NotImplementedException($"{t}")
             };
 
-        private IRunnableStep InstanciateRest(Step step)
+        private IRunnableStep InstanciateRest(IStep step)
             => new RestStep(
                 step,
                 _bindings,
@@ -49,10 +49,10 @@ namespace Applique.LoadTester.Logic.Runtime.Engine
                 RestStepExecutor.Create(_restCallerFactory, _testSuite, step, _bindings),
                 _stepVerifierFactory.CreateVerifier(step, _bindings));
 
-        public IRunnableStep InstanciateBlob(Step step)
+        public IRunnableStep InstanciateBlob(IStep step)
             => new BlobStep(_blobFactory, step, _testSuite.GetBlob(step.Endpoint), _bindings, GetOverloads(step));
 
-        private IBindings GetOverloads(Step step)
+        private IBindings GetOverloads(IStep step)
             => step.Constants.Any() ? _bindingsFactory.CreateBindings(_testSuite, step.Constants) : null;
     }
 }

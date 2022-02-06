@@ -12,9 +12,9 @@ namespace Applique.LoadTester.Runtime.Engine
         protected readonly IBindings _bindings;
         private readonly IBindings _overloads;
 
-        public Step Blueprint { get; private set; }
+        public IStep Blueprint { get; private set; }
 
-        protected RunnableStep(Step step, IBindings bindings, IBindings overloads)
+        protected RunnableStep(IStep step, IBindings bindings, IBindings overloads)
         {
             Blueprint = step;
             _bindings = bindings;

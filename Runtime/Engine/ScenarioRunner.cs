@@ -30,14 +30,13 @@ namespace Applique.LoadTester.Runtime.Engine
 
         public async Task<IScenarioResult> Run(IScenario scenario)
         {
-            var scenarioToRun = _testSuite.GetScenarioToRun(scenario);
-            var instances = CreateRunnableScenarios(scenarioToRun);
+            var instances = CreateRunnableScenarios(scenario);
             var runs = await Task.WhenAll(instances.Select(i => i.Run()));
             if (!runs.All(r => r.Success))
-                return ScenarioResult.Failed(scenarioToRun, runs.First(r => !r.Success));
-            if (scenarioToRun.Persist.Any())
-                _bindingsRepository.PersistBindings(instances.Last().Bindings, scenarioToRun.Persist);
-            return ScenarioResult.Succeeded(scenarioToRun,
+                return ScenarioResult.Failed(scenario, runs.First(r => !r.Success));
+            if (scenario.Persist.Any())
+                _bindingsRepository.PersistBindings(instances.Last().Bindings, scenario.Persist);
+            return ScenarioResult.Succeeded(scenario,
                 runs.OrderBy(d => d.Duration)
                 .ToArray());
         }
@@ -61,7 +60,10 @@ namespace Applique.LoadTester.Runtime.Engine
         {
             var bindings = _bindingsFactory.CreateInstanceBindings(_testSuite, scenarioToRun, instanceId);
             StepInstantiator stepInstantiator = _stepInstantiatorFactory.Create(_testSuite, bindings);
-            return new(_testSuite, scenarioToRun, bindings, stepInstantiator);
+            var steps = scenarioToRun.GetStepsToRun(_testSuite)
+                .Select(stepInstantiator.Instanciate)
+                .ToArray();
+            return new(bindings, steps);
         }
     }
 }

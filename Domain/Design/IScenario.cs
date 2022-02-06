@@ -8,7 +8,6 @@ namespace Applique.LoadTester.Domain.Design
         string[] Load { get; }
         string[] Persist { get; }
         Constant[] Constants { get; }
-        Step[] Steps { get; }
-        IScenario MergeWith(IScenario scenario);
+        IStep[] GetStepsToRun(ITestSuite testSuite);
     }
 }

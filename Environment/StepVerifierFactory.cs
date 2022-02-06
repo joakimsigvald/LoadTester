@@ -6,7 +6,7 @@ namespace Applique.LoadTester.Logic.Environment
 {
     public class StepVerifierFactory : IStepVerifierFactory
     {
-        public IStepVerifier CreateVerifier(Step step, IBindings bindings)
+        public IStepVerifier CreateVerifier(IStep step, IBindings bindings)
             => new StepVerifier(step, bindings);
     }
 }

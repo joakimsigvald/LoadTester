@@ -16,10 +16,20 @@ namespace Applique.LoadTester.Logic.Assembly
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
         public Step[] Steps { get; set; } = Array.Empty<Step>();
 
-        public IScenario MergeWith(IScenario other)
-            => new Scenario()
+        public IStep[] GetStepsToRun(ITestSuite testSuite)
+        {
+            return Steps.Select(GetStepToRun).ToArray();
+
+            IStep GetStepToRun(IStep step)
+                => step.Template is null
+                    ? step
+                    : GetStepToRun(testSuite.GetStepTemplate(step.Template)).MergeWith(step);
+        }
+
+        public Scenario MergeWith(Scenario other)
+            => new ()
             {
-                Constants = Constants.Concat(other.Constants).ToArray(),
+                Constants = Constants.Merge(other.Constants),
                 Instances = other.Instances,
                 Load = other.Load,
                 Name = other.Name,

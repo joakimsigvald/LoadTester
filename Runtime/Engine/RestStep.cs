@@ -15,7 +15,7 @@ namespace Applique.LoadTester.Logic.Runtime.Engine
         private readonly IStepVerifier _stepVerifier;
 
         public RestStep(
-            Step step,
+            IStep step,
             IBindings bindings,
             IBindings overloads,
             RestStepExecutor executor,

@@ -22,7 +22,7 @@ namespace Applique.LoadTester.Runtime.Result
                 Mean = GetQuantile(durations, 0.5f),
                 Q75 = GetQuantile(durations, 0.75f),
                 Q90 = GetQuantile(durations, 0.9f),
-                StepResults = GetStepResults(scenario, orderedResults),
+                StepResults = GetStepResults(orderedResults),
                 Bindings = lastResult.Bindings
             };
         }
@@ -35,11 +35,11 @@ namespace Applique.LoadTester.Runtime.Result
                 Bindings = failedRun.Bindings
             };
 
-        private static StepResult[] GetStepResults(IScenario scenario, ScenarioInstanceResult[] results)
+        private static StepResult[] GetStepResults(ScenarioInstanceResult[] results)
         => results
-            .SelectMany(res => res.StepTimes.Select((st, i) => (step: scenario.Steps[i], elapsed: st)))
-            .GroupBy(pair => pair.step)
-            .Select(g => new StepResult(g.Key, g.Select(pair => pair.elapsed).OrderBy(ts => ts).ToArray()))
+            .SelectMany(res => res.StepDurations)
+            .GroupBy(sd => sd.Step)
+            .Select(g => new StepResult(g.Key.Endpoint, g.Select(sd => sd.Duration).OrderBy(ts => ts).ToArray()))
             .ToArray();
 
         private static TimeSpan GetQuantile(TimeSpan[] orderedDurations, float quantile)

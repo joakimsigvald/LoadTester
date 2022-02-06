@@ -6,7 +6,7 @@ namespace Applique.LoadTester.Runtime.Engine
 {
     public interface IRunnableStep
     {
-        Step Blueprint { get; }
+        IStep Blueprint { get; }
         Task<TimeSpan> Run();
     }
 }

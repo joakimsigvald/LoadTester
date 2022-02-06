@@ -5,6 +5,6 @@ namespace Applique.LoadTester.Domain.Service
 {
     public interface IStepVerifierFactory
     {
-        IStepVerifier CreateVerifier(Step step, IBindings bindings);
+        IStepVerifier CreateVerifier(IStep step, IBindings bindings);
     }
 }
