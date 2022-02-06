@@ -1,5 +1,5 @@
 ﻿using Applique.LoadTester.Core.Design;
-using Applique.LoadTester.Domain.Service;
+using Applique.LoadTester.Domain.Design;
 using System;
 using System.Collections;
 using System.Collections.Generic;

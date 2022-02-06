@@ -1,7 +1,7 @@
 ﻿using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Service;
 
-namespace Applique.LoadTester.Assembly
+namespace Applique.LoadTester.Logic.Assembly
 {
     public class Assembler : IAssembler
     {
@@ -11,7 +11,7 @@ namespace Applique.LoadTester.Assembly
         public Assembler(IFileSystem fileSystem, ITestSuiteRunnerFactory testSuiteRunnerFactory)
         {
             _fileSystem = fileSystem;
-           _testSuiteRunnerFactory = testSuiteRunnerFactory;
+            _testSuiteRunnerFactory = testSuiteRunnerFactory;
         }
 
         public ITestSuiteRunner AssembleTestSuite(string filename)

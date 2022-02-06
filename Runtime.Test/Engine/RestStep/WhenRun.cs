@@ -1,5 +1,4 @@
 ﻿using Applique.LoadTester.Domain;
-using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Logic.Runtime.Test.Engine.RestStep;
 using Applique.LoadTester.Runtime.External;
 using Moq;
@@ -8,7 +7,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
-using static Applique.LoadTester.Domain.Service.ConstantExpressions;
+using static Applique.LoadTester.Domain.Design.ConstantExpressions;
 using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Runtime.Test.Engine.RestStep

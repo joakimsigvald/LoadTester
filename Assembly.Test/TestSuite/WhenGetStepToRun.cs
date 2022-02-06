@@ -5,7 +5,7 @@ using System.Net;
 using Xunit;
 using static Applique.LoadTester.Test.TestData;
 
-namespace Applique.LoadTester.Assembly.Test.TestSuite
+namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
 {
     public abstract class WhenGetStepToRun : TestSuiteTestBase<Step>
     {
@@ -87,17 +87,12 @@ namespace Applique.LoadTester.Assembly.Test.TestSuite
             [Fact]
             public void ThenMergeConstants()
             {
-                var myValue = "MyValue";
-                SuiteConstants = CreateConstants((SomeConstant, SomeString));
                 TemplateStep.Constants = CreateConstants((SomeConstant, AnotherString));
-                Step.Constants = CreateConstants((SomeConstant, myValue));
+                Step.Constants = CreateConstants((SomeConstant, SomeString));
                 ArrangeAndAct();
                 var actual = ReturnValue.Constants.Single(c => c.Name == SomeConstant).Value;
-                Assert.Equal(myValue, actual);
+                Assert.Equal(SomeString, actual);
             }
-
-            private static Constant[] CreateConstants(params (string name, string value)[] namedValues)
-                => namedValues.Select(nv => new Constant { Name = nv.name, Value = nv.value }).ToArray();
         }
 
         public class GivenEndpoint : GivenTemplate

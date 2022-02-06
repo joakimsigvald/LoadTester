@@ -1,7 +1,7 @@
 ﻿using Applique.LoadTester.Logic.Environment;
 using Applique.LoadTester.Logic.Environment.Test.ValueVerifier;
 using Xunit;
-using static Applique.LoadTester.Domain.Service.ConstantExpressions;
+using static Applique.LoadTester.Domain.Design.ConstantExpressions;
 using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.ValueVerifier

@@ -3,7 +3,7 @@ using Applique.LoadTester.Domain.Design;
 using System;
 using System.Linq;
 
-namespace Applique.LoadTester.Assembly
+namespace Applique.LoadTester.Logic.Assembly
 {
     public class Scenario : IScenario
     {
@@ -16,15 +16,15 @@ namespace Applique.LoadTester.Assembly
         public Constant[] Constants { get; set; } = Array.Empty<Constant>();
         public Step[] Steps { get; set; } = Array.Empty<Step>();
 
-        public IScenario MergeWith(IScenario scenario)
+        public IScenario MergeWith(IScenario other)
             => new Scenario()
             {
-                Constants = Constants.Concat(scenario.Constants).ToArray(),
-                Instances = scenario.Instances,
-                Load = scenario.Load,
-                Name = scenario.Name,
-                Persist = scenario.Persist,
-                Steps = Steps.Concat(scenario.Steps).ToArray()
+                Constants = Constants.Concat(other.Constants).ToArray(),
+                Instances = other.Instances,
+                Load = other.Load,
+                Name = other.Name,
+                Persist = other.Persist,
+                Steps = Steps.Concat(other.Steps).ToArray()
             };
     }
 }

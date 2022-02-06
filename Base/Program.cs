@@ -2,9 +2,9 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using Applique.LoadTester.Runtime.Engine;
-using Applique.LoadTester.Assembly;
 using Applique.LoadTester.Front;
 using Applique.LoadTester.Logic.Environment;
+using Applique.LoadTester.Logic.Assembly;
 
 namespace Applique.LoadTester.Base
 {

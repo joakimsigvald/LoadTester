@@ -20,5 +20,21 @@ namespace Applique.LoadTester.Domain.Design
         public int Times { get; set; } = 1;
         public bool BreakOnSuccess { get; set; }
         public bool RetryOnFail { get; set; }
+
+        public Step MergeWith(Step other)
+            => new()
+            {
+                Args = Args,
+                Body = other.Body ?? Body,
+                Constants = Constants.Merge(other.Constants),
+                Endpoint = other.Endpoint ?? Endpoint,
+                ExpectedStatusCodes = ExpectedStatusCodes,
+                Response = other.Response ?? Response,
+                BreakOnSuccess = BreakOnSuccess,
+                RetryOnFail = RetryOnFail,
+                DelayMs = DelayMs,
+                Times = Times,
+                Type = Type
+            };
     }
 }
