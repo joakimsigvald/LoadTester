@@ -42,17 +42,16 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
         public class GivenArgs : GivenTemplate
         {
             [Theory]
-            [InlineData(null, null, null)]
-            [InlineData(null, "?b=2", null)]
-            [InlineData("?a=1", null, "?a=1")]
-            [InlineData("?a=1", "?b=2", "?a=1")]
-            public void ThenGetArgsFromTemplate(string fromTemplate, string fromStep, string expected)
+            [InlineData(null, null)]
+            [InlineData(null, "?b=2")]
+            [InlineData("?a=1", null)]
+            [InlineData("?a=1", "?b=2")]
+            public void ThenGetArgsFromTemplate(string fromTemplate, string fromStep)
             {
-                Step.Template = "TheTemplate";
                 TemplateStep.Args = fromTemplate;
                 Step.Args = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(expected, ReturnValue.Args);
+                Assert.Equal(fromTemplate, ReturnValue.Args);
             }
         }
 
@@ -95,16 +94,16 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
         public class GivenEndpoint : GivenTemplate
         {
             [Theory]
-            [InlineData(null, null, null)]
-            [InlineData(null, "elsewhere", "elsewhere")]
-            [InlineData("somewhere", null, "somewhere")]
-            [InlineData("somewhere", "elsewhere", "elsewhere")]
-            public void ThenUseTemplateAsFallback(string fromTemplate, string fromStep, string expected)
+            [InlineData(null, null)]
+            [InlineData(null, "elsewhere")]
+            [InlineData("somewhere", null)]
+            [InlineData("somewhere", "elsewhere")]
+            public void ThenUseTemplateAsFallback(string fromTemplate, string fromStep)
             {
                 TemplateStep.Endpoint = fromTemplate;
                 Step.Endpoint = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(expected, ReturnValue.Endpoint);
+                Assert.Equal(fromStep ?? fromTemplate, ReturnValue.Endpoint);
             }
         }
 
@@ -146,80 +145,80 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
         public class GivenBreakOnSuccess : GivenTemplate
         {
             [Theory]
-            [InlineData(false, false, false)]
-            [InlineData(false, true, false)]
-            [InlineData(true, false, true)]
-            [InlineData(true, true, true)]
-            public void ThenGetBreakOnSuccessFromTemplate(bool fromTemplate, bool fromStep, bool expected)
+            [InlineData(false, false)]
+            [InlineData(false, true)]
+            [InlineData(true, false)]
+            [InlineData(true, true)]
+            public void ThenGetBreakOnSuccessFromTemplate(bool fromTemplate, bool fromStep)
             {
                 TemplateStep.BreakOnSuccess = fromTemplate;
                 Step.BreakOnSuccess = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(expected, ReturnValue.BreakOnSuccess);
+                Assert.Equal(fromTemplate, ReturnValue.BreakOnSuccess);
             }
         }
 
         public class GivenRetryOnFail : GivenTemplate
         {
             [Theory]
-            [InlineData(false, false, false)]
-            [InlineData(false, true, false)]
-            [InlineData(true, false, true)]
-            [InlineData(true, true, true)]
-            public void ThenGetRetryOnFailFromTemplate(bool fromTemplate, bool fromStep, bool expected)
+            [InlineData(false, false)]
+            [InlineData(false, true)]
+            [InlineData(true, false)]
+            [InlineData(true, true)]
+            public void ThenGetRetryOnFailFromTemplate(bool fromTemplate, bool fromStep)
             {
                 TemplateStep.RetryOnFail = fromTemplate;
                 Step.RetryOnFail = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(expected, ReturnValue.RetryOnFail);
+                Assert.Equal(fromTemplate, ReturnValue.RetryOnFail);
             }
         }
 
         public class GivenDelayMs : GivenTemplate
         {
             [Theory]
-            [InlineData(1, 1, 1)]
-            [InlineData(1, 2, 1)]
-            [InlineData(2, 1, 2)]
-            [InlineData(2, 2, 2)]
-            public void ThenGetDelayMsFromTemplate(int fromTemplate, int fromStep, int expected)
+            [InlineData(1, 1)]
+            [InlineData(1, 2)]
+            [InlineData(2, 1)]
+            [InlineData(2, 2)]
+            public void ThenGetDelayMsFromTemplate(int fromTemplate, int fromStep)
             {
                 TemplateStep.DelayMs = fromTemplate;
                 Step.DelayMs = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(expected, ReturnValue.DelayMs);
+                Assert.Equal(fromTemplate, ReturnValue.DelayMs);
             }
         }
 
         public class GivenTimes : GivenTemplate
         {
             [Theory]
-            [InlineData(1, 1, 1)]
-            [InlineData(1, 2, 1)]
-            [InlineData(2, 1, 2)]
-            [InlineData(2, 2, 2)]
-            public void ThenGetTimesFromTemplate(int fromTemplate, int fromStep, int expected)
+            [InlineData(1, 1)]
+            [InlineData(1, 2)]
+            [InlineData(2, 1)]
+            [InlineData(2, 2)]
+            public void ThenGetTimesFromTemplate(int fromTemplate, int fromStep)
             {
                 TemplateStep.Times = fromTemplate;
                 Step.Times = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(expected, ReturnValue.Times);
+                Assert.Equal(fromTemplate, ReturnValue.Times);
             }
         }
 
         public class GivenType : GivenTemplate
         {
             [Theory]
-            [InlineData(StepType.Blob, StepType.Blob, StepType.Blob)]
-            [InlineData(StepType.Blob, StepType.Rest, StepType.Blob)]
-            [InlineData(StepType.Rest, StepType.Blob, StepType.Rest)]
-            [InlineData(StepType.Rest, StepType.Rest, StepType.Rest)]
-            public void ThenGetTypeFromTemplate(StepType fromTemplate, StepType fromStep, StepType expected)
+            [InlineData(StepType.Blob, StepType.Blob)]
+            [InlineData(StepType.Blob, StepType.Rest)]
+            [InlineData(StepType.Rest, StepType.Blob)]
+            [InlineData(StepType.Rest, StepType.Rest)]
+            public void ThenGetTypeFromTemplate(StepType fromTemplate, StepType fromStep)
             {
                 TemplateStep.Type = fromTemplate;
                 Step.Type = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(expected, ReturnValue.Type);
+                Assert.Equal(fromTemplate, ReturnValue.Type);
             }
         }
     }
