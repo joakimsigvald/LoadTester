@@ -7,53 +7,35 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings;
 
-public abstract class WhenCreate : TestStatic<Constant>
+public abstract class WhenCreateWithConstantExpression : TestStatic<Constant>
 {
     protected string ConstantExpression;
-    protected string ConstantValue;
 
-    protected override void Act() => CollectResult(() => Create(ConstantExpression, ConstantValue));
+    protected override void Act() => CollectResult(() => Create(ConstantExpression));
 
-    public abstract class GivenNoValue : WhenCreate
+    public class GivenNullExpression : WhenCreateWithConstantExpression
     {
-        protected GivenNoValue() => ConstantValue = null;
+        protected override void Given() => ConstantExpression = null;
+        public GivenNullExpression() => ArrangeAndAct();
+        [Fact] public void ThenReturnNull() => Assert.Null(Result);
     }
 
-    public class GivenNullExpression : GivenNoValue
+    public class GivenEmptyExpression : WhenCreateWithConstantExpression
     {
-        [Fact]
-        public void ThenReturnNull()
-        {
-            ConstantExpression = null;
-            Act();
-            Assert.Null(Result);
-        }
+        protected override void Given() => ConstantExpression = string.Empty;
+        public GivenEmptyExpression() => ArrangeAndAct();
+        [Fact] public void ThenReturnNull() => Assert.Null(Result);
     }
 
-    public class GivenEmptyExpression : GivenNoValue
+    public class GivenName : WhenCreateWithConstantExpression
     {
-        [Fact]
-        public void ThenReturnNull()
-        {
-            ConstantExpression = string.Empty;
-            Act();
-            Assert.Null(Result);
-        }
+        protected override void Given() => ConstantExpression = SomeString;
+        public GivenName() => ArrangeAndAct();
+        [Fact] public void ThenConstantHasName() => Assert.Equal(SomeString, Result.Name);
+        [Fact] public void ThenConstantTypeIsString() => Assert.Equal(ConstantType.String, Result.Type);
     }
 
-    public class GivenName : GivenNoValue
-    {
-        [Fact]
-        public void ThenReturnNamedStringConstant()
-        {
-            ConstantExpression = SomeString;
-            Act();
-            Assert.Equal(SomeString, Result.Name);
-            Assert.Equal(ConstantType.String, Result.Type);
-        }
-    }
-
-    public class GivenColonName : GivenNoValue
+    public class GivenColonName : WhenCreateWithConstantExpression
     {
         [Fact]
         public void ThenReturnOvershadowingConstant()
@@ -64,7 +46,7 @@ public abstract class WhenCreate : TestStatic<Constant>
         }
     }
 
-    public class GivenNameColonUnrecogniced : GivenNoValue
+    public class GivenNameColonUnrecogniced : WhenCreateWithConstantExpression
     {
         [Fact]
         public void ThenThrowArgumentException()
@@ -74,7 +56,7 @@ public abstract class WhenCreate : TestStatic<Constant>
         }
     }
 
-    public class GivenNameColonType : GivenNoValue
+    public class GivenNameColonType : WhenCreateWithConstantExpression
     {
         [Theory]
         [InlineData(ConstantType.Int)]
@@ -91,7 +73,7 @@ public abstract class WhenCreate : TestStatic<Constant>
         }
     }
 
-    public class GivenNameSpaceUnrecogniced : GivenNoValue
+    public class GivenNameSpaceUnrecogniced : WhenCreateWithConstantExpression
     {
         [Fact]
         public void ThenThrowArgumentException()
@@ -101,7 +83,7 @@ public abstract class WhenCreate : TestStatic<Constant>
         }
     }
 
-    public class GivenNameSpaceConstraint : GivenNoValue
+    public class GivenNameSpaceConstraint : WhenCreateWithConstantExpression
     {
         [Theory]
         [InlineData(Constraint.Mandatory)]
@@ -113,7 +95,7 @@ public abstract class WhenCreate : TestStatic<Constant>
         }
     }
 
-    public class GivenTypeCast : GivenNoValue
+    public class GivenTypeCast : WhenCreateWithConstantExpression
     {
         [Fact]
         public void ThenReturnConstantWithConversion()
@@ -125,7 +107,7 @@ public abstract class WhenCreate : TestStatic<Constant>
         }
     }
 
-    public class GivenTolerance : GivenNoValue
+    public class GivenTolerance : WhenCreateWithConstantExpression
     {
         [Theory]
         [InlineData(0.3)]
@@ -137,7 +119,7 @@ public abstract class WhenCreate : TestStatic<Constant>
         }
     }
 
-    public class GivenFullfeaturedConstantExpression : GivenNoValue
+    public class GivenFullfeaturedConstantExpression : WhenCreateWithConstantExpression
     {
         [Theory]
         [InlineData("TheName", 2.34, ConstantType.Decimal, ConstantType.Int, Constraint.Mandatory)]
