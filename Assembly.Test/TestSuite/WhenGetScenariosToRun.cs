@@ -1,13 +1,30 @@
-﻿using Applique.LoadTester.Domain.Assembly;
+﻿using Applique.LoadTester.Core.Design;
+using Applique.LoadTester.Domain.Assembly;
+using Applique.WhenGivenThen.Core;
 using System.Linq;
 using Xunit;
 using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
 {
-    public abstract class WhenGetScenariosToRun : TestSuiteTestBase<IScenario>
+    public abstract class WhenGetScenariosToRun : TestSubject<Assembly.TestSuite, IScenario>
     {
-        protected override void Act() => ReturnValue = SUT.ScenarioWrappers.Single().Scenario;
+        protected StepTemplate[] StepTemplates;
+        protected Scenario[] Templates;
+        protected Scenario Scenario = new();
+
+        protected override Assembly.TestSuite CreateSUT()
+            => new()
+            {
+                StepTemplates = StepTemplates,
+                Templates = Templates,
+                Scenarios = new[] { Scenario }
+            };
+
+        protected static Constant[] CreateConstants(params (string name, string value)[] namedValues)
+            => namedValues.Select(nv => new Constant { Name = nv.name, Value = nv.value }).ToArray();
+
+        protected override void Act() => CollectResult(() => SUT.ScenarioWrappers.Single().Scenario);
 
         public class GivenNoTemplate : WhenGetScenariosToRun
         {
@@ -15,7 +32,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
             public void ThenReturnScenarioFromScript()
             {
                 ArrangeAndAct();
-                Assert.Same(Scenario, ReturnValue);
+                Assert.Same(Scenario, Result);
             }
         }
 
@@ -43,7 +60,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
                 TemplateScenario.Constants = CreateConstants((SomeConstant, AnotherString));
                 Scenario.Constants = CreateConstants((SomeConstant, SomeString));
                 ArrangeAndAct();
-                var actual = ReturnValue.Constants.Single(c => c.Name == SomeConstant).Value;
+                var actual = Result.Constants.Single(c => c.Name == SomeConstant).Value;
                 Assert.Equal(SomeString, actual);
             }
         }
@@ -60,7 +77,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
                 TemplateScenario.Instances = fromTemplate;
                 Scenario.Instances = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(expected, ReturnValue.Instances);
+                Assert.Equal(expected, Result.Instances);
             }
         }
 
@@ -71,7 +88,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
             {
                 Scenario.Name = "MyName";
                 ArrangeAndAct();
-                Assert.Equal(Scenario.Name, ReturnValue.Name);
+                Assert.Equal(Scenario.Name, Result.Name);
             }
         }
 
@@ -83,7 +100,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
                 Scenario.Load = new[] { "A" };
                 TemplateScenario.Load = new[] { "B" };
                 ArrangeAndAct();
-                Assert.Equal(Scenario.Load, ReturnValue.Load);
+                Assert.Equal(Scenario.Load, Result.Load);
             }
         }
 
@@ -95,7 +112,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
                 Scenario.Persist = new[] { "A" };
                 TemplateScenario.Persist = new[] { "B" };
                 ArrangeAndAct();
-                Assert.Equal(Scenario.Persist, ReturnValue.Persist);
+                Assert.Equal(Scenario.Persist, Result.Persist);
             }
         }
 
@@ -108,7 +125,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuite
                 TemplateScenario.Steps = steps[..2];
                 Scenario.Steps = steps[2..];
                 ArrangeAndAct();
-                Assert.Equal(steps, ((Assembly.Scenario)ReturnValue).Steps);
+                Assert.Equal(steps, ((Scenario)Result).Steps);
             }
         }
     }

@@ -7,11 +7,11 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public class WhenSubstituteVariables : BindingsTestBase<string>
+    public class WhenSubstituteVariables : TestBindings<string>
     {
         protected string Target;
 
-        protected override void Act() => ReturnValue = SUT.SubstituteVariables(Target);
+        protected override void Act() => CollectResult(() => SUT.SubstituteVariables(Target));
 
         public class GivenNoConstantExpressionsInTarget : WhenSubstituteVariables
         {
@@ -20,7 +20,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             {
                 Target = SomeString;
                 ArrangeAndAct();
-                Assert.Equal(Target, ReturnValue);
+                Assert.Equal(Target, Result);
             }
         }
 
@@ -31,7 +31,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             {
                 Target = $"A{Embrace(SomeConstant)}B";
                 ArrangeAndAct();
-                Assert.Equal(Target, ReturnValue);
+                Assert.Equal(Target, Result);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 Target = $"A{Embrace(SomeConstant)}B";
                 ArrangeAndAct();
-                Assert.Equal($"A{SomeString}B", ReturnValue);
+                Assert.Equal($"A{SomeString}B", Result);
             }
         }
 
@@ -56,7 +56,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 OverloadVariables[SomeConstant] = AnotherString;
                 Target = $"A{Embrace(SomeConstant)}B";
                 ArrangeAndAct();
-                Assert.Equal($"A{AnotherString}B", ReturnValue);
+                Assert.Equal($"A{AnotherString}B", Result);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeInt;
                 Target = Embrace(SomeConstant);
                 ArrangeAndAct();
-                Assert.Equal($"{SomeInt}", ReturnValue);
+                Assert.Equal($"{SomeInt}", Result);
             }
         }
 
@@ -80,7 +80,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeInt;
                 Target = $"'{Embrace(SomeConstant)}'";
                 ArrangeAndAct();
-                Assert.Equal($"{SomeInt}", ReturnValue);
+                Assert.Equal($"{SomeInt}", Result);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeInt;
                 Target = $"\"{Embrace(SomeConstant)}\"";
                 ArrangeAndAct();
-                Assert.Equal($"{SomeInt}", ReturnValue);
+                Assert.Equal($"{SomeInt}", Result);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeDecimal;
                 Target = $"'{Embrace(SomeConstant)}'";
                 ArrangeAndAct();
-                Assert.Equal($"{SomeDecimal}", ReturnValue);
+                Assert.Equal($"{SomeDecimal}", Result);
             }
         }
 
@@ -116,7 +116,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeDecimal;
                 Target = Embrace(SomeConstant);
                 ArrangeAndAct();
-                Assert.Equal($"{SomeDecimal}", ReturnValue);
+                Assert.Equal($"{SomeDecimal}", Result);
             }
         }
 
@@ -128,7 +128,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = true;
                 Target = Embrace(SomeConstant);
                 ArrangeAndAct();
-                Assert.Equal("true", ReturnValue);
+                Assert.Equal("true", Result);
             }
         }
 
@@ -141,7 +141,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SpecialVariables.CurrentTime;
                 Target = Embrace(SomeConstant);
                 ArrangeAndAct();
-                var currentTime = DateTime.Parse(ReturnValue);
+                var currentTime = DateTime.Parse(Result);
                 var after = DateTime.Now;
                 Assert.True(currentTime >= before, $"Expected {currentTime.Ticks} >= {before.Ticks}");
                 Assert.True(currentTime <= DateTime.Now, $"Expected {currentTime.Ticks} <= {after.Ticks}");
@@ -156,7 +156,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 Target = Embrace($":{SomeConstant}");
                 ArrangeAndAct();
-                Assert.Equal(Target, ReturnValue);
+                Assert.Equal(Target, Result);
             }
         }
 
@@ -168,7 +168,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 Target = Embrace($"{SomeConstant}:int");
                 ArrangeAndAct();
-                Assert.Equal(Target, ReturnValue);
+                Assert.Equal(Target, Result);
             }
         }
 
@@ -180,7 +180,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 Target = Embrace($"{SomeConstant}+-0.1");
                 ArrangeAndAct();
-                Assert.Equal(Target, ReturnValue);
+                Assert.Equal(Target, Result);
             }
         }
 
@@ -192,7 +192,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 Target = Embrace($"{SomeConstant} Mandatory");
                 ArrangeAndAct();
-                Assert.Equal(Target, ReturnValue);
+                Assert.Equal(Target, Result);
             }
         }
 
@@ -205,7 +205,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[AnotherConstant] = SomeInt;
                 Target = $"A{Embrace(SomeConstant)}B{Embrace(AnotherConstant)}C";
                 ArrangeAndAct();
-                Assert.Equal($"A{SomeString}B{SomeInt}C", ReturnValue);
+                Assert.Equal($"A{SomeString}B{SomeInt}C", Result);
             }
         }
 
@@ -217,7 +217,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 Target = $"A{Embrace(SomeConstant)}B{Embrace(SomeConstant)}C";
                 ArrangeAndAct();
-                Assert.Equal($"A{SomeString}B{SomeString}C", ReturnValue);
+                Assert.Equal($"A{SomeString}B{SomeString}C", Result);
             }
         }
     }

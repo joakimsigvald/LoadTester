@@ -1,4 +1,6 @@
 ﻿using Applique.LoadTester.Domain.Assembly;
+using Applique.WhenGivenThen.Core;
+using Applique.LoadTester.Core.Design;
 using System.Linq;
 using System.Net;
 using Xunit;
@@ -6,9 +8,29 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
 {
-    public abstract class WhenGetStepsToRun : TestSuiteScenarioTestBase<IStep>
+    public abstract class WhenGetStepsToRun : TestSubject<Assembly.TestSuiteScenario, IStep>
     {
-        protected override void Act() => ReturnValue = SUT.GetStepsToRun().Single();
+        protected Step Step = new();
+        protected StepTemplate[] StepTemplates;
+        protected Scenario[] Templates;
+
+        private Assembly.TestSuite TestSuite => new()
+        {
+            StepTemplates = StepTemplates,
+            Templates = Templates
+        };
+
+        private Scenario Scenario => new()
+        {
+            Steps = new[] { Step }
+        };
+
+        protected override Assembly.TestSuiteScenario CreateSUT() => new(TestSuite, Scenario);
+
+        protected static Constant[] CreateConstants(params (string name, string value)[] namedValues)
+            => namedValues.Select(nv => new Constant { Name = nv.name, Value = nv.value }).ToArray();
+
+        protected override void Act() => CollectResult(() => SUT.GetStepsToRun().Single());
 
         public class GivenNoTemplate : WhenGetStepsToRun
         {
@@ -16,7 +38,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
             public void ThenReturnStepFromScript()
             {
                 ArrangeAndAct();
-                Assert.Same(Step, ReturnValue);
+                Assert.Same(Step, Result);
             }
         }
 
@@ -51,7 +73,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.Args = fromTemplate;
                 Step.Args = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(fromTemplate, ReturnValue.Args);
+                Assert.Equal(fromTemplate, Result.Args);
             }
         }
 
@@ -62,7 +84,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
             {
                 TemplateStep.Body = new { A = "B" };
                 ArrangeAndAct();
-                Assert.Same(TemplateStep.Body, ReturnValue.Body);
+                Assert.Same(TemplateStep.Body, Result.Body);
             }
         }
 
@@ -74,7 +96,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.Body = new { A = "B" };
                 Step.Body = new { B = "C" };
                 ArrangeAndAct();
-                Assert.Same(Step.Body, ReturnValue.Body);
+                Assert.Same(Step.Body, Result.Body);
             }
         }
 
@@ -86,7 +108,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.Constants = CreateConstants((SomeConstant, AnotherString));
                 Step.Constants = CreateConstants((SomeConstant, SomeString));
                 ArrangeAndAct();
-                var actual = ReturnValue.Constants.Single(c => c.Name == SomeConstant).Value;
+                var actual = Result.Constants.Single(c => c.Name == SomeConstant).Value;
                 Assert.Equal(SomeString, actual);
             }
         }
@@ -103,7 +125,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.Endpoint = fromTemplate;
                 Step.Endpoint = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(fromStep ?? fromTemplate, ReturnValue.Endpoint);
+                Assert.Equal(fromStep ?? fromTemplate, Result.Endpoint);
             }
         }
 
@@ -115,7 +137,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.ExpectedStatusCodes = new[] { HttpStatusCode.NotFound };
                 Step.ExpectedStatusCodes = new[] { HttpStatusCode.Accepted };
                 ArrangeAndAct();
-                Assert.Equal(TemplateStep.ExpectedStatusCodes, ReturnValue.ExpectedStatusCodes);
+                Assert.Equal(TemplateStep.ExpectedStatusCodes, Result.ExpectedStatusCodes);
             }
         }
 
@@ -126,7 +148,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
             {
                 TemplateStep.Response = new { A = "B" };
                 ArrangeAndAct();
-                Assert.Same(TemplateStep.Response, ReturnValue.Response);
+                Assert.Same(TemplateStep.Response, Result.Response);
             }
         }
 
@@ -138,7 +160,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.Response = new { A = "B" };
                 Step.Response = new { B = "C" };
                 ArrangeAndAct();
-                Assert.Same(Step.Response, ReturnValue.Response);
+                Assert.Same(Step.Response, Result.Response);
             }
         }
 
@@ -154,7 +176,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.BreakOnSuccess = fromTemplate;
                 Step.BreakOnSuccess = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(fromTemplate, ReturnValue.BreakOnSuccess);
+                Assert.Equal(fromTemplate, Result.BreakOnSuccess);
             }
         }
 
@@ -170,7 +192,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.RetryOnFail = fromTemplate;
                 Step.RetryOnFail = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(fromTemplate, ReturnValue.RetryOnFail);
+                Assert.Equal(fromTemplate, Result.RetryOnFail);
             }
         }
 
@@ -186,7 +208,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.DelayMs = fromTemplate;
                 Step.DelayMs = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(fromTemplate, ReturnValue.DelayMs);
+                Assert.Equal(fromTemplate, Result.DelayMs);
             }
         }
 
@@ -202,7 +224,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.Times = fromTemplate;
                 Step.Times = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(fromTemplate, ReturnValue.Times);
+                Assert.Equal(fromTemplate, Result.Times);
             }
         }
 
@@ -218,7 +240,7 @@ namespace Applique.LoadTester.Logic.Assembly.Test.TestSuiteScenario
                 TemplateStep.Type = fromTemplate;
                 Step.Type = fromStep;
                 ArrangeAndAct();
-                Assert.Equal(fromTemplate, ReturnValue.Type);
+                Assert.Equal(fromTemplate, Result.Type);
             }
         }
     }

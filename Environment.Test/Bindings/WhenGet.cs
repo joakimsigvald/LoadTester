@@ -4,9 +4,9 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public class WhenGet : BindingsTestBase<object>
+    public class WhenGet : TestBindings<object>
     {
-        protected override void Act() => ReturnValue = SUT.Get(SomeConstant);
+        protected override void Act() => CollectResult(() => SUT.Get(SomeConstant));
 
         public class GivenValueNotExist : WhenGet
         {
@@ -14,7 +14,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnNull()
             {
                 ArrangeAndAct();
-                Assert.Null(ReturnValue);
+                Assert.Null(Result);
             }
         }
 
@@ -25,7 +25,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             {
                 Variables[SomeConstant] = SomeString;
                 ArrangeAndAct();
-                Assert.Equal(SomeString, ReturnValue);
+                Assert.Equal(SomeString, Result);
             }
         }
 
@@ -36,7 +36,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             {
                 Variables[SomeConstant] = SomeInt;
                 ArrangeAndAct();
-                Assert.Equal(SomeInt, ReturnValue);
+                Assert.Equal(SomeInt, Result);
             }
         }
 
@@ -47,7 +47,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             {
                 Variables[SomeConstant] = SomeDecimal;
                 ArrangeAndAct();
-                Assert.Equal(SomeDecimal, ReturnValue);
+                Assert.Equal(SomeDecimal, Result);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 OverloadVariables[SomeConstant] = SomeInt;
                 ArrangeAndAct();
-                Assert.Equal(SomeInt, ReturnValue);
+                Assert.Equal(SomeInt, Result);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Arrange();
                 SUT.OverloadWith(null);
                 Act();
-                Assert.Equal(SomeString, ReturnValue);
+                Assert.Equal(SomeString, Result);
             }
         }
     }

@@ -6,7 +6,7 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public abstract class WhenBindResponse : BindingsTestBase
+    public abstract class WhenBindResponse : TestBindings<object>
     {
         protected readonly dynamic Pattern = new JObject();
         protected readonly dynamic ResponseToken = new JObject();

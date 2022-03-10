@@ -1,5 +1,5 @@
 ﻿using Applique.LoadTester.Core.Design;
-using Applique.LoadTester.Environment.Test.ConstantFactory;
+using Applique.WhenGivenThen.Core;
 using System;
 using Xunit;
 using static Applique.LoadTester.Domain.Design.ConstantFactory;
@@ -7,12 +7,12 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public abstract class WhenCreate : ConstantFactoryTestBase<Constant>
+    public abstract class WhenCreate : TestStatic<Constant>
     {
         protected string ConstantExpression;
         protected string ConstantValue;
 
-        protected override void Act() => ReturnValue = Create(ConstantExpression, ConstantValue);
+        protected override void Act() => CollectResult(() => Create(ConstantExpression, ConstantValue));
 
         public abstract class GivenNoValue : WhenCreate
         {
@@ -25,8 +25,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnNull()
             {
                 ConstantExpression = null;
-                ArrangeAndAct();
-                Assert.Null(ReturnValue);
+                Act();
+                Assert.Null(Result);
             }
         }
 
@@ -36,8 +36,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnNull()
             {
                 ConstantExpression = string.Empty;
-                ArrangeAndAct();
-                Assert.Null(ReturnValue);
+                Act();
+                Assert.Null(Result);
             }
         }
 
@@ -47,9 +47,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnNamedStringConstant()
             {
                 ConstantExpression = SomeString;
-                ArrangeAndAct();
-                Assert.Equal(SomeString, ReturnValue.Name);
-                Assert.Equal(ConstantType.String, ReturnValue.Type);
+                Act();
+                Assert.Equal(SomeString, Result.Name);
+                Assert.Equal(ConstantType.String, Result.Type);
             }
         }
 
@@ -59,8 +59,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnOvershadowingConstant()
             {
                 ConstantExpression = $":{SomeString}";
-                ArrangeAndAct();
-                Assert.True(ReturnValue.Overshadow);
+                Act();
+                Assert.True(Result.Overshadow);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenThrowArgumentException()
             {
                 ConstantExpression = $"{SomeString}:int";
-                Assert.Throws<ArgumentException>(ArrangeAndAct);
+                Assert.Throws<ArgumentException>(Act);
             }
         }
 
@@ -86,8 +86,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnTypedConstant(ConstantType type)
             {
                 ConstantExpression = $"{SomeString}:{type}";
-                ArrangeAndAct();
-                Assert.Equal(type, ReturnValue.Type);
+                Act();
+                Assert.Equal(type, Result.Type);
             }
         }
 
@@ -97,7 +97,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenThrowArgumentException()
             {
                 ConstantExpression = $"{SomeString} {AnotherString}";
-                Assert.Throws<ArgumentException>(ArrangeAndAct);
+                Assert.Throws<ArgumentException>(Act);
             }
         }
 
@@ -108,8 +108,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnConstrainedConstant(Constraint constraint)
             {
                 ConstantExpression = $"{SomeString} {constraint}";
-                ArrangeAndAct();
-                Assert.Equal(constraint, ReturnValue.Constraint);
+                Act();
+                Assert.Equal(constraint, Result.Constraint);
             }
         }
 
@@ -119,9 +119,9 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnConstantWithConversion()
             {
                 ConstantExpression = $"{SomeString}:Decimal->Int";
-                ArrangeAndAct();
-                Assert.Equal(ConstantType.Decimal, ReturnValue.Type);
-                Assert.Equal(new[] { ConstantType.Int }, ReturnValue.Conversions);
+                Act();
+                Assert.Equal(ConstantType.Decimal, Result.Type);
+                Assert.Equal(new[] { ConstantType.Int }, Result.Conversions);
             }
         }
 
@@ -132,8 +132,8 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             public void ThenReturnConstantWithTolerance(decimal tolerance)
             {
                 ConstantExpression = $"{SomeString}+-{tolerance}";
-                ArrangeAndAct();
-                Assert.Equal(tolerance, ReturnValue.Tolerance);
+                Act();
+                Assert.Equal(tolerance, Result.Tolerance);
             }
         }
 
@@ -149,12 +149,12 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Constraint constraint)
             {
                 ConstantExpression = $":{name}+-{tolerance}:{from}->{to} {constraint}";
-                ArrangeAndAct();
-                Assert.Equal(name, ReturnValue.Name);
-                Assert.Equal(tolerance, ReturnValue.Tolerance);
-                Assert.Equal(from, ReturnValue.Type);
-                Assert.Equal(new[] { to}, ReturnValue.Conversions);
-                Assert.Equal(constraint, ReturnValue.Constraint);
+                Act();
+                Assert.Equal(name, Result.Name);
+                Assert.Equal(tolerance, Result.Tolerance);
+                Assert.Equal(from, Result.Type);
+                Assert.Equal(new[] { to}, Result.Conversions);
+                Assert.Equal(constraint, Result.Constraint);
             }
         }
     }

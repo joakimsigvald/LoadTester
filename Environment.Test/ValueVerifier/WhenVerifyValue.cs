@@ -7,7 +7,7 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.ValueVerifier
 {
-    public class WhenVerifyValue : ValueVerifierTestBase
+    public class WhenVerifyValue : TestValueVerifier
     {
         public class GivenConstantExistAndEqualToValue : WhenVerifyValue
         {

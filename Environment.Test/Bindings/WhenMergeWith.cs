@@ -7,7 +7,7 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public class WhenMergeWithThenGet : BindingsTestBase<object>
+    public class WhenMergeWithThenGet : TestBindings<object>
     {
         protected IBindings OtherBindings;
         protected IDictionary<string, object> OtherVariables = new Dictionary<string, object>();
@@ -18,7 +18,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
         protected override void Act()
         {
             SUT.MergeWith(OtherBindings);
-            ReturnValue = SUT.Get(SomeConstant);
+            CollectResult(() => SUT.Get(SomeConstant));
         }
 
         public class GivenHasValueAndOtherIsEmpty : WhenMergeWithThenGet
@@ -28,7 +28,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             {
                 Variables[SomeConstant] = SomeString;
                 ArrangeAndAct();
-                Assert.Equal(SomeString, ReturnValue);
+                Assert.Equal(SomeString, Result);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 OtherVariables[AnotherConstant] = AnotherString;
                 ArrangeAndAct();
-                Assert.Equal(SomeString, ReturnValue);
+                Assert.Equal(SomeString, Result);
             }
         }
 
@@ -52,7 +52,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
                 Variables[SomeConstant] = SomeString;
                 OtherVariables[SomeConstant] = AnotherString;
                 ArrangeAndAct();
-                Assert.Equal(AnotherString, ReturnValue);
+                Assert.Equal(AnotherString, Result);
             }
         }
 
@@ -63,7 +63,7 @@ namespace Applique.LoadTester.Environment.Test.Bindings
             {
                 OtherVariables[SomeConstant] = AnotherString;
                 ArrangeAndAct();
-                Assert.Equal(AnotherString, ReturnValue);
+                Assert.Equal(AnotherString, Result);
             }
         }
     }

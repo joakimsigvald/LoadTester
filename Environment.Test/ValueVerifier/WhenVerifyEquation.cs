@@ -6,7 +6,7 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.ValueVerifier
 {
-    public class WhenVerifyEquation : ValueVerifierTestBase
+    public class WhenVerifyEquation : TestValueVerifier
     {
         public class GivenTemplateIsSumOfDecimalsEqualToValue : WhenVerifyValue
         {

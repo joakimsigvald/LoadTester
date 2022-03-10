@@ -4,11 +4,15 @@ using static Applique.LoadTester.Test.TestData;
 
 namespace Applique.LoadTester.Environment.Test.Bindings
 {
-    public class WhenTryGet : BindingsTestBase<bool?>
+    public class WhenTryGet : TestBindings<object>
     {
-        protected object Result;
+        protected bool ReturnValue;
 
-        protected override void Act() => ReturnValue = SUT.TryGet(SomeConstant, out Result);
+        protected override void Act() => CollectResult(() =>
+        {
+            ReturnValue = SUT.TryGet(SomeConstant, out var val);
+            return val;
+        });
 
         public class GivenValueNotExist : WhenTryGet
         {
