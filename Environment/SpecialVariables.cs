@@ -1,7 +1,6 @@
-﻿namespace Applique.LoadTester.Logic.Environment
+﻿namespace Applique.LoadTester.Logic.Environment;
+
+public static class SpecialVariables
 {
-    public static class SpecialVariables
-    {
-        public const string CurrentTime = "|CurrentTime|";
-    }
+    public const string CurrentTime = "|CurrentTime|";
 }

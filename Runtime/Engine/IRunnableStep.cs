@@ -2,11 +2,10 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Applique.LoadTester.Logic.Runtime.Engine
+namespace Applique.LoadTester.Logic.Runtime.Engine;
+
+public interface IRunnableStep
 {
-    public interface IRunnableStep
-    {
-        IStep Blueprint { get; }
-        Task<TimeSpan> Run();
-    }
+    IStep Blueprint { get; }
+    Task<TimeSpan> Run();
 }

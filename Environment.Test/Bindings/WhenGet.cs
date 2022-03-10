@@ -2,79 +2,78 @@
 using Xunit;
 using static Applique.LoadTester.Test.TestData;
 
-namespace Applique.LoadTester.Environment.Test.Bindings
+namespace Applique.LoadTester.Environment.Test.Bindings;
+
+public class WhenGet : TestBindings<object>
 {
-    public class WhenGet : TestBindings<object>
+    protected override void Act() => CollectResult(() => SUT.Get(SomeConstant));
+
+    public class GivenValueNotExist : WhenGet
     {
-        protected override void Act() => CollectResult(() => SUT.Get(SomeConstant));
-
-        public class GivenValueNotExist : WhenGet
+        [Fact]
+        public void ThenReturnNull()
         {
-            [Fact]
-            public void ThenReturnNull()
-            {
-                ArrangeAndAct();
-                Assert.Null(Result);
-            }
+            ArrangeAndAct();
+            Assert.Null(Result);
         }
+    }
 
-        public class GivenStringExist : WhenGet
+    public class GivenStringExist : WhenGet
+    {
+        [Fact]
+        public void ThenReturnString()
         {
-            [Fact]
-            public void ThenReturnString()
-            {
-                Variables[SomeConstant] = SomeString;
-                ArrangeAndAct();
-                Assert.Equal(SomeString, Result);
-            }
+            Variables[SomeConstant] = SomeString;
+            ArrangeAndAct();
+            Assert.Equal(SomeString, Result);
         }
+    }
 
-        public class GivenIntExist : WhenGet
+    public class GivenIntExist : WhenGet
+    {
+        [Fact]
+        public void ThenReturnInt()
         {
-            [Fact]
-            public void ThenReturnInt()
-            {
-                Variables[SomeConstant] = SomeInt;
-                ArrangeAndAct();
-                Assert.Equal(SomeInt, Result);
-            }
+            Variables[SomeConstant] = SomeInt;
+            ArrangeAndAct();
+            Assert.Equal(SomeInt, Result);
         }
+    }
 
-        public class GivenDecimalExist : WhenGet
+    public class GivenDecimalExist : WhenGet
+    {
+        [Fact]
+        public void ThenReturnDecimal()
         {
-            [Fact]
-            public void ThenReturnDecimal()
-            {
-                Variables[SomeConstant] = SomeDecimal;
-                ArrangeAndAct();
-                Assert.Equal(SomeDecimal, Result);
-            }
+            Variables[SomeConstant] = SomeDecimal;
+            ArrangeAndAct();
+            Assert.Equal(SomeDecimal, Result);
         }
+    }
 
-        public class GivenStringOverloadedWithInt : WhenGet
+    public class GivenStringOverloadedWithInt : WhenGet
+    {
+        [Fact]
+        public void ThenReturnInt()
         {
-            [Fact]
-            public void ThenReturnInt()
-            {
-                Variables[SomeConstant] = SomeString;
-                OverloadVariables[SomeConstant] = SomeInt;
-                ArrangeAndAct();
-                Assert.Equal(SomeInt, Result);
-            }
+            Variables[SomeConstant] = SomeString;
+            OverloadVariables[SomeConstant] = SomeInt;
+            ArrangeAndAct();
+            Assert.Equal(SomeInt, Result);
         }
+    }
 
-        public class GivenStringWasOverloadedWithIntButOverloadRemoved : WhenGet
+    public class GivenStringWasOverloadedWithIntButOverloadRemoved : WhenGet
+    {
+        [Fact]
+        public void ThenReturnString()
         {
-            [Fact]
-            public void ThenReturnString()
-            {
-                Variables[SomeConstant] = SomeString;
-                OverloadVariables[SomeConstant] = SomeInt;
-                Arrange();
-                SUT.OverloadWith(null);
-                Act();
-                Assert.Equal(SomeString, Result);
-            }
+            Variables[SomeConstant] = SomeString;
+            OverloadVariables[SomeConstant] = SomeInt;
+            Arrange();
+            SUT.OverloadWith(null);
+            Act();
+            Assert.Equal(SomeString, Result);
         }
     }
 }

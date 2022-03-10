@@ -5,126 +5,125 @@ using Xunit;
 using static Applique.LoadTester.Domain.Design.ConstantExpressions;
 using static Applique.LoadTester.Test.TestData;
 
-namespace Applique.LoadTester.Environment.Test.ValueVerifier
+namespace Applique.LoadTester.Environment.Test.ValueVerifier;
+
+public class WhenVerifyValue : TestValueVerifier
 {
-    public class WhenVerifyValue : TestValueVerifier
+    public class GivenConstantExistAndEqualToValue : WhenVerifyValue
     {
-        public class GivenConstantExistAndEqualToValue : WhenVerifyValue
+        [Fact]
+        public void ThenPass()
         {
-            [Fact]
-            public void ThenPass()
-            {
-                TemplateValue = Embrace(SomeConstant);
-                Variables[SomeConstant] = Value;
-                ArrangeAndAct();
-            }
+            TemplateValue = Embrace(SomeConstant);
+            Variables[SomeConstant] = Value;
+            ArrangeAndAct();
         }
+    }
 
-        public class GivenConstantExistAndNotEqualtoValue : WhenVerifyValue
+    public class GivenConstantExistAndNotEqualtoValue : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenThrowVerificationFailed()
         {
-            [Fact]
-            public void ThenThrowVerificationFailed()
-            {
-                TemplateValue = Embrace(SomeConstant);
-                Variables[SomeConstant] = $"Not {Value}";
-                Arrange();
-                Assert.Throws<VerificationFailed>(Act);
-            }
+            TemplateValue = Embrace(SomeConstant);
+            Variables[SomeConstant] = $"Not {Value}";
+            Arrange();
+            Assert.Throws<VerificationFailed>(Act);
         }
+    }
 
-        public class GivenConstantNotExistAndNotConstrained : WhenVerifyValue
+    public class GivenConstantNotExistAndNotConstrained : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenPass()
         {
-            [Fact]
-            public void ThenPass()
-            {
-                TemplateValue = Embrace(SomeConstant);
-                ArrangeAndAct();
-            }
+            TemplateValue = Embrace(SomeConstant);
+            ArrangeAndAct();
         }
+    }
 
-        public class GivenConstantExistButOvershadowedAndNotConstrained : WhenVerifyValue
+    public class GivenConstantExistButOvershadowedAndNotConstrained : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenPass()
         {
-            [Fact]
-            public void ThenPass()
-            {
-                TemplateValue = Embrace($":{SomeConstant}");
-                Variables[SomeConstant] = $"Not {Value}";
-                ArrangeAndAct();
-            }
+            TemplateValue = Embrace($":{SomeConstant}");
+            Variables[SomeConstant] = $"Not {Value}";
+            ArrangeAndAct();
         }
+    }
 
-        public class GivenConstantNotExistButConstraintViolated : WhenVerifyValue
+    public class GivenConstantNotExistButConstraintViolated : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenThrowVerificationFailed()
         {
-            [Fact]
-            public void ThenThrowVerificationFailed()
-            {
-                TemplateValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
-                Value = null;
-                Arrange();
-                Assert.Throws<VerificationFailed>(Act);
-            }
+            TemplateValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
+            Value = null;
+            Arrange();
+            Assert.Throws<VerificationFailed>(Act);
         }
+    }
 
-        public class GivenConstantNotExistAndConstraintFollowed : WhenVerifyValue
+    public class GivenConstantNotExistAndConstraintFollowed : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenPass()
         {
-            [Fact]
-            public void ThenPass()
-            {
-                TemplateValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
-                Value = "Not empty";
-                ArrangeAndAct();
-            }
+            TemplateValue = Embrace($"{SomeConstant} {Constraint.Mandatory}");
+            Value = "Not empty";
+            ArrangeAndAct();
         }
+    }
 
-        public class GivenConstantExistAndIsEmbeddedInString : WhenVerifyValue
+    public class GivenConstantExistAndIsEmbeddedInString : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenPass()
         {
-            [Fact]
-            public void ThenPass()
-            {
-                var embeddedString = "embedded";
-                Variables[SomeConstant] = embeddedString;
-                TemplateValue = $"before {Embrace(SomeConstant)} after";
-                Value = $"before {embeddedString} after";
-                ArrangeAndAct();
-            }
+            var embeddedString = "embedded";
+            Variables[SomeConstant] = embeddedString;
+            TemplateValue = $"before {Embrace(SomeConstant)} after";
+            Value = $"before {embeddedString} after";
+            ArrangeAndAct();
         }
+    }
 
-        public class GivenDecimalExistButSlightlyDifferentAndNoTolerance : WhenVerifyValue
+    public class GivenDecimalExistButSlightlyDifferentAndNoTolerance : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenThrowVerificationFailed()
         {
-            [Fact]
-            public void ThenThrowVerificationFailed()
-            {
-                TemplateValue = Embrace(SomeConstant);
-                Variables[SomeConstant] = 10M;
-                Value = "10.01";
-                Arrange();
-                Assert.Throws<VerificationFailed>(Act);
-            }
+            TemplateValue = Embrace(SomeConstant);
+            Variables[SomeConstant] = 10M;
+            Value = "10.01";
+            Arrange();
+            Assert.Throws<VerificationFailed>(Act);
         }
+    }
 
-        public class GivenDecimalExistAndWithinTolerance : WhenVerifyValue
+    public class GivenDecimalExistAndWithinTolerance : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenPass()
         {
-            [Fact]
-            public void ThenPass()
-            {
-                TemplateValue = Embrace($"{SomeConstant}+-0.01");
-                Variables[SomeConstant] = 10M;
-                Value = "10.01";
-                ArrangeAndAct();
-            }
+            TemplateValue = Embrace($"{SomeConstant}+-0.01");
+            Variables[SomeConstant] = 10M;
+            Value = "10.01";
+            ArrangeAndAct();
         }
+    }
 
-        public class GivenDecimalExistAndNotWithinTolerance : WhenVerifyValue
+    public class GivenDecimalExistAndNotWithinTolerance : WhenVerifyValue
+    {
+        [Fact]
+        public void ThenThrowVerificationFailed()
         {
-            [Fact]
-            public void ThenThrowVerificationFailed()
-            {
-                TemplateValue = Embrace($"{SomeConstant}+-0.01");
-                Variables[SomeConstant] = 10M;
-                Value = "10.02";
-                Arrange();
-                Assert.Throws<VerificationFailed>(Act);
-            }
+            TemplateValue = Embrace($"{SomeConstant}+-0.01");
+            Variables[SomeConstant] = 10M;
+            Value = "10.02";
+            Arrange();
+            Assert.Throws<VerificationFailed>(Act);
         }
     }
 }

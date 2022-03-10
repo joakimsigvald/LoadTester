@@ -1,7 +1,6 @@
-﻿namespace Applique.LoadTester.Logic.Runtime.External
+﻿namespace Applique.LoadTester.Logic.Runtime.External;
+
+public interface IRestCallerFactory
 {
-    public interface IRestCallerFactory
-    {
-        IRestCaller Create(string baseUrl);
-    }
+    IRestCaller Create(string baseUrl);
 }

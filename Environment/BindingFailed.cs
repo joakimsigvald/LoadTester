@@ -1,11 +1,10 @@
 ﻿using Applique.LoadTester.Domain;
 
-namespace Applique.LoadTester.Logic.Environment
+namespace Applique.LoadTester.Logic.Environment;
+
+internal class BindingFailed : RunFailed
 {
-    internal class BindingFailed : RunFailed
+    public BindingFailed(string property, string message) : base($"{property}: {message}")
     {
-        public BindingFailed(string property, string message) : base($"{property}: {message}")
-        {
-        }
     }
 }

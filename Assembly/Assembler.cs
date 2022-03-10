@@ -1,23 +1,22 @@
 ﻿using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Service;
 
-namespace Applique.LoadTester.Logic.Assembly
+namespace Applique.LoadTester.Logic.Assembly;
+
+public class Assembler : IAssembler
 {
-    public class Assembler : IAssembler
+    private readonly IFileSystem _fileSystem;
+    private readonly ITestSuiteRunnerFactory _testSuiteRunnerFactory;
+
+    public Assembler(IFileSystem fileSystem, ITestSuiteRunnerFactory testSuiteRunnerFactory)
     {
-        private readonly IFileSystem _fileSystem;
-        private readonly ITestSuiteRunnerFactory _testSuiteRunnerFactory;
+        _fileSystem = fileSystem;
+        _testSuiteRunnerFactory = testSuiteRunnerFactory;
+    }
 
-        public Assembler(IFileSystem fileSystem, ITestSuiteRunnerFactory testSuiteRunnerFactory)
-        {
-            _fileSystem = fileSystem;
-            _testSuiteRunnerFactory = testSuiteRunnerFactory;
-        }
-
-        public ITestSuiteRunner AssembleTestSuite(string filename)
-        {
-            var testSuite = _fileSystem.Read<TestSuite>(filename);
-            return _testSuiteRunnerFactory.Create(testSuite);
-        }
+    public ITestSuiteRunner AssembleTestSuite(string filename)
+    {
+        var testSuite = _fileSystem.Read<TestSuite>(filename);
+        return _testSuiteRunnerFactory.Create(testSuite);
     }
 }

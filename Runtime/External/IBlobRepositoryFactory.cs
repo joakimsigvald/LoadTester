@@ -1,7 +1,6 @@
-﻿namespace Applique.LoadTester.Logic.Runtime.External
+﻿namespace Applique.LoadTester.Logic.Runtime.External;
+
+public interface IBlobRepositoryFactory
 {
-    public interface IBlobRepositoryFactory
-    {
-        IBlobRepository Create(string connectionString, string containerName, string folderName);
-    }
+    IBlobRepository Create(string connectionString, string containerName, string folderName);
 }

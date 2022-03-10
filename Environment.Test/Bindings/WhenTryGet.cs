@@ -2,64 +2,63 @@
 using Xunit;
 using static Applique.LoadTester.Test.TestData;
 
-namespace Applique.LoadTester.Environment.Test.Bindings
+namespace Applique.LoadTester.Environment.Test.Bindings;
+
+public class WhenTryGet : TestBindings<object>
 {
-    public class WhenTryGet : TestBindings<object>
+    protected bool ReturnValue;
+
+    protected override void Act() => CollectResult(() =>
     {
-        protected bool ReturnValue;
+        ReturnValue = SUT.TryGet(SomeConstant, out var val);
+        return val;
+    });
 
-        protected override void Act() => CollectResult(() =>
+    public class GivenValueNotExist : WhenTryGet
+    {
+        [Fact]
+        public void ThenReturnFalse()
         {
-            ReturnValue = SUT.TryGet(SomeConstant, out var val);
-            return val;
-        });
-
-        public class GivenValueNotExist : WhenTryGet
-        {
-            [Fact]
-            public void ThenReturnFalse()
-            {
-                ArrangeAndAct();
-                Assert.False(ReturnValue);
-            }
+            ArrangeAndAct();
+            Assert.False(ReturnValue);
         }
+    }
 
-        public class GivenStringExist : WhenTryGet
+    public class GivenStringExist : WhenTryGet
+    {
+        [Fact]
+        public void ThenReturnTrueAndString()
         {
-            [Fact]
-            public void ThenReturnTrueAndString()
-            {
-                Variables[SomeConstant] = SomeString;
-                ArrangeAndAct();
-                Assert.True(ReturnValue);
-                Assert.Equal(SomeString, Result);
-            }
+            Variables[SomeConstant] = SomeString;
+            ArrangeAndAct();
+            Assert.True(ReturnValue);
+            Assert.Equal(SomeString, Result);
         }
+    }
 
-        public class GivenIntExist : WhenTryGet
+    public class GivenIntExist : WhenTryGet
+    {
+        [Fact]
+        public void ThenReturnTrueAndInt()
         {
-            [Fact]
-            public void ThenReturnTrueAndInt()
-            {
-                Variables[SomeConstant] = SomeInt;
-                Arrange();
-                Act();
-                Assert.True(ReturnValue);
-                Assert.Equal(SomeInt, Result);
-            }
+            Variables[SomeConstant] = SomeInt;
+            Arrange();
+            Act();
+            Assert.True(ReturnValue);
+            Assert.Equal(SomeInt, Result);
         }
+    }
 
-        public class GivenDecimalExist : WhenTryGet
+    public class GivenDecimalExist : WhenTryGet
+    {
+        [Fact]
+        public void ThenReturnTrueAndDecimal()
         {
-            [Fact]
-            public void ThenReturnTrueAndDecimal()
-            {
-                Variables[SomeConstant] = SomeDecimal;
-                Arrange();
-                Act();
-                Assert.True(ReturnValue);
-                Assert.Equal(SomeDecimal, Result);
-            }
+            Variables[SomeConstant] = SomeDecimal;
+            Arrange();
+            Act();
+            Assert.True(ReturnValue);
+            Assert.Equal(SomeDecimal, Result);
         }
     }
 }

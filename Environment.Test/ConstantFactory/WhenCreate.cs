@@ -5,157 +5,156 @@ using Xunit;
 using static Applique.LoadTester.Domain.Design.ConstantFactory;
 using static Applique.LoadTester.Test.TestData;
 
-namespace Applique.LoadTester.Environment.Test.Bindings
+namespace Applique.LoadTester.Environment.Test.Bindings;
+
+public abstract class WhenCreate : TestStatic<Constant>
 {
-    public abstract class WhenCreate : TestStatic<Constant>
+    protected string ConstantExpression;
+    protected string ConstantValue;
+
+    protected override void Act() => CollectResult(() => Create(ConstantExpression, ConstantValue));
+
+    public abstract class GivenNoValue : WhenCreate
     {
-        protected string ConstantExpression;
-        protected string ConstantValue;
+        protected GivenNoValue() => ConstantValue = null;
+    }
 
-        protected override void Act() => CollectResult(() => Create(ConstantExpression, ConstantValue));
-
-        public abstract class GivenNoValue : WhenCreate
+    public class GivenNullExpression : GivenNoValue
+    {
+        [Fact]
+        public void ThenReturnNull()
         {
-            protected GivenNoValue() => ConstantValue = null;
+            ConstantExpression = null;
+            Act();
+            Assert.Null(Result);
         }
+    }
 
-        public class GivenNullExpression : GivenNoValue
+    public class GivenEmptyExpression : GivenNoValue
+    {
+        [Fact]
+        public void ThenReturnNull()
         {
-            [Fact]
-            public void ThenReturnNull()
-            {
-                ConstantExpression = null;
-                Act();
-                Assert.Null(Result);
-            }
+            ConstantExpression = string.Empty;
+            Act();
+            Assert.Null(Result);
         }
+    }
 
-        public class GivenEmptyExpression : GivenNoValue
+    public class GivenName : GivenNoValue
+    {
+        [Fact]
+        public void ThenReturnNamedStringConstant()
         {
-            [Fact]
-            public void ThenReturnNull()
-            {
-                ConstantExpression = string.Empty;
-                Act();
-                Assert.Null(Result);
-            }
+            ConstantExpression = SomeString;
+            Act();
+            Assert.Equal(SomeString, Result.Name);
+            Assert.Equal(ConstantType.String, Result.Type);
         }
+    }
 
-        public class GivenName : GivenNoValue
+    public class GivenColonName : GivenNoValue
+    {
+        [Fact]
+        public void ThenReturnOvershadowingConstant()
         {
-            [Fact]
-            public void ThenReturnNamedStringConstant()
-            {
-                ConstantExpression = SomeString;
-                Act();
-                Assert.Equal(SomeString, Result.Name);
-                Assert.Equal(ConstantType.String, Result.Type);
-            }
+            ConstantExpression = $":{SomeString}";
+            Act();
+            Assert.True(Result.Overshadow);
         }
+    }
 
-        public class GivenColonName : GivenNoValue
+    public class GivenNameColonUnrecogniced : GivenNoValue
+    {
+        [Fact]
+        public void ThenThrowArgumentException()
         {
-            [Fact]
-            public void ThenReturnOvershadowingConstant()
-            {
-                ConstantExpression = $":{SomeString}";
-                Act();
-                Assert.True(Result.Overshadow);
-            }
+            ConstantExpression = $"{SomeString}:int";
+            Assert.Throws<ArgumentException>(Act);
         }
+    }
 
-        public class GivenNameColonUnrecogniced : GivenNoValue
+    public class GivenNameColonType : GivenNoValue
+    {
+        [Theory]
+        [InlineData(ConstantType.Int)]
+        [InlineData(ConstantType.Decimal)]
+        [InlineData(ConstantType.Bool)]
+        [InlineData(ConstantType.DateTime)]
+        [InlineData(ConstantType.Seed)]
+        [InlineData(ConstantType.String)]
+        public void ThenReturnTypedConstant(ConstantType type)
         {
-            [Fact]
-            public void ThenThrowArgumentException()
-            {
-                ConstantExpression = $"{SomeString}:int";
-                Assert.Throws<ArgumentException>(Act);
-            }
+            ConstantExpression = $"{SomeString}:{type}";
+            Act();
+            Assert.Equal(type, Result.Type);
         }
+    }
 
-        public class GivenNameColonType : GivenNoValue
+    public class GivenNameSpaceUnrecogniced : GivenNoValue
+    {
+        [Fact]
+        public void ThenThrowArgumentException()
         {
-            [Theory]
-            [InlineData(ConstantType.Int)]
-            [InlineData(ConstantType.Decimal)]
-            [InlineData(ConstantType.Bool)]
-            [InlineData(ConstantType.DateTime)]
-            [InlineData(ConstantType.Seed)]
-            [InlineData(ConstantType.String)]
-            public void ThenReturnTypedConstant(ConstantType type)
-            {
-                ConstantExpression = $"{SomeString}:{type}";
-                Act();
-                Assert.Equal(type, Result.Type);
-            }
+            ConstantExpression = $"{SomeString} {AnotherString}";
+            Assert.Throws<ArgumentException>(Act);
         }
+    }
 
-        public class GivenNameSpaceUnrecogniced : GivenNoValue
+    public class GivenNameSpaceConstraint : GivenNoValue
+    {
+        [Theory]
+        [InlineData(Constraint.Mandatory)]
+        public void ThenReturnConstrainedConstant(Constraint constraint)
         {
-            [Fact]
-            public void ThenThrowArgumentException()
-            {
-                ConstantExpression = $"{SomeString} {AnotherString}";
-                Assert.Throws<ArgumentException>(Act);
-            }
+            ConstantExpression = $"{SomeString} {constraint}";
+            Act();
+            Assert.Equal(constraint, Result.Constraint);
         }
+    }
 
-        public class GivenNameSpaceConstraint : GivenNoValue
+    public class GivenTypeCast : GivenNoValue
+    {
+        [Fact]
+        public void ThenReturnConstantWithConversion()
         {
-            [Theory]
-            [InlineData(Constraint.Mandatory)]
-            public void ThenReturnConstrainedConstant(Constraint constraint)
-            {
-                ConstantExpression = $"{SomeString} {constraint}";
-                Act();
-                Assert.Equal(constraint, Result.Constraint);
-            }
+            ConstantExpression = $"{SomeString}:Decimal->Int";
+            Act();
+            Assert.Equal(ConstantType.Decimal, Result.Type);
+            Assert.Equal(new[] { ConstantType.Int }, Result.Conversions);
         }
+    }
 
-        public class GivenTypeCast : GivenNoValue
+    public class GivenTolerance : GivenNoValue
+    {
+        [Theory]
+        [InlineData(0.3)]
+        public void ThenReturnConstantWithTolerance(decimal tolerance)
         {
-            [Fact]
-            public void ThenReturnConstantWithConversion()
-            {
-                ConstantExpression = $"{SomeString}:Decimal->Int";
-                Act();
-                Assert.Equal(ConstantType.Decimal, Result.Type);
-                Assert.Equal(new[] { ConstantType.Int }, Result.Conversions);
-            }
+            ConstantExpression = $"{SomeString}+-{tolerance}";
+            Act();
+            Assert.Equal(tolerance, Result.Tolerance);
         }
+    }
 
-        public class GivenTolerance : GivenNoValue
+    public class GivenFullfeaturedConstantExpression : GivenNoValue
+    {
+        [Theory]
+        [InlineData("TheName", 2.34, ConstantType.Decimal, ConstantType.Int, Constraint.Mandatory)]
+        public void ThenReturnFullfeaturedConstant(
+            string name,
+            decimal tolerance,
+            ConstantType from,
+            ConstantType to,
+            Constraint constraint)
         {
-            [Theory]
-            [InlineData(0.3)]
-            public void ThenReturnConstantWithTolerance(decimal tolerance)
-            {
-                ConstantExpression = $"{SomeString}+-{tolerance}";
-                Act();
-                Assert.Equal(tolerance, Result.Tolerance);
-            }
-        }
-
-        public class GivenFullfeaturedConstantExpression : GivenNoValue
-        {
-            [Theory]
-            [InlineData("TheName", 2.34, ConstantType.Decimal, ConstantType.Int, Constraint.Mandatory)]
-            public void ThenReturnFullfeaturedConstant(
-                string name,
-                decimal tolerance,
-                ConstantType from, 
-                ConstantType to, 
-                Constraint constraint)
-            {
-                ConstantExpression = $":{name}+-{tolerance}:{from}->{to} {constraint}";
-                Act();
-                Assert.Equal(name, Result.Name);
-                Assert.Equal(tolerance, Result.Tolerance);
-                Assert.Equal(from, Result.Type);
-                Assert.Equal(new[] { to}, Result.Conversions);
-                Assert.Equal(constraint, Result.Constraint);
-            }
+            ConstantExpression = $":{name}+-{tolerance}:{from}->{to} {constraint}";
+            Act();
+            Assert.Equal(name, Result.Name);
+            Assert.Equal(tolerance, Result.Tolerance);
+            Assert.Equal(from, Result.Type);
+            Assert.Equal(new[] { to }, Result.Conversions);
+            Assert.Equal(constraint, Result.Constraint);
         }
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace Applique.LoadTester.Logic.Assembly
+﻿namespace Applique.LoadTester.Logic.Assembly;
+
+public class StepTemplate
 {
-    public class StepTemplate
-    {
-        public string Name { get; set; }
-        public Step Step { get; set; }
-    }
+    public string Name { get; set; }
+    public Step Step { get; set; }
 }

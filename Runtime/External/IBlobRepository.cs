@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Applique.LoadTester.Logic.Runtime.External
+namespace Applique.LoadTester.Logic.Runtime.External;
+
+public interface IBlobRepository
 {
-    public interface IBlobRepository
-    {
-        Task Upload(string name, string text);
-    }
+    Task Upload(string name, string text);
 }
