@@ -1,9 +1,8 @@
 ﻿using Applique.LoadTester.Domain.Assembly;
 
-namespace Applique.LoadTester.Domain.Service
+namespace Applique.LoadTester.Domain.Service;
+
+public interface IBindingsRepositoryFactory
 {
-    public interface IBindingsRepositoryFactory
-    {
-        IBindingsRepository Create(ITestSuite testSuite);
-    }
+    IBindingsRepository Create(ITestSuite testSuite);
 }

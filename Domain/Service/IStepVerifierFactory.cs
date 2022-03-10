@@ -1,10 +1,9 @@
 ﻿using Applique.LoadTester.Core.Service;
 using Applique.LoadTester.Domain.Assembly;
 
-namespace Applique.LoadTester.Domain.Service
+namespace Applique.LoadTester.Domain.Service;
+
+public interface IStepVerifierFactory
 {
-    public interface IStepVerifierFactory
-    {
-        IStepVerifier CreateVerifier(IStep step, IBindings bindings);
-    }
+    IStepVerifier CreateVerifier(IStep step, IBindings bindings);
 }

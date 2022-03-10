@@ -1,8 +1,7 @@
-﻿namespace Applique.LoadTester.Domain.Design
+﻿namespace Applique.LoadTester.Domain.Design;
+
+public class Header
 {
-    public class Header
-    {
-        public string Name { get; set; }
-        public string Value { get; set; }
-    }
+    public string Name { get; set; }
+    public string Value { get; set; }
 }

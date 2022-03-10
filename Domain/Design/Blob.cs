@@ -1,11 +1,10 @@
-﻿namespace Applique.LoadTester.Domain.Design
+﻿namespace Applique.LoadTester.Domain.Design;
+
+public class Blob
 {
-    public class Blob
-    {
-        public string Name { get; set; }
-        public string ConnectionString { get; set; } = string.Empty;
-        public string ContainerName { get; set; }
-        public string Folder { get; set; }
-        public string BlobName { get; set; }
-    }
+    public string Name { get; set; }
+    public string ConnectionString { get; set; } = string.Empty;
+    public string ContainerName { get; set; }
+    public string Folder { get; set; }
+    public string BlobName { get; set; }
 }

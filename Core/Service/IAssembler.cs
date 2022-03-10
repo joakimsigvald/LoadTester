@@ -1,9 +1,6 @@
-﻿using Applique.LoadTester.Core.Design;
+﻿namespace Applique.LoadTester.Core.Service;
 
-namespace Applique.LoadTester.Core.Service
+public interface IAssembler
 {
-    public interface IAssembler
-    {
-        ITestSuiteRunner AssembleTestSuite(string filename);
-    }
+    ITestSuiteRunner AssembleTestSuite(string filename);
 }

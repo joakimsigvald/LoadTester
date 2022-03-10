@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Applique.LoadTester.Domain
+namespace Applique.LoadTester.Domain;
+
+public class RunFailed : Exception
 {
-    public class RunFailed : Exception
+    public RunFailed(string message) : base(message)
     {
-        public RunFailed(string message) : base(message)
-        {
-        }
     }
 }

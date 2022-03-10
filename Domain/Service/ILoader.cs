@@ -1,9 +1,8 @@
 ﻿using Applique.LoadTester.Core.Design;
 
-namespace Applique.LoadTester.Domain.Service
+namespace Applique.LoadTester.Domain.Service;
+
+public interface ILoader
 {
-    public interface ILoader
-    {
-        Constant[] LoadConstants<T>(string filename);
-    }
+    Constant[] LoadConstants<T>(string filename);
 }

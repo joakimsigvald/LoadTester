@@ -1,7 +1,6 @@
-﻿namespace Applique.LoadTester.Core.Result
+﻿namespace Applique.LoadTester.Core.Result;
+
+public interface IStepResult : ITimedResult
 {
-    public interface IStepResult : ITimedResult
-    {
-        string Endpoint { get; }
-    }
+    string Endpoint { get; }
 }

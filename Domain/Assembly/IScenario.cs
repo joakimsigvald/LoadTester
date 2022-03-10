@@ -1,12 +1,11 @@
 ﻿using Applique.LoadTester.Core.Design;
 
-namespace Applique.LoadTester.Domain.Assembly
+namespace Applique.LoadTester.Domain.Assembly;
+
+public interface IScenario : IScenarioMetadata
 {
-    public interface IScenario : IScenarioMetadata
-    {
-        string Template { get; }
-        string[] Load { get; }
-        string[] Persist { get; }
-        Constant[] Constants { get; }
-    }
+    string Template { get; }
+    string[] Load { get; }
+    string[] Persist { get; }
+    Constant[] Constants { get; }
 }

@@ -2,10 +2,9 @@
 using Applique.LoadTester.Domain.Assembly;
 using System.Threading.Tasks;
 
-namespace Applique.LoadTester.Domain.Service
+namespace Applique.LoadTester.Domain.Service;
+
+public interface IScenarioRunner
 {
-    public interface IScenarioRunner
-    {
-        Task<IScenarioResult> Run(ITestSuiteScenario instantiator);
-    }
+    Task<IScenarioResult> Run(ITestSuiteScenario instantiator);
 }

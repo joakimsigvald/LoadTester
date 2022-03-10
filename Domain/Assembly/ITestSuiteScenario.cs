@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Applique.LoadTester.Domain.Assembly
-{
-    public interface ITestSuiteScenario
-    {
-        IScenario Scenario { get; }
+namespace Applique.LoadTester.Domain.Assembly;
 
-        IEnumerable<IStep> GetStepsToRun();
-    }
+public interface ITestSuiteScenario
+{
+    IScenario Scenario { get; }
+
+    IEnumerable<IStep> GetStepsToRun();
 }

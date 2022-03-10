@@ -1,8 +1,7 @@
-﻿namespace Applique.LoadTester.Core.Design
+﻿namespace Applique.LoadTester.Core.Design;
+
+public interface IScenarioMetadata
 {
-    public interface IScenarioMetadata
-    {
-        string Name { get; }
-        int Instances { get; }
-    }
+    string Name { get; }
+    int Instances { get; }
 }
