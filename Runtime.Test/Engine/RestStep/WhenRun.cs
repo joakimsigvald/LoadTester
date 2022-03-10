@@ -22,7 +22,6 @@ namespace Applique.LoadTester.Runtime.Test.Engine.RestStep
 {
     public abstract class WhenRun : TestSubjectAsync<Logic.Runtime.Engine.RestStep, TimeSpan>
     {
-        protected Exception Exception;
         protected dynamic RequestBody;
         protected JToken TemplateBody;
         protected string ResponseBody;
@@ -41,58 +40,22 @@ namespace Applique.LoadTester.Runtime.Test.Engine.RestStep
         protected HttpStatusCode ExpectedStatusCode = HttpStatusCode.OK;
         protected HttpStatusCode RestStatusCode = HttpStatusCode.OK;
 
+        protected override void Setup()
+        {
+            Mocked<ITestSuite>().Setup(suite => suite.Services).Returns(Services);
+            SetupRestCallerFactory();
+        }
+
         protected override Logic.Runtime.Engine.RestStep CreateSUT()
         {
             var bindings = CreateBindings(Variables);
             var overloads = CreateBindings(OverloadVariables);
-            var testSuite = MockTestSuite();
-            SetupRestCallerFactory();
             var step = CreateStep();
-            var executor = RestStepExecutor.Create(MockOf<IRestCallerFactory>(), testSuite, step, bindings);
+            var executor = RestStepExecutor.Create(MockOf<IRestCallerFactory>(), MockOf<ITestSuite>(), step, bindings);
             return new Logic.Runtime.Engine.RestStep(step, bindings, overloads, executor, new StepVerifier(step, bindings));
         }
 
-        private void SetupRestCallerFactory()
-        {
-            Mocked<IRestCaller>().SetReturnsDefault(Task.FromResult(new RestCallResponse
-            {
-                StatusCode = RestStatusCode,
-                Body = ResponseBody
-            }));
-            Mocked<IRestCallerFactory>().Setup(rcf => rcf.Create(It.IsAny<string>())).Returns(MockOf<IRestCaller>());
-        }
-
-        private ITestSuite MockTestSuite()
-        {
-            var mock = new Mock<ITestSuite>();
-            mock.Setup(suite => suite.Services).Returns(Services);
-            return mock.Object;
-        }
-
-        private Step CreateStep()
-            => new()
-            {
-                Endpoint = StepEndpoint,
-                Body = RequestBody,
-                ExpectedStatusCodes = new[] { ExpectedStatusCode },
-                Response = TemplateBody
-            };
-
-        protected static IBindings CreateBindings(IDictionary<string, object> variables)
-            => new Bindings(new BindingVariables(variables));
-
-        protected async override Task<TimeSpan> ActAsync()
-        {
-            try
-            {
-                return await SUT.Run();
-            }
-            catch (Exception ex)
-            {
-                Exception = ex;
-                return default;
-            }
-        }
+        protected override Task<TimeSpan> ActAsync() => SUT.Run();
 
         public class GivenRestGetReturnOk : WhenRun
         {
@@ -105,7 +68,7 @@ namespace Applique.LoadTester.Runtime.Test.Engine.RestStep
             }
         }
 
-        public class GivenRestGetReturnUnexpectedStatusCodeError : WhenRun
+        public class GivenGetUnexpectedStatusCode : WhenRun
         {
             [Theory]
             [InlineData(HttpStatusCode.OK, HttpStatusCode.NotFound)]
@@ -116,36 +79,61 @@ namespace Applique.LoadTester.Runtime.Test.Engine.RestStep
             {
                 ExpectedStatusCode = expected;
                 RestStatusCode = returned;
-                ArrangeAndAct();
-                Assert.True(Exception is RunFailed, $"Exception was {Exception?.GetType()}");
+                Assert.Throws<RunFailed>(ArrangeAndAct);
             }
         }
 
         public class GivenRestGetReturnUnexpectedValue : WhenRun
         {
-            [Fact]
-            public void ThenThrowRunFailed()
+            protected override void Given()
             {
                 TemplateBody = new JObject();
                 var dtb = (dynamic)TemplateBody;
                 dtb.MyProperty = SomeString;
                 ResponseBody = $"{{\"MyProperty\":\"{AnotherString}\"}}";
-                ArrangeAndAct();
-                Assert.True(Exception is RunFailed, $"Exception was {Exception?.GetType()}");
             }
+
+            [Fact] public void ThenThrowRunFailed() => Assert.Throws<VerificationFailed>(ArrangeAndAct);
         }
 
         public class GivenOverloads : WhenRun
         {
-            [Fact]
-            public void ThenApplyOverloadsToBody()
+            protected override void Given()
             {
                 Variables[SomeConstant] = SomeString;
                 OverloadVariables[SomeConstant] = AnotherString;
                 RequestBody = new { MyProperty = Embrace(SomeConstant) };
-                ArrangeAndAct();
-                Mocked<IRestCaller>().Verify(rc => rc.Call(It.Is<Request>(req => req.Content == $"{{\"MyProperty\":\"{AnotherString}\"}}")));
             }
+
+            public GivenOverloads() => ArrangeAndAct();
+
+            [Fact]
+            public void ThenApplyOverloadsToBody()
+                => Mocked<IRestCaller>()
+                .Verify(rc => rc.Call(It.Is<Request>(
+                    req => req.Content == $"{{\"MyProperty\":\"{AnotherString}\"}}")));
         }
+
+        private void SetupRestCallerFactory()
+        {
+            Mocked<IRestCaller>().SetReturnsDefault(Task.FromResult(new RestCallResponse
+            {
+                StatusCode = RestStatusCode,
+                Body = ResponseBody
+            }));
+            Mocked<IRestCallerFactory>().Setup(rcf => rcf.Create(It.IsAny<string>())).Returns(MockOf<IRestCaller>());
+        }
+
+        private Step CreateStep()
+            => new()
+            {
+                Endpoint = StepEndpoint,
+                Body = RequestBody,
+                ExpectedStatusCodes = new[] { ExpectedStatusCode },
+                Response = TemplateBody
+            };
+
+        private static IBindings CreateBindings(IDictionary<string, object> variables)
+            => new Bindings(new BindingVariables(variables));
     }
 }
