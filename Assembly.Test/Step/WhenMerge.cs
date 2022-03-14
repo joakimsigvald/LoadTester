@@ -17,75 +17,60 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
 
     protected override void Act() => CollectResult(() => SUT.MergeWith(Other));
 
-    public class GivenBothHasDifferentArgs : WhenMerge
+    public class WhenMerged : WhenMerge
+    {
+        public WhenMerged() => ArrangeAndAct();
+    }
+
+    public class GivenBothHasDifferentArgs : WhenMerged
     {
         protected override void Given() => (Step.Args, Other.Args) = ("?a=1", "?b=2");
-        public GivenBothHasDifferentArgs() => ArrangeAndAct();
         [Fact] public void ThenAppendGetArgsFromOther() => Assert.Equal("?a=1&b=2", Result.Args);
     }
 
-    public class GivenBothHasSameArg : WhenMerge
+    public class GivenBothHasSameArg : WhenMerged
     {
         protected override void Given() => (Step.Args, Other.Args) = ("?a=1", "?a=2");
-        public GivenBothHasSameArg() => ArrangeAndAct();
         [Fact] public void ThenGetArgValueFromOther() => Assert.Equal("?a=2", Result.Args);
     }
 
-    public class GivenOnlyStepHasArgs : WhenMerge
+    public class GivenOnlyStepHasArgs : WhenMerged
     {
         protected override void Given() => Step.Args = "?a=1";
-        public GivenOnlyStepHasArgs() => ArrangeAndAct();
         [Fact] public void ThenGetArgsFromStep() => Assert.Equal(Step.Args, Result.Args);
     }
 
-    public class GivenOnlyOtherHasArgs : WhenMerge
+    public class GivenOnlyOtherHasArgs : WhenMerged
     {
         protected override void Given() => Other.Args = "?a=1";
-        public GivenOnlyOtherHasArgs() => ArrangeAndAct();
         [Fact] public void ThenGetArgsFromOther() => Assert.Equal(Other.Args, Result.Args);
     }
 
-    public class GivenStepHasDuplicatedArgKeys : WhenMerge
+    public class GivenStepHasDuplicatedArgKeys : WhenMerged
     {
         protected override void Given() => Step.Args = "?a=1&a=2";
-        public GivenStepHasDuplicatedArgKeys() => ArrangeAndAct();
         [Fact] public void ThenThenConvertToCommaSeparatedValues() => Assert.Equal("?a=1,2", Result.Args);
     }
 
-    public class GivenOnlyOtherHasBody : WhenMerge
+    public class GivenOnlyOtherHasBody : WhenMerged
     {
-        [Fact]
-        public void ThenGetBodyFromOther()
-        {
-            Other.Body = new { A = "B" };
-            ArrangeAndAct();
-            Assert.Same(Other.Body, Result.Body);
-        }
+        protected override void Given() => Other.Body = new { A = "B" };
+        [Fact] public void ThenGetBodyFromOther() => Assert.Same(Other.Body, Result.Body);
     }
 
-    public class GivenBothHasBody : WhenMerge
+    public class GivenBothHasBody : WhenMerged
     {
-        [Fact]
-        public void ThenGetBodyFromOther()
-        {
-            Step.Body = new { B = "C" };
-            Other.Body = new { A = "B" };
-            ArrangeAndAct();
-            Assert.Same(Other.Body, Result.Body);
-        }
+        protected override void Given() => (Step.Body, Other.Body) = (new { B = "C" }, new { A = "B" });
+        [Fact] public void ThenGetBodyFromOther() => Assert.Same(Other.Body, Result.Body);
     }
 
-    public class GivenBothHasSameConstant : WhenMerge
+    public class GivenBothHasSameConstant : WhenMerged
     {
-        [Fact]
-        public void ThenGetConstantValueFromOther()
-        {
-            Step.Constants = CreateConstants((SomeConstant, SomeString));
-            Other.Constants = CreateConstants((SomeConstant, AnotherString));
-            ArrangeAndAct();
-            var actual = Result.Constants.Single(c => c.Name == SomeConstant).Value;
-            Assert.Equal(AnotherString, actual);
-        }
+        protected override void Given()
+            => (Step.Constants, Other.Constants)
+            = (CreateConstants((SomeConstant, SomeString)), CreateConstants((SomeConstant, AnotherString)));
+        [Fact] public void ThenHasTheConstant() => Assert.Equal(SomeConstant, Result.Constants.Single().Name);
+        [Fact] public void ThenGetValueFromOther() => Assert.Equal(AnotherString, Result.Constants[0].Value);
     }
 
     public class GivenBothHasEndpoint : WhenMerge
