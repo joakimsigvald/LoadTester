@@ -121,7 +121,7 @@ public abstract class WhenGetScenariosToRun : TestSubject<Assembly.TestSuite, IS
         [Fact]
         public void ThenGetTemplateStepsFollowedByScenarioStepsPersistFromScenario()
         {
-            var steps = new[] { "A", "B", "C", "D" }.Select(v => new Step { Endpoint = v }).ToArray();
+            var steps = new[] { "A", "B", "C", "D" }.Select(v => new Assembly.Step { Endpoint = v }).ToArray();
             TemplateScenario.Steps = steps[..2];
             Scenario.Steps = steps[2..];
             ArrangeAndAct();

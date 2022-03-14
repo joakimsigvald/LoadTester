@@ -2,7 +2,10 @@
 using Applique.LoadTester.Domain.Assembly;
 using Applique.LoadTester.Domain.Design;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Web;
 
 namespace Applique.LoadTester.Logic.Assembly;
 
@@ -24,16 +27,33 @@ public class Step : IStep
     public IStep MergeWith(IStep other)
         => new Step()
         {
-            Args = Args,
+            Args = MergeArgs(Args, other.Args),
             Body = other.Body ?? Body,
             Constants = Constants.Merge(other.Constants),
             Endpoint = other.Endpoint ?? Endpoint,
             ExpectedStatusCodes = ExpectedStatusCodes,
             Response = other.Response ?? Response,
-            BreakOnSuccess = BreakOnSuccess,
-            RetryOnFail = RetryOnFail,
-            DelayMs = DelayMs,
-            Times = Times,
-            Type = Type
+            BreakOnSuccess = other.BreakOnSuccess,
+            RetryOnFail = other.RetryOnFail,
+            DelayMs = other.DelayMs,
+            Times = other.Times,
+            Type = other.Type
         };
+
+    private static string MergeArgs(string args1, string args2)
+    {
+        var argDict1 = ExtractQuery(args1);
+        foreach (var kvp in ExtractQuery(args2))
+            argDict1[kvp.Key] = kvp.Value;
+        return argDict1.Any()
+            ? $"?{string.Join('&', argDict1.Select(kvp => $"{kvp.Key}={kvp.Value}"))}"
+            : string.Empty;
+    }
+
+    private static IDictionary<string, string> ExtractQuery(string args)
+        => args.TrimStart('?')
+        .Split('&', StringSplitOptions.RemoveEmptyEntries)
+        .Select(s => s.Split('='))
+        .GroupBy(arr => arr[0])
+        .ToDictionary(g => g.Key, g => string.Join(',', g.Select(arr => arr[1])));
 }
