@@ -17,10 +17,7 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
 
     protected override void Act() => CollectResult(() => SUT.MergeWith(Other));
 
-    public class WhenMerged : WhenMerge
-    {
-        public WhenMerged() => ArrangeAndAct();
-    }
+    public class WhenMerged : WhenMerge { public WhenMerged() => ArrangeAndAct(); }
 
     public class GivenBothHasDifferentArgs : WhenMerged
     {
@@ -73,62 +70,42 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
         [Fact] public void ThenGetValueFromOther() => Assert.Equal(AnotherString, Result.Constants[0].Value);
     }
 
-    public class GivenBothHasEndpoint : WhenMerge
+    public class GivenBothHasEndpoint : WhenMerged
     {
-        [Fact]
-        public void ThenGetEndpointFromOther()
-        {
-            Step.Endpoint = "somewhere";
-            Other.Endpoint = "elsewhere";
-            ArrangeAndAct();
-            Assert.Equal(Other.Endpoint, Result.Endpoint);
-        }
+        protected override void Given() => (Step.Endpoint, Other.Endpoint) = ("somewhere", "elsewhere");
+        [Fact] public void ThenGetEndpointFromOther() => Assert.Equal(Other.Endpoint, Result.Endpoint);
     }
 
-    public class GivenStepEndpointIsNull : WhenMerge
+    public class GivenStepEndpointIsNull : WhenMerged
     {
-        [Fact]
-        public void ThenUseEndpointFromOther()
-        {
-            Other.Endpoint = "elsewhere";
-            ArrangeAndAct();
-            Assert.Equal(Other.Endpoint, Result.Endpoint);
-        }
+        protected override void Given() => Other.Endpoint = "elsewhere";
+        [Fact] public void ThenUseEndpointFromOther() => Assert.Equal(Other.Endpoint, Result.Endpoint);
     }
 
-    public class GivenBothHasStatusCodes : WhenMerge
+    public class GivenOtherEndpointIsNull : WhenMerged
     {
-        [Fact]
-        public void ThenGetStatusCodesFromStep()
-        {
-            Step.ExpectedStatusCodes = new[] { HttpStatusCode.Accepted };
-            Other.ExpectedStatusCodes = new[] { HttpStatusCode.NotFound };
-            ArrangeAndAct();
-            Assert.Equal(Step.ExpectedStatusCodes, Result.ExpectedStatusCodes);
-        }
+        protected override void Given() => Step.Endpoint = "somewhere";
+        [Fact] public void ThenUseEndpointFromStep() => Assert.Equal(Step.Endpoint, Result.Endpoint);
     }
 
-    public class GivenOnlyOtherHasResponse : WhenMerge
+    public class GivenBothHasStatusCodes : WhenMerged
     {
-        [Fact]
-        public void ThenGetResponseFromOther()
-        {
-            Other.Response = new { A = "B" };
-            ArrangeAndAct();
-            Assert.Same(Other.Response, Result.Response);
-        }
+        protected override void Given() 
+            => (Step.ExpectedStatusCodes, Other.ExpectedStatusCodes) 
+            = (new[] { HttpStatusCode.Accepted }, new[] { HttpStatusCode.NotFound });
+        [Fact] public void ThenGetStatusCodesFromStep() => Assert.Equal(Step.ExpectedStatusCodes, Result.ExpectedStatusCodes);
     }
 
-    public class GivenBothHasResponse : WhenMerge
+    public class GivenOnlyOtherHasResponse : WhenMerged
     {
-        [Fact]
-        public void ThenGetResponseFromOther()
-        {
-            Step.Response = new { B = "C" };
-            Other.Response = new { A = "B" };
-            ArrangeAndAct();
-            Assert.Same(Other.Response, Result.Response);
-        }
+        protected override void Given() => Other.Response = new { A = "B" };
+        [Fact] public void ThenUseEndpointFromOther() => Assert.Same(Other.Response, Result.Response);
+    }
+
+    public class GivenBothHasResponse : WhenMerged
+    {
+        protected override void Given() => (Step.Response, Other.Response) = (new { B = "C" }, new { B = "C" });
+        [Fact] public void ThenGetResponseFromOther() => Assert.Same(Other.Response, Result.Response);
     }
 
     public class GivenBothHasBreakOnSuccess : WhenMerge
