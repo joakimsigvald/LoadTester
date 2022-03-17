@@ -33,11 +33,11 @@ public class Step : IStep
             Endpoint = other.Endpoint ?? Endpoint,
             ExpectedStatusCodes = ExpectedStatusCodes,
             Response = other.Response ?? Response,
-            BreakOnSuccess = other.BreakOnSuccess,
-            RetryOnFail = other.RetryOnFail,
-            DelayMs = other.DelayMs,
-            Times = other.Times,
-            Type = other.Type
+            BreakOnSuccess = BreakOnSuccess,
+            RetryOnFail = RetryOnFail,
+            DelayMs = DelayMs,
+            Times = Times,
+            Type = Type
         };
 
     private static string MergeArgs(string args1, string args2)
@@ -46,12 +46,12 @@ public class Step : IStep
         foreach (var kvp in ExtractQuery(args2))
             argDict1[kvp.Key] = kvp.Value;
         return argDict1.Any()
-            ? $"?{string.Join('&', argDict1.Select(kvp => $"{kvp.Key}={kvp.Value}"))}"
+            ? string.Join('&', argDict1.Select(kvp => $"{kvp.Key}={kvp.Value}"))
             : string.Empty;
     }
 
     private static IDictionary<string, string> ExtractQuery(string args)
-        => args.TrimStart('?')
+        => args
         .Split('&', StringSplitOptions.RemoveEmptyEntries)
         .Select(s => s.Split('='))
         .GroupBy(arr => arr[0])

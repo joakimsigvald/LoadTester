@@ -21,32 +21,32 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
 
     public class GivenBothHasDifferentArgs : WhenMerged
     {
-        protected override void Given() => (Step.Args, Other.Args) = ("?a=1", "?b=2");
-        [Fact] public void ThenAppendGetArgsFromOther() => Assert.Equal("?a=1&b=2", Result.Args);
+        protected override void Given() => (Step.Args, Other.Args) = ("a=1", "b=2");
+        [Fact] public void ThenAppendGetArgsFromOther() => Assert.Equal("a=1&b=2", Result.Args);
     }
 
     public class GivenBothHasSameArg : WhenMerged
     {
-        protected override void Given() => (Step.Args, Other.Args) = ("?a=1", "?a=2");
-        [Fact] public void ThenGetArgValueFromOther() => Assert.Equal("?a=2", Result.Args);
+        protected override void Given() => (Step.Args, Other.Args) = ("a=1", "a=2");
+        [Fact] public void ThenGetArgValueFromOther() => Assert.Equal("a=2", Result.Args);
     }
 
     public class GivenOnlyStepHasArgs : WhenMerged
     {
-        protected override void Given() => Step.Args = "?a=1";
+        protected override void Given() => Step.Args = "a=1";
         [Fact] public void ThenGetArgsFromStep() => Assert.Equal(Step.Args, Result.Args);
     }
 
     public class GivenOnlyOtherHasArgs : WhenMerged
     {
-        protected override void Given() => Other.Args = "?a=1";
+        protected override void Given() => Other.Args = "a=1";
         [Fact] public void ThenGetArgsFromOther() => Assert.Equal(Other.Args, Result.Args);
     }
 
     public class GivenStepHasDuplicatedArgKeys : WhenMerged
     {
-        protected override void Given() => Step.Args = "?a=1&a=2";
-        [Fact] public void ThenThenConvertToCommaSeparatedValues() => Assert.Equal("?a=1,2", Result.Args);
+        protected override void Given() => Step.Args = "a=1&a=2";
+        [Fact] public void ThenThenConvertToCommaSeparatedValues() => Assert.Equal("a=1,2", Result.Args);
     }
 
     public class GivenOnlyOtherHasBody : WhenMerged
@@ -115,12 +115,12 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
         [InlineData(false, true)]
         [InlineData(true, false)]
         [InlineData(true, true)]
-        public void ThenGetBreakOnSuccessFromOther(bool inOther, bool inStep)
+        public void ThenGetBreakOnSuccessFromStep(bool inStep, bool inOther)
         {
-            Other.BreakOnSuccess = inOther;
             Step.BreakOnSuccess = inStep;
+            Other.BreakOnSuccess = inOther;
             ArrangeAndAct();
-            Assert.Equal(inOther, Result.BreakOnSuccess);
+            Assert.Equal(inStep, Result.BreakOnSuccess);
         }
     }
 
@@ -131,12 +131,12 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
         [InlineData(false, true)]
         [InlineData(true, false)]
         [InlineData(true, true)]
-        public void ThenGetRetryOnFailFromOther(bool inStep, bool inOther)
+        public void ThenGetRetryOnFailFromStep(bool inStep, bool inOther)
         {
             Step.RetryOnFail = inStep;
             Other.RetryOnFail = inOther;
             ArrangeAndAct();
-            Assert.Equal(inOther, Result.RetryOnFail);
+            Assert.Equal(inStep, Result.RetryOnFail);
         }
     }
 
@@ -147,12 +147,12 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
         [InlineData(1, 2)]
         [InlineData(2, 1)]
         [InlineData(2, 2)]
-        public void ThenGetDelayMsFromOther(int inStep, int inOther)
+        public void ThenGetDelayMsFromStep(int inStep, int inOther)
         {
             Step.DelayMs = inStep;
             Other.DelayMs = inOther;
             ArrangeAndAct();
-            Assert.Equal(inOther, Result.DelayMs);
+            Assert.Equal(inStep, Result.DelayMs);
         }
     }
 
@@ -163,12 +163,12 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
         [InlineData(1, 2)]
         [InlineData(2, 1)]
         [InlineData(2, 2)]
-        public void ThenGetTimesFromOther(int inStep, int inOther)
+        public void ThenGetTimesFromStep(int inStep, int inOther)
         {
             Step.Times = inStep;
             Other.Times = inOther;
             ArrangeAndAct();
-            Assert.Equal(inOther, Result.Times);
+            Assert.Equal(inStep, Result.Times);
         }
     }
 
@@ -179,12 +179,12 @@ public abstract class WhenMerge : TestSubject<Assembly.Step, IStep>
         [InlineData(StepType.Blob, StepType.Rest)]
         [InlineData(StepType.Rest, StepType.Blob)]
         [InlineData(StepType.Rest, StepType.Rest)]
-        public void ThenGetTypeFromOther(StepType inStep, StepType inOther)
+        public void ThenGetTypeFromStep(StepType inStep, StepType inOther)
         {
             Step.Type = inStep;
             Other.Type = inOther;
             ArrangeAndAct();
-            Assert.Equal(inOther, Result.Type);
+            Assert.Equal(inStep, Result.Type);
         }
     }
 
