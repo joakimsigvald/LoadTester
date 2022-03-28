@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Applique.LoadTester.Core.Service;
+using Applique.LoadTester.Domain;
 using Applique.LoadTester.Domain.Assembly;
 using Applique.LoadTester.Domain.Design;
 using Applique.LoadTester.Logic.Runtime.External;
@@ -35,7 +37,15 @@ internal class RequestFactory
         };
 
     private string GetUrl(string args)
-        => $"{GetPath(_service.BasePath)}{GetQuery(args)}";
+        => ValidateUrl($"{GetPath(_service.BasePath)}{GetQuery(args)}");
+
+    private static string ValidateUrl(string url)
+    {
+        var unboundVariables = $"_{url}".Split("{{").Skip(1).Select(part => part.Split("}}")[0]).ToArray();
+        return !unboundVariables.Any()
+            ? url
+            : throw new RunFailed("Failed to bind variables in url: " + string.Join(", ", unboundVariables));
+    }
 
     private string GetPath(string basePath)
         => $"{basePath}/{_bindings.SubstituteVariables(_endpoint.Path)}".Trim('/');
